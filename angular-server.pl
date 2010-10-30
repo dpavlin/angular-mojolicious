@@ -41,9 +41,9 @@ get '/data/:database' => sub {
 	my $self = shift;
 	my $database = $self->param('database');
 	my $list_databases = { name => $database };
-	foreach my $database ( keys %{ $data->{ $database }} ) {
-		my $count = scalar keys %{ $data->{$database} };
-		$list_databases->{entities}->{$database} = $count;
+	foreach my $entity ( keys %{ $data->{ $database }} ) {
+		my $count = $#{ $data->{$database}->{$entity} } + 1;
+		$list_databases->{entities}->{$entity} = $count;
 		$list_databases->{document_count} += $count;
 	}
 	warn dump($list_databases);
