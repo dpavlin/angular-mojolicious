@@ -8,6 +8,7 @@ use Data::Dump qw(dump);
 # http://angular.getangular.com/data
 
 our $data;
+our $id2nr;
 
 get '/' => 'index';
 
@@ -66,6 +67,25 @@ get '/data/:database/:entity' => sub {
 get '/data/:database/:entity/:id' => sub {
     my $self = shift;
 
+	my $database = $self->param('database');
+	my $entity   = $self->param('entity');
+	my $id       = $self->param('id');
+
+	my $e = $data->{$database}->{$entity} || die "no entity $entity";
+
+	if ( ! defined $id2nr->{$database}->{$entity}  ) {
+		foreach my $i ( 0 .. $#$e ) {
+			$id2nr->{$database}->{$entity}->{ $e->[$i]->{'$id'} } = $i;
+		}
+	}
+
+	if ( exists $id2nr->{$database}->{$entity}->{$id} ) {
+		my $nr = $id2nr->{$database}->{$entity}->{$id};
+		warn "# entity $id -> $nr\n";
+		$self->render_json( $data->{$database}->{$entity}->[$nr] );
+	} else {
+		die "no entity $entity $id in ", dump( $id2nr->{$database}->{$entity} );
+	}
 };
 
 any [ 'put' ] => '/data/:database/:entity/:id' => sub {
