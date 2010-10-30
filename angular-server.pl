@@ -49,6 +49,7 @@ get '/data/:database' => sub {
 	my $database = $self->param('database');
 	my $list_databases = { name => $database };
 	foreach my $entity ( keys %{ $data->{ $database }} ) {
+warn "# entry $entity ", dump( $data->{$database}->{$entity} );
 		my $count = $#{ $data->{$database}->{$entity} } + 1;
 		$list_databases->{entities}->{$entity} = $count;
 		$list_databases->{document_count} += $count;
