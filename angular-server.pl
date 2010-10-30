@@ -31,6 +31,7 @@ get '/_replicate' => sub {
 				my $e = $self->client->get( $url )->res->json;
 				warn "# replicated $url ", dump($e);
 				$data->{$database}->{$entity} = $e;
+				delete $id2nr->{$database}->{$entity};
 			}
 		}
 	}
