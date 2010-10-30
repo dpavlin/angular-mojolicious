@@ -35,6 +35,10 @@ get '/_replicate' => sub {
 	}
 };
 
+get '/_data' => sub {
+	shift->render_json( $data )
+};
+
 get '/data/' => sub {
 	my $self = shift;
 	$self->render_json( [ keys %$data ] );
