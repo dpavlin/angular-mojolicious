@@ -26,7 +26,7 @@ get '/_replicate' => sub {
 		if ( $database && $entities ) {
 			foreach my $entity ( keys %$entities ) {
 				my $url = $from;
-				$url =~ s{/+$}{/};
+				$url =~ s{/?$}{/}; # add slash at end
 				$url .= $entity;
 				my $e = $self->client->get( $url )->res->json;
 				warn "# replicated $url ", dump($e);
