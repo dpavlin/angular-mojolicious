@@ -60,7 +60,7 @@ warn "# entry $entity ", dump( $data->{$database}->{$entity} );
 
 get '/data/:database/:entity' => sub {
 	my $self = shift;
-
+	$self->render_json( $data->{ $self->param('database') }->{ $self->param('entity' ) } );
 };
 
 get '/data/:database/:entity/:id' => sub {
