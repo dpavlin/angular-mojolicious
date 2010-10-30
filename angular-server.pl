@@ -11,7 +11,7 @@ our $data;
 
 get '/' => 'index';
 
-get '/replicate' => sub {
+get '/_replicate' => sub {
 	my $self = shift;
 
 	if ( my $from = $self->param('from') ) {
@@ -24,8 +24,11 @@ get '/replicate' => sub {
 
 		if ( $database && $entities ) {
 			foreach my $entity ( keys %$entities ) {
-				my $e = $self->client->get( "$from/$entity" )->res->json;
-				warn "# replicated $entity ", dump($e);
+				my $url = $from;
+				$url =~ s{/+$}{/};
+				$url .= $entity;
+				my $e = $self->client->get( $url )->res->json;
+				warn "# replicated $url ", dump($e);
 				$data->{$database}->{$entity} = $e;
 			}
 		}
