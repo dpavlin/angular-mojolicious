@@ -101,6 +101,10 @@ get '/demo/:groovy' => sub {
 };
 
 get '/Cookbook' => 'Cookbook';
+get '/Cookbook/:example' => sub {
+	my $self = shift;
+	$self->render( "Cookbook/" . $self->param('example'), layout => 'angular' );
+};
 
 
 app->start;
@@ -114,4 +118,14 @@ Yea baby!
 <!doctype html><html>
     <head><title>Funky!</title></head>
     <body><%== content %></body>
+</html>
+
+@@ layouts/angular.html.ep
+<!DOCTYPE HTML>
+<html xmlns:ng="http://angularjs.org">
+  <head>
+    <script type="text/javascript"
+         src="/build/angular.js" ng:autobind></script>
+  </head>
+  <body><%== content %></body>
 </html>

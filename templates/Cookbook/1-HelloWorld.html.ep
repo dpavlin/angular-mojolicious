@@ -1,0 +1,3 @@
+Your name: <input type="text" name="name" value="World"/>
+<hr/>
+Hello {{name}}!
