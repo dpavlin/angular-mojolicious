@@ -1,0 +1,20 @@
+<script type="text/javascript">
+    MyController = function($resource) {
+      this.People = $resource('/data/AddressBook/people');
+    };
+    MyController.$inject = ['$resource'];
+	MyController.prototype = {
+		fetchPeople: function() {
+			this.people = this.People.query();
+		}
+	};
+</script>
+
+<div ng:controller="MyController" ng:init="$window.$root = this">
+	<h1>Address Book </h1>
+	<button ng:click="fetchPeople()">fetch</button>
+	<hr/>
+	<ul>
+		<li ng:repeat="person in people">{{person.name}}</li>
+	</ul>
+</div>
