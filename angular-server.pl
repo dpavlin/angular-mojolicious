@@ -125,6 +125,7 @@ get '/demo/:groovy' => sub {
 get '/Cookbook' => 'Cookbook';
 get '/Cookbook/:example' => sub {
 	my $self = shift;
+	$self->stash('ANGULAR_JS', $ENV{ANGULAR_JS} || '/angular/src/angular-bootstrap.js' );
 	$self->render( "Cookbook/" . $self->param('example'), layout => 'angular' );
 };
 
@@ -147,7 +148,7 @@ Yea baby!
 <html xmlns:ng="http://angularjs.org">
   <head>
     <script type="text/javascript"
-         src="<%== $ENV{ANGULAR_JS} || '/build/angular.js' %>" ng:autobind></script>
+         src="<%== $ANGULAR_JS %>" ng:autobind></script>
   </head>
   <body><%== content %></body>
 </html>
