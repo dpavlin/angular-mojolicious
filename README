@@ -19,10 +19,16 @@ using simple in-memory model for experimenting with local datasets using
 
 Installation:
 
-    git submodule init
-    git submodule update
+	git submodule init
+	git submodule update
+
+Optionally build angular to get single file download
+
+	cd public/angular
+	rake compile
+	cd -
 
 Start it with:
 
-    ./angular-server.pl daemon --reload  
+	./angular-server.pl daemon --reload  
 

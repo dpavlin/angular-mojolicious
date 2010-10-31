@@ -125,7 +125,7 @@ get '/demo/:groovy' => sub {
 get '/Cookbook' => 'Cookbook';
 get '/Cookbook/:example' => sub {
 	my $self = shift;
-	$self->stash('ANGULAR_JS', $ENV{ANGULAR_JS} || '/angular/src/angular-bootstrap.js' );
+	$self->stash('ANGULAR_JS', $ENV{ANGULAR_JS} || ( -e 'public/angular/build/angular.js' ? '/angular/build/angular.js' : '/angular/src/angular-bootstrap.js' ) );
 	$self->render( "Cookbook/" . $self->param('example'), layout => 'angular' );
 };
 
