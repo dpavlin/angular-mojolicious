@@ -7,7 +7,16 @@ use Data::Dump qw(dump);
 # http://docs.getangular.com/REST.Basic
 # http://angular.getangular.com/data
 
-our $data;
+our $data = {
+	'Cookbook' => {
+		test => [
+				{ '$id' => 1, foo => 1, bar => 2, baz => 3 },
+				{ '$id' => 2, foo => 1                     },
+				{ '$id' => 3,           bar => 2           },
+				{ '$id' => 4,                     baz => 3 },
+		],
+	}
+};
 our $id2nr;
 
 get '/' => 'index';
