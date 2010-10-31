@@ -19,6 +19,15 @@ our $data = {
 };
 our $id2nr;
 
+sub _render_jsonp {
+	my ( $self, $json ) = @_;
+	my $data = $self->render( json => $json, partial => 1 );
+	if ( my $callback = $self->param('callback') ) {
+		$data = "$callback($data)";
+	}
+	$self->render( data => $data, format => 'js' );
+}
+
 get '/' => 'index';
 
 get '/_replicate' => sub {
@@ -27,7 +36,7 @@ get '/_replicate' => sub {
 	if ( my $from = $self->param('from') ) {
 		my $got = $self->client->get( $from )->res->json;
 		warn "# from $from ",dump($got);
-		$self->render_json( $got );
+		_render_jsonp( $self,  $got );
 
 		my $database = $got->{name};
 		my $entities = $got->{entities};
@@ -47,12 +56,13 @@ get '/_replicate' => sub {
 };
 
 get '/_data' => sub {
-	shift->render_json( $data )
+	my $self = shift;
+	_render_jsonp( $self, $data )
 };
 
 get '/data/' => sub {
 	my $self = shift;
-	$self->render_json( [ keys %$data ] );
+	_render_jsonp( $self,  [ keys %$data ] );
 };
 
 get '/data/:database' => sub {
@@ -66,12 +76,12 @@ warn "# entry $entity ", dump( $data->{$database}->{$entity} );
 		$list_databases->{document_count} += $count;
 	}
 	warn dump($list_databases);
-	$self->render_json( $list_databases );
+	_render_jsonp( $self,  $list_databases );
 };
 
 get '/data/:database/:entity' => sub {
 	my $self = shift;
-	$self->render_json( $data->{ $self->param('database') }->{ $self->param('entity' ) } );
+	_render_jsonp( $self,  $data->{ $self->param('database') }->{ $self->param('entity' ) } );
 };
 
 get '/data/:database/:entity/:id' => sub {
@@ -92,7 +102,7 @@ get '/data/:database/:entity/:id' => sub {
 	if ( exists $id2nr->{$database}->{$entity}->{$id} ) {
 		my $nr = $id2nr->{$database}->{$entity}->{$id};
 		warn "# entity $id -> $nr\n";
-		$self->render_json( $data->{$database}->{$entity}->[$nr] );
+		_render_jsonp( $self,  $data->{$database}->{$entity}->[$nr] );
 	} else {
 		die "no entity $entity $id in ", dump( $id2nr->{$database}->{$entity} );
 	}
@@ -104,7 +114,7 @@ any [ 'put', 'post' ] => '/data/:database/:entity/:id' => sub {
 	warn "# body ",dump($self->req->body, $data);
 	die "no data" unless $data;
 	$data->{ $self->param('database') }->{ $self->param('entity') }->{ $self->param('id') } = $data;
-	$self->render_json( $data );
+	_render_jsonp( $self,  $data );
 };
 
 get '/demo/:groovy' => sub {
