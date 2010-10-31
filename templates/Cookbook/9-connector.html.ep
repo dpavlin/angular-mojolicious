@@ -1,0 +1,27 @@
+<script type="text/javascript"> 
+	TestCntl.$inject = ['$xhr', '$route']; 
+
+	function TestCntl(xhr, route){ 
+
+		this.route = route; 
+		this.xhr = xhr; 
+
+		var data = {}
+		this.data = data;
+
+		this.xhr("JSON"
+			, "/data/Cookbook/test/?callback=JSON_CALLBACK"
+			, function(code, response){ 
+				console.log(code, response, data);
+				data.response = response;
+			}
+		); 
+
+	} 
+</script> 
+
+<div ng:controller="TestCntl"> 
+<pre>
+data={{data}}
+</pre>
+</div> 
