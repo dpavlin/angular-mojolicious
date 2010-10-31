@@ -1,11 +1,28 @@
-REST JSONP server using Mojolicious for <angular/>
+REST JSONP server using mojolicious for <angular/>
 
 
 <angular/>: Complex web apps made simple
-
 http://angularjs.org/
 
 
 mojolicious: the web in the box!
-
 http://mojolicious.org/
+
+
+This is my attempt to implement REST API described at:
+
+http://docs.getangular.com/REST.Basic
+
+using simple in-memory model for experimenting with local datasets using
+<angular/>
+
+
+Installation:
+
+    git submodule init
+    git submodule update
+
+Start it with:
+
+    ./angular-server.pl daemon --reload  
+
