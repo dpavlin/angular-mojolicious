@@ -13,13 +13,15 @@ Examples from
 
 <ul>
 
-<li>
-<a target="HelloWorld" href="1-HelloWorld.html">HelloWorld</a>
-<a href="http://angularjs.org/Cookbook:HelloWorld">wiki</a>
+% foreach my $path ( sort glob('public/Cookbook/*') ) {
+%	my ( $file, $name ) = ( $1.$2.$3, $2 ) if $path =~ m{^.+/(\d-)([^/]+)(.html)};
 
 <li>
-<a target="BasicForm" href="2-BasicForm.html">BasicForm</a>
-<a href="http://angularjs.org/Cookbook:BasicForm">wiki</a>
+<a target="<%= $name %>" href="/Cookbook/<%= $file %>"><%= $name %></a>
+<a target="angular.js-wiki" href="http://angularjs.org/Cookbook:<%= $name %>">wiki</a>
+
+% }
+
 </ul>
 
 </div>
