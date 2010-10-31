@@ -100,6 +100,8 @@ get '/demo/:groovy' => sub {
     $self->render(text => $self->param('groovy'), layout => 'funky');
 };
 
+get '/Cookbook' => 'Cookbook';
+
 
 app->start;
 __DATA__
