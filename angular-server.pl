@@ -125,7 +125,7 @@ Yea baby!
 <html xmlns:ng="http://angularjs.org">
   <head>
     <script type="text/javascript"
-         src="/build/angular.js" ng:autobind></script>
+         src="<%== $ENV{ANGULAR_JS} || '/build/angular.js' %>" ng:autobind></script>
   </head>
   <body><%== content %></body>
 </html>
