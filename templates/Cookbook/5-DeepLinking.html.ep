@@ -1,0 +1,44 @@
+<script>
+angular.service('myApplication', function($route){
+  // define routes
+  $route.when("",          {template:'/cb/welcome.html',  controller:WelcomeCntl});
+  $route.when("/settings", {template:'/cb/settings.html', controller:SettingsCntl});
+
+  // initialize the model to something useful
+  this.person = {
+   name:'anonymous',
+   contacts:[{type:'email', url:'anonymous@example.com'}]
+  };
+ }, {inject:['$route']});
+
+ function WelcomeCntl(){}
+ WelcomeCntl.prototype = {
+  greet: function(){
+   alert("Hello " + this.person.name);
+  }
+ };
+
+ function SettingsCntl(){
+  this.cancel();
+ }
+ SettingsCntl.prototype = {
+  cancel: function(){
+   this.form = angular.copy(this.person);
+  },
+
+  save: function(){
+   angular.copy(this.form, this.person);
+   window.location.hash = "#";
+  }
+ };
+</script>
+<h1>Your App Chrome</h1>
+[ <a href="#">Welcome</a> | <a href="#/settings">Settings</a> ]
+<hr/>
+<span style="background-color: blue; color: white; padding: 3px;">
+  Partial: {{$route.current.template}}
+</span>
+<div style="border: 1px solid blue; margin: 0;">
+  <ng:include src="$route.current.template" scope="$route.current.scope"></ng:include>
+</div>
+<small>Your app footer </small>
