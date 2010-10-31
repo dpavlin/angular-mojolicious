@@ -98,10 +98,13 @@ get '/data/:database/:entity/:id' => sub {
 	}
 };
 
-any [ 'put' ] => '/data/:database/:entity/:id' => sub {
+any [ 'put', 'post' ] => '/data/:database/:entity/:id' => sub {
 	my $self = shift;
-	$data->{ $self->param('database') }->{ $self->param('entity') }->{ $self->param('id') } = $self->req->json;
-	dumper $data;
+	my $data = $self->req->json;
+	warn "# body ",dump($self->req->body, $data);
+	die "no data" unless $data;
+	$data->{ $self->param('database') }->{ $self->param('entity') }->{ $self->param('id') } = $data;
+	$self->render_json( $data );
 };
 
 get '/demo/:groovy' => sub {
