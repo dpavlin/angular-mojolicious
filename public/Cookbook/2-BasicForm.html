@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html xmlns:ng="http://angularjs.org">
+  <head>
+    <script type="text/javascript"
+         src="http://angularjs.org/ng/js/angular-debug.js" ng:autobind></script>
+  </head>
+  <body>
+
+<div ng:init="user = {name: 'John Smith', address:{line1: '123 Main St.', city:'Anytown', state:'AA', zip:'12345'}, contacts:[{type:'phone', value:'1(234) 555-1212'}]}">
+
+  <label>Name:</label><br/>
+  <input type="text" name="user.name" ng:required/> <br/><br/>
+
+  <label>Address:</label><br/>
+  <input type="text" name="user.address.line1" size="33" ng:required/> <br/>
+  <input type="text" name="user.address.city" size="12" ng:required/>,
+  <input type="text" name="user.address.state" size="2" ng:required ng:validate="regexp:/^\w\w$/"/>
+  <input type="text" name="user.address.zip" size="5" ng:required ng:validate="regexp:/^\d\d\d\d\d$/"/><br/><br/>
+
+  <label>Phone:</label>
+  [ <a href="" ng:click="user.contacts.$add()">add</a> ]
+  <div ng:repeat="contact in user.contacts">
+    <select name="contact.type">
+      <option>email</option>
+      <option>phone</option>
+      <option>pager</option>
+      <option>IM</option>
+    </select>
+    <input type="text" name="contact.value" ng:required/> 
+     [ <a href="" ng:click="user.contacts.$remove(contact)">X</a> ]
+  </div>
+</div>
+
+<hr/>
+Debug View:
+<pre>user={{user}}</pre>
+
+  </body>
+</html>
