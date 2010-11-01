@@ -123,13 +123,24 @@ get '/data/:database/:entity/:id' => sub {
 any [ 'post' ] => '/data/:database/:entity' => sub {
 	my $self = shift;
 	my $json = $self->req->json;
-	my $id = $self->param('id');
-	$id = $json->{'$id'};
-	$id = Time::HiRes::time() if ! $id || $id eq '_new';
-	$json->{'$id'} = $id;
+	my $id = $json->{'$id'} || Time::HiRes::time(); # FIXME UUID?
 	warn "## $id body ",dump($self->req->body, $json);
 	die "no data" unless $data;
-	$data->{ $self->param('database') }->{ $self->param('entity') }->{ $id } = $json;
+
+	my $database = $self->param('database');
+	my $entity   = $self->param('entity');
+
+	my $nr = $id2nr->{$database}->{$entity}->{$id};
+	if ( defined $nr ) {
+		$data->{$database}->{$entity}->[$nr] = $json;
+		warn "# update $nr $id ",dump($json);
+	} else {
+		$json->{'$id'} ||= $id;
+		push @{ $data->{$database}->{$entity} }, $json;
+		my $nr = $#{ $data->{$database}->{$entity} };
+		$id2nr->{$id} = $nr;
+		warn "# added $nr $id ",dump($json);
+	}
 	_render_jsonp( $self,  $json );
 };
 
