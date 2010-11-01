@@ -10,27 +10,24 @@ function WorkForm(){
 		abstract: '',
 		authors:[ { name:'', surname:'', inst:'', 'email':'' } ],
 	};
-	this.cancel();
+//	this.cancel();
+	this.work = new this.Work( this.master );
 }
 WorkForm.prototype = {
-	cancel: function() {
+	reset: function() {
 		this.work = angular.copy(this.master);
+		console.info('reset');
 	},
 	save: function(){
-		if ( ! this.saved ) {
-			this.saved = new this.Work( this.work );
-			console.debug( 'new', this.saved, 'from', this.work );
-			this.work = this.saved;
-		}
-
 		this.work.$save();
-		console.debug( 'work', this.work );
+//		console.debug( 'work', this.work );
 	}
 };
 </script>
 
 <div ng:controller="WorkForm">
 <pre>
+{{work.search()}}
 $id={{$id}}
 work.$id={{work.$id}}
 work._id={{work._id}}
@@ -84,10 +81,9 @@ work._id={{work._id}}
    
    Sazetak: <br/>
     <textarea name="work.abstract" cols="50" rows="5"></textarea> <br/>
+    <input type="submit" value="Save" ng:click="work.$save()" disabled="{{$invalidWidgets}}">
     <input type="submit" value="Save" ng:click="save()" disabled="{{$invalidWidgets}}">
-
-
-
+    <input type="reset" value="Reset" ng:click="reset()">
 
 <hr>
 Debug Information:
