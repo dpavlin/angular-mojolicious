@@ -15,6 +15,14 @@ our $data = {
 				{ '$id' => 3,           bar => 2           },
 				{ '$id' => 4,                     baz => 3 },
 		],
+	},
+	'AddressBook' => {
+		people => [
+			{name=>'Misko'},
+			{name=>'Igor'},
+			{name=>'Adam'},
+			{name=>'Elliott'}
+		]
 	}
 };
 our $id2nr;
@@ -28,7 +36,7 @@ sub _render_jsonp {
 	$self->render( data => $data, format => 'js' );
 }
 
-get '/' => 'index';
+#get '/' => 'index';
 
 get '/_replicate' => sub {
 	my $self = shift;
@@ -122,6 +130,7 @@ get '/demo/:groovy' => sub {
     $self->render(text => $self->param('groovy'), layout => 'funky');
 };
 
+get '/' => sub { shift->redirect_to('/Cookbook') };
 get '/Cookbook' => 'Cookbook';
 get '/Cookbook/:example' => sub {
 	my $self = shift;
