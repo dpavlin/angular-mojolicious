@@ -6,7 +6,7 @@ angular.service('myApplication', function($resource){
   { get:     {method:'JSON', params:{visibility:'@self'}},
    replies: {method:'JSON', params:{visibility:'@self', comments:'@comments'}}
   });
-}, {inject:['$resource']});
+}, {$inject:['$resource'],$creation:'eager'});
 
 function BuzzController(){}
 BuzzController.prototype = {
