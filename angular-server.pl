@@ -2,6 +2,8 @@
 
 use Mojolicious::Lite;
 use Data::Dump qw(dump);
+use Time::HiRes qw(time);
+use Clone qw(clone);
 
 # based on
 # http://docs.getangular.com/REST.Basic
@@ -29,7 +31,9 @@ our $id2nr;
 
 sub _render_jsonp {
 	my ( $self, $json ) = @_;
+warn "_render_json ",dump($json);
 	my $data = $self->render( json => $json, partial => 1 );
+warn "## $data";
 	if ( my $callback = $self->param('callback') ) {
 		$data = "$callback($data)";
 	}
@@ -116,13 +120,17 @@ get '/data/:database/:entity/:id' => sub {
 	}
 };
 
-any [ 'put', 'post' ] => '/data/:database/:entity/:id' => sub {
+any [ 'post' ] => '/data/:database/:entity' => sub {
 	my $self = shift;
-	my $data = $self->req->json;
-	warn "# body ",dump($self->req->body, $data);
+	my $json = $self->req->json;
+	my $id = $self->param('id');
+	$id = $json->{'$id'};
+	$id = Time::HiRes::time() if ! $id || $id eq '_new';
+	$json->{'$id'} = $id;
+	warn "## $id body ",dump($self->req->body, $json);
 	die "no data" unless $data;
-	$data->{ $self->param('database') }->{ $self->param('entity') }->{ $self->param('id') } = $data;
-	_render_jsonp( $self,  $data );
+	$data->{ $self->param('database') }->{ $self->param('entity') }->{ $id } = $json;
+	_render_jsonp( $self,  $json );
 };
 
 get '/demo/:groovy' => sub {
@@ -134,10 +142,13 @@ get '/' => sub { shift->redirect_to('/Cookbook') };
 get '/Cookbook' => 'Cookbook';
 get '/Cookbook/:example' => sub {
 	my $self = shift;
-	$self->stash('ANGULAR_JS', $ENV{ANGULAR_JS} || ( -e 'public/angular/build/angular.js' ? '/angular/build/angular.js' : '/angular/src/angular-bootstrap.js' ) );
 	$self->render( "Cookbook/" . $self->param('example'), layout => 'angular' );
 };
 
+get '/conference/:page' => sub {
+	my $self = shift;
+	$self->render( "conference/" . $self->param('page'), layout => 'angular' );
+};
 
 app->start;
 __DATA__
@@ -156,6 +167,7 @@ Yea baby!
 <!DOCTYPE HTML>
 <html xmlns:ng="http://angularjs.org">
   <head>
+% my $ANGULAR_JS = $ENV{ANGULAR_JS} || ( -e 'public/angular/build/angular.js' ? '/angular/build/angular.js' : '/angular/src/angular-bootstrap.js' );
     <script type="text/javascript"
          src="<%== $ANGULAR_JS %>" ng:autobind></script>
   </head>
