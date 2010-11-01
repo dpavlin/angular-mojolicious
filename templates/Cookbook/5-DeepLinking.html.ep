@@ -9,7 +9,7 @@ angular.service('myApplication', function($route){
    name:'anonymous',
    contacts:[{type:'email', url:'anonymous@example.com'}]
   };
- }, {inject:['$route']});
+ }, {$inject:['$route'], $creation:'eager'});
 
  function WelcomeCntl(){}
  WelcomeCntl.prototype = {
