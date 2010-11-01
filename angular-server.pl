@@ -31,9 +31,9 @@ our $id2nr;
 
 sub _render_jsonp {
 	my ( $self, $json ) = @_;
-warn "_render_json ",dump($json);
+#warn "## _render_json ",dump($json);
 	my $data = $self->render( json => $json, partial => 1 );
-warn "## $data";
+warn "## _render_json $data";
 	if ( my $callback = $self->param('callback') ) {
 		$data = "$callback($data)";
 	}
@@ -123,9 +123,14 @@ get '/data/:database/:entity/:id' => sub {
 any [ 'post' ] => '/data/:database/:entity' => sub {
 	my $self = shift;
 	my $json = $self->req->json;
-	my $id = $json->{'$id'} || Time::HiRes::time(); # FIXME UUID?
+	my $id = $json->{'$id'} # XXX we don't get it back from angular.js
+		|| $json->{'_id'}  # so we use our version
+		|| Time::HiRes::time(); # FIXME UUID?
 	warn "## $id body ",dump($self->req->body, $json);
 	die "no data" unless $data;
+
+	$json->{'$id'} ||= $id;	# angular.js doesn't resend this one
+	$json->{'_id'} = $id;	# but does this one :-)
 
 	my $database = $self->param('database');
 	my $entity   = $self->param('entity');
@@ -135,10 +140,9 @@ any [ 'post' ] => '/data/:database/:entity' => sub {
 		$data->{$database}->{$entity}->[$nr] = $json;
 		warn "# update $nr $id ",dump($json);
 	} else {
-		$json->{'$id'} ||= $id;
 		push @{ $data->{$database}->{$entity} }, $json;
 		my $nr = $#{ $data->{$database}->{$entity} };
-		$id2nr->{$id} = $nr;
+		$id2nr->{$database}->{$entity}->{$id} = $nr;
 		warn "# added $nr $id ",dump($json);
 	}
 	_render_jsonp( $self,  $json );

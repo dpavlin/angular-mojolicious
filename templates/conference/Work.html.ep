@@ -1,0 +1,70 @@
+<script>
+angular.service('conference', function($resource){
+ this.Work = $resource( '/data/conference/Work/' );
+}, {$inject:['$resource'],$creation:'eager'});
+
+function WorkForm(){
+	this.master = {
+		type: '',
+		title: '',
+		abstract: '',
+		authors:[ { name:'', surname:'', inst:'', 'email':'' } ],
+	};
+	this.cancel();
+}
+WorkForm.prototype = {
+	cancel: function() {
+		this.work = angular.copy(this.master);
+	},
+	save: function(){
+		if ( ! this.saved ) {
+			this.saved = new this.Work( this.work );
+			console.debug( 'new', this.saved, 'from', this.work );
+			this.work = this.saved;
+		}
+
+		this.work.$save();
+		console.debug( 'work', this.work );
+	}
+};
+</script>
+
+<div ng:controller="WorkForm">
+<pre>
+$id={{$id}}
+work.$id={{work.$id}}
+work._id={{work._id}}
+</pre>
+	<label>Vrsta rada:</label><br/>
+	<input type="radio" name="work.type" value="simp"> Simpozij <br/>
+	<input type="radio" name="work.type" value="pred"> Predavanje <br/>
+	<input type="radio" name="work.type" value="poster"> Poster <br/>
+	<input type="radio" name="work.type" value="round"> Okrugli stol <br/>
+
+
+<div ng:repeat="author in work.authors">
+[<a href="#" ng:click="work.authors.$remove(author)">X</a>]
+<input name="author.name" ng:required>
+<input name="author.surname" ng:required>
+<input name="author.inst" >
+<input name="author.email" ng:required>
+</div>
+[<a href="#" ng:click="work.authors.$add()">Add another author</a>]
+
+
+
+
+   Naslov: <input name="work.title" size="60"><br/>
+   
+   Sazetak: <br/>
+    <input type="submit" value="Save" ng:click="save()" disabled="{{$invalidWidgets}}">
+
+
+
+
+Debug Information:
+{{$window.location.href}}
+<pre>work = {{work}}</pre>
+<pre>master = {{master}}</pre>
+
+</div>
