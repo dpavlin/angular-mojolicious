@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 
+use lib 'common/mojo/lib';
+
 use Mojolicious::Lite;
 use Data::Dump qw(dump);
 use Time::HiRes;
