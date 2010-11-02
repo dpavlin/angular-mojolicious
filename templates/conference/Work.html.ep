@@ -131,7 +131,7 @@ Organizator:
    Sazetak: <br/>
     <textarea name="work.abstract" cols="50" rows="5"></textarea> <br/>
     <input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();" disabled="{{$invalidWidgets}}">
-    <input type="reset" value="Novi rad" ng:click="reset()">
+    <input type="reset" value="Novi rad" ng:click="reset()" ng:show="work && work._id">
 
 	<div ng:show="work._id">
 	<a href="#{{work._id}}">permalink to {{work.title}}</a>
