@@ -1,33 +1,91 @@
-<script src="/controller/conference/Work.js"></script>
 <script>
 
-function Symposium($resource){
-	this.Symposium = $resource( '/data/conference/Symposium/:_id', { _id:'' } );
-	this.symposiums = this.Symposium.query();
-	console.debug( this );
+function Work($resource){
+	this.master = {
+		type: '',
+		title: '',
+		abstract: '',
+		authors:[ { name:'', surname:'', inst:'', email:'' } ],
+		symposium: { authors: [ {name:''} ] },
+	};
+	this.Work = $resource( '/data/conference/Work/:_id', { _id:'' } );
+	this.reset();
+	this.$watch('$location.hashPath', this.hash_change);
 }
-Symposium.$inject=['$resource'];
+Work.$inject=['$resource'];
+
+Work.prototype = {
+	hash_change: function() {
+		var id = this.$location.hashPath;
+console.debug( 'hash_change', id, this.work._id );
+		if ( id != this.work._id ) {
+			if (id) this.work = this.Work.get({ _id: id })
+			else this.reset();
+		}
+	},
+	reset: function() {
+		console.debug( this.Work );
+		var symposium = null;
+		if ( this.work && this.work.type == 'symposium' ) symposium = this.work.symposium;
+		this.work = new this.Work( this.master );
+		if ( symposium ) {
+			this.work.symposium = symposium;
+			this.work.type = 'symposium';
+		}
+console.debug( 'reset', symposium, this.work, this.$location.hashPath );
+		this.$location.hashPath = '';
+	},
+	save: function(){
+		var l = this.$location;
+		this.work.$save(function(work){
+			l.hashPath = work._id;
+		});
+	}
+};
+
 
 </script>
 
+<h1>Prijava rada</h1>
+
 <div ng:controller="Work" ng:init="$window.$root = this">
 
-<div ng:show="work._id">
-<a href="#{{work._id}}">permalink to {{work.title}}</a>
-</div>
+<h2>Vrsta rada:</h2>
+<input type="radio" name="work.type" value="symposium"> Simpozij
 
-	<label>Vrsta rada:</label><br/>
-	<input type="radio" name="work.type" value="simp"> Simpozij
-
-<select name="work.symposium_id" ng:show="work.type == 'simp'" ng:controller="Symposium">
+<div ng:show="work.type == 'symposium'" style="background:#f0f0f0">
+<!--
+<select name="work.symposium_id" ng:show="work.type == 'symposium'" ng:controller="Symposium">
 <option ng:repeat="s in symposiums" value="{{s._id}}">{{s.title}}</option>
 </select>
+-->
 
- <br/>
+Tema simpozija: <input name="work.symposium.title" size="60"><br/>
+   
+Sažetak: <br/>
+<textarea name="work.symposium.abstract" cols="50" rows="5"></textarea> <br/>
 
-	<input type="radio" name="work.type" value="pred"> Predavanje <br/>
+Organizator:
+<div ng:repeat="author in work.symposium.authors">
+[<a href="" ng:click="work.symposium.authors.$remove(author)">X</a>]
+<input name="author.name" ng:required>
+<input name="author.surname" ng:required>
+<input name="author.inst" >
+<input name="author.email" ng:required>
+</div>
+[<a href="" ng:click="work.symposium.authors.$add()">Add another organizer</a>]
+
+</div>
+
+<br/>
+
+	<input type="radio" name="work.type" value="lecture"> Predavanje <br/>
 	<input type="radio" name="work.type" value="poster"> Poster <br/>
 	<input type="radio" name="work.type" value="round"> Okrugli stol <br/>
+
+<hr>
+
+<h2>Autori rada</h2>
 
 <div ng:repeat="author in work.authors">
 [<a href="" ng:click="work.authors.$remove(author)">X</a>]
@@ -69,12 +127,15 @@ Symposium.$inject=['$resource'];
 
 
    Naslov: <input name="work.title" size="60"><br/>
-   
+
    Sazetak: <br/>
     <textarea name="work.abstract" cols="50" rows="5"></textarea> <br/>
-    <input type="submit" value="Save" ng:click="save();" disabled="{{$invalidWidgets}}">
-    <input type="reset" value="Reset" ng:click="reset()">
-	<a href="Work">Novi rad</a>
+    <input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();" disabled="{{$invalidWidgets}}">
+    <input type="reset" value="Novi rad" ng:click="reset()">
+
+	<div ng:show="work._id">
+	<a href="#{{work._id}}">permalink to {{work.title}}</a>
+	</div>
 
 <hr>
 Debug Information:
