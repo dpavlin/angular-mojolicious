@@ -4,40 +4,28 @@
 
 <h1>Prijava simpozija</h1>
 
-<div ng:show="work._id">
-<a href="#{{work._id}}">permalink to {{work.title}}</a>
+<div ng:show="symposium._id">
+<a href="#{{symposium._id}}">permalink to {{symposium.title}}</a>
 </div>
 
-   Naslov: <input name="work.title" size="60"><br/>
+   Naslov: <input name="symposium.title" size="60"><br/>
    
    Sazetak: <br/>
-    <textarea name="work.abstract" cols="50" rows="5"></textarea> <br/>
+    <textarea name="symposium.abstract" cols="50" rows="5"></textarea> <br/>
 
-<div ng:repeat="author in work.authors">
-[<a href="" ng:click="work.authors.$remove(author)">X</a>]
+<div ng:repeat="author in symposium.authors">
+[<a href="" ng:click="symposium.authors.$remove(author)">X</a>]
 <input name="author.name" ng:required>
 <input name="author.surname" ng:required>
 <input name="author.inst" >
 <input name="author.email" ng:required>
 </div>
-[<a href="" ng:click="work.authors.$add()">Add another author</a>]
+[<a href="" ng:click="symposium.authors.$add()">Add another author</a>]
 
 <hr>    
 
     <input type="submit" value="Save" ng:click="save();" disabled="{{$invalidWidgets}}">
     <input type="reset" value="Reset" ng:click="reset()">
 	<a href="Symposium">Novi simpozij</a>
-
-<hr>
-Debug Information:
-{{$window.location.href}}
-<pre>work = {{work}}</pre>
-<pre>master = {{master}}</pre>
-
-<pre>
-$id={{$id}}
-work.$id={{work.$id}}
-work._id={{work._id}}
-</pre>
 
 </div>
