@@ -2,8 +2,10 @@
 
 use Mojolicious::Lite;
 use Data::Dump qw(dump);
-use Time::HiRes qw(time);
+use Time::HiRes;
 use Clone qw(clone);
+
+sub new_uuid { Time::HiRes::time * 100000 }
 
 # based on
 # http://docs.getangular.com/REST.Basic
@@ -125,7 +127,7 @@ any [ 'post' ] => '/data/:database/:entity' => sub {
 	my $json = $self->req->json;
 	my $id = $json->{'$id'} # XXX we don't get it back from angular.js
 		|| $json->{'_id'}  # so we use our version
-		|| Time::HiRes::time(); # FIXME UUID?
+		|| new_uuid;
 	warn "## $id body ",dump($self->req->body, $json);
 	die "no data" unless $data;
 
