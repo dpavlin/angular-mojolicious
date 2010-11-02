@@ -1,4 +1,4 @@
-<script src="/data/Work.js"></script>
+<script src="/controller/conference/Work.js"></script>
 
 <div ng:controller="Work">
 
