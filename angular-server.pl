@@ -186,6 +186,7 @@ Yea baby!
 <!DOCTYPE HTML>
 <html xmlns:ng="http://angularjs.org">
   <head>
+   <meta charset="utf-8">
 % my $ANGULAR_JS = $ENV{ANGULAR_JS} || ( -e 'public/angular/build/angular.js' ? '/angular/build/angular.js' : '/angular/src/angular-bootstrap.js' );
     <script type="text/javascript"
          src="<%== $ANGULAR_JS %>" ng:autobind></script>
