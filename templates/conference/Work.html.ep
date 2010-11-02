@@ -1,13 +1,30 @@
 <script src="/controller/conference/Work.js"></script>
+<script>
 
-<div ng:controller="Work">
+function Symposium($resource){
+	this.Symposium = $resource( '/data/conference/Symposium/:_id', { _id:'' } );
+	this.symposiums = this.Symposium.query();
+	console.debug( this );
+}
+Symposium.$inject=['$resource'];
+
+</script>
+
+<div ng:controller="Work" ng:init="$window.$root = this">
 
 <div ng:show="work._id">
 <a href="#{{work._id}}">permalink to {{work.title}}</a>
 </div>
 
 	<label>Vrsta rada:</label><br/>
-	<input type="radio" name="work.type" value="simp"> Simpozij <br/>
+	<input type="radio" name="work.type" value="simp"> Simpozij
+
+<select name="work.symposium_id" ng:show="work.type == 'simp'" ng:controller="Symposium">
+<option ng:repeat="s in symposiums" value="{{s._id}}">{{s.title}}</option>
+</select>
+
+ <br/>
+
 	<input type="radio" name="work.type" value="pred"> Predavanje <br/>
 	<input type="radio" name="work.type" value="poster"> Poster <br/>
 	<input type="radio" name="work.type" value="round"> Okrugli stol <br/>
