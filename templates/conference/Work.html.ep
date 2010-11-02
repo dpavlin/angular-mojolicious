@@ -1,6 +1,6 @@
 <script>
 angular.service('conference', function($resource){
- this.Work = $resource( '/data/conference/Work/' );
+ this.Work = $resource( '/data/conference/Work/:_id', { _id:'' } );
 }, {$inject:['$resource'],$creation:'eager'});
 
 function WorkForm(){
@@ -8,46 +8,51 @@ function WorkForm(){
 		type: '',
 		title: '',
 		abstract: '',
-		authors:[ { name:'', surname:'', inst:'', 'email':'' } ],
+		authors:[ { name:'', surname:'', inst:'', email:'' } ],
 	};
-//	this.cancel();
-	this.work = new this.Work( this.master );
+	this.reset();
+	this.$watch('$location.hashPath', this.hash_change);
 }
+
 WorkForm.prototype = {
+	hash_change: function() {
+		var id = this.$location.hashPath;
+		if ( id ) {
+			this.work = this.Work.get({ _id: id });
+		}
+	},
 	reset: function() {
-		this.work = angular.copy(this.master);
-		console.info('reset');
+		this.work = new this.Work( this.master );
 	},
 	save: function(){
-		this.work.$save();
-//		console.debug( 'work', this.work );
+		var l = this.$location;
+		this.work.$save(function(work){
+			l.hashPath = work._id;
+		});
 	}
 };
 </script>
 
 <div ng:controller="WorkForm">
-<pre>
-{{work.search()}}
-$id={{$id}}
-work.$id={{work.$id}}
-work._id={{work._id}}
-</pre>
+
+<div ng:show="work._id">
+<a href="#{{work._id}}">permalink to this work</a>
+</div>
 	<label>Vrsta rada:</label><br/>
 	<input type="radio" name="work.type" value="simp"> Simpozij <br/>
 	<input type="radio" name="work.type" value="pred"> Predavanje <br/>
 	<input type="radio" name="work.type" value="poster"> Poster <br/>
 	<input type="radio" name="work.type" value="round"> Okrugli stol <br/>
 
-<!--
 <div ng:repeat="author in work.authors">
-[<a href="#" ng:click="work.authors.$remove(author)">X</a>]
+[<a href="" ng:click="work.authors.$remove(author)">X</a>]
 <input name="author.name" ng:required>
 <input name="author.surname" ng:required>
 <input name="author.inst" >
 <input name="author.email" ng:required>
 </div>
-[<a href="#" ng:click="work.authors.$add()">Add another author</a>]
--->
+[<a href="" ng:click="work.authors.$add()">Add another author</a>]
+<!--
 
     <table>
       <tr>
@@ -58,7 +63,7 @@ work._id={{work._id}}
         <th>email</th>
       </tr>
       <tr ng:repeat="author in work.authors">
-        <td>[<a href="#" ng:click="work.authors.$remove(author)">X</a>]</td>
+        <td>[<a href="" ng:click="work.authors.$remove(author)">X</a>]</td>
         <td><input name="author.name" ng:required></td>
         <td><input name="author.surname" ng:required></td>
         <td><input name="author.inst" ></td>
@@ -73,6 +78,7 @@ work._id={{work._id}}
       </tr>
     </table>
 
+-->
 
 <hr>    
 
@@ -81,14 +87,20 @@ work._id={{work._id}}
    
    Sazetak: <br/>
     <textarea name="work.abstract" cols="50" rows="5"></textarea> <br/>
-    <input type="submit" value="Save" ng:click="work.$save()" disabled="{{$invalidWidgets}}">
-    <input type="submit" value="Save" ng:click="save()" disabled="{{$invalidWidgets}}">
+    <input type="submit" value="Save" ng:click="save();" disabled="{{$invalidWidgets}}">
     <input type="reset" value="Reset" ng:click="reset()">
+	<a href="Work">Novi rad</a>
 
 <hr>
 Debug Information:
 {{$window.location.href}}
 <pre>work = {{work}}</pre>
 <pre>master = {{master}}</pre>
+
+<pre>
+$id={{$id}}
+work.$id={{work.$id}}
+work._id={{work._id}}
+</pre>
 
 </div>
