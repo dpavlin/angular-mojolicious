@@ -8,7 +8,7 @@ function Work($resource){
 		title: '',
 		abstract: '',
 		authors:[ { name:'', surname:'', inst:'', email:'' } ],
-		symposium: { authors: [ {name:''} ] },
+		symposium: { authors: [ {name:'', surname:'', inst:'', email:''} ] },
 	};
 	this.Work = $resource( '/data/conference/Work/:_id', { _id:'' } );
 	this.reset();
