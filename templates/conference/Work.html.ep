@@ -1,5 +1,7 @@
 <script>
 
+if (typeof (console) === 'undefined') console = { debug: function() {} }; // mock console.debug
+
 function Work($resource){
 	this.master = {
 		type: '',
