@@ -58,7 +58,7 @@ console.debug( 'reset', symposium, this.work, this.$location.hashPath );
 <div ng:controller="Work" ng:init="$window.$root = this">
 
 <h2>Vrsta rada:</h2>
-<input type="radio" name="work.type" value="symposium"> Simpozij
+<label><input type="radio" name="work.type" value="symposium"> Simpozij</label>
 
 <div ng:show="work.type == 'symposium'" style="background:#f0f0f0">
 <!--
@@ -86,9 +86,9 @@ Organizator:
 
 <br/>
 
-	<input type="radio" name="work.type" value="lecture"> Predavanje <br/>
-	<input type="radio" name="work.type" value="poster"> Poster <br/>
-	<input type="radio" name="work.type" value="round"> Okrugli stol <br/>
+<label><input type="radio" name="work.type" value="lecture"> Predavanje </label><br/>
+<label><input type="radio" name="work.type" value="poster"> Poster </label><br/>
+<label><input type="radio" name="work.type" value="round"> Okrugli stol </label><br/>
 
 <hr>
 
