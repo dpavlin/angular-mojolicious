@@ -8,7 +8,7 @@ function Work($resource){
 		title: '',
 		abstract: '',
 		authors:[ { name:'', surname:'', inst:'', email:'' } ],
-		symposium: { authors: [ {name:'', surname:'', inst:'', email:''} ] },
+		symposium: { authors: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1, },
 	};
 	this.Work = $resource( '/data/conference/Work/:_id', { _id:'' } );
 	this.reset();
@@ -28,7 +28,12 @@ console.debug( 'hash_change', id, this.work._id );
 	reset: function() {
 		console.debug( this.Work );
 		var symposium = null;
-		if ( this.work && this.work.type == 'symposium' ) symposium = this.work.symposium;
+		if ( this.work && this.work.type == 'symposium' ) {
+			symposium = this.work.symposium;
+			if ( this.work._id ) symposium.work_nr++;
+			// if is required because reset is called twice -- once with saved records and once with new empty one
+console.debug( 'symposium', symposium, this.work )
+		}
 		this.work = new this.Work( this.master );
 		if ( symposium ) {
 			this.work.symposium = symposium;
@@ -87,7 +92,7 @@ Organizator:
 
 <hr>
 
-<h2>Autori rada</h2>
+<h2>Autori <span ng:show="work.type == 'symposium'">{{work.symposium.work_nr}}. </span>rada</h2>
 
 <div ng:repeat="author in work.authors">
 [<a href="" ng:click="work.authors.$remove(author)">X</a>]
