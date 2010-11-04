@@ -55,7 +55,7 @@ console.debug( 'reset', symposium, this.work, this.$location.hashPath );
 
 <h1>Prijava rada</h1>
 
-<div ng:controller="Work" ng:init="$window.$root = this">
+<div ng:controller="Work" ng:init="$window.$root = this; changes = 0" ng:eval="changes = changes + 1">
 
 <h2>Vrsta rada:</h2>
 <input type="radio" name="work.type" value="symposium"> Simpozij
@@ -139,7 +139,7 @@ Organizator:
     <textarea name="work.abstract" cols="50" rows="5"></textarea> <br/>
 
 	<span ng:show="$invalidWidgets.visible() == 0">
-    <input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();">
+    <input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();" ng:show="changes" title="{{changes}} changes">
     <input type="reset" value="Novi rad" ng:click="reset()" ng:show="work && work._id">
 	</span>
 
