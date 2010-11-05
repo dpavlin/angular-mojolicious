@@ -1,0 +1,31 @@
+<script src="/controller/conference/Symposium.js"></script>
+
+<div ng:controller="Symposium">
+
+<h1>Prijava simpozija</h1>
+
+<div ng:show="symposium._id">
+<a href="#{{symposium._id}}">permalink to {{symposium.title}}</a>
+</div>
+
+   Naslov: <input name="symposium.title" size="60"><br/>
+   
+   Sazetak: <br/>
+    <textarea name="symposium.abstract" cols="50" rows="5"></textarea> <br/>
+
+<div ng:repeat="author in symposium.authors">
+[<a href="" ng:click="symposium.authors.$remove(author)">X</a>]
+<input name="author.name" ng:required>
+<input name="author.surname" ng:required>
+<input name="author.inst" >
+<input name="author.email" ng:required>
+</div>
+[<a href="" ng:click="symposium.authors.$add()">Add another author</a>]
+
+<hr>    
+
+    <input type="submit" value="Save" ng:click="save();" disabled="{{$invalidWidgets}}">
+    <input type="reset" value="Reset" ng:click="reset()">
+	<a href="Symposium">Novi simpozij</a>
+
+</div>

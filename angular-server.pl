@@ -1,9 +1,13 @@
 #!/usr/bin/env perl
 
+use lib 'common/mojo/lib';
+
 use Mojolicious::Lite;
 use Data::Dump qw(dump);
-use Time::HiRes qw(time);
+use Time::HiRes;
 use Clone qw(clone);
+
+sub new_uuid { Time::HiRes::time * 100000 }
 
 # based on
 # http://docs.getangular.com/REST.Basic
@@ -125,7 +129,7 @@ any [ 'post' ] => '/data/:database/:entity' => sub {
 	my $json = $self->req->json;
 	my $id = $json->{'$id'} # XXX we don't get it back from angular.js
 		|| $json->{'_id'}  # so we use our version
-		|| Time::HiRes::time(); # FIXME UUID?
+		|| new_uuid;
 	warn "## $id body ",dump($self->req->body, $json);
 	die "no data" unless $data;
 
@@ -182,6 +186,7 @@ Yea baby!
 <!DOCTYPE HTML>
 <html xmlns:ng="http://angularjs.org">
   <head>
+   <meta charset="utf-8">
 % my $ANGULAR_JS = $ENV{ANGULAR_JS} || ( -e 'public/angular/build/angular.js' ? '/angular/build/angular.js' : '/angular/src/angular-bootstrap.js' );
     <script type="text/javascript"
          src="<%== $ANGULAR_JS %>" ng:autobind></script>

@@ -1,3 +1,6 @@
 [submodule "public/angular"]
 	path = public/angular
 	url = git://github.com/angular/angular.js.git
+[submodule "common/mojo"]
+	path = common/mojo
+	url = http://github.com/kraih/mojo.git
