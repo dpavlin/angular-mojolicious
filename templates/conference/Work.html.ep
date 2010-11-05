@@ -9,8 +9,10 @@ function Work($resource){
 		abstract: '',
 		authors:[ { name:'', surname:'', inst:'', email:'' } ],
 		symposium: { authors: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1, },
+		_changes: 0,
 	};
 	this.Work = $resource( '/data/conference/Work/:_id', { _id:'' } );
+	this.Symposium = $resource( '/data/conference/Symposium/:_id', { _id:'' } );
 	this.reset();
 	this.$watch('$location.hashPath', this.hash_change);
 }
@@ -21,33 +23,56 @@ Work.prototype = {
 		var id = this.$location.hashPath;
 console.debug( 'hash_change', id, this.work._id );
 		if ( id != this.work._id ) {
-			if (id) this.work = this.Work.get({ _id: id })
+			if (id) {
+				var self = this;
+				this.work = this.Work.get({ _id: id }, function(work) {
+					work._changes = -1
+					if ( work.type == 'symposium' ) {
+						var s_id = work.symposium._id || work._id;
+						// first work doesn't have symposium._id, but we used same _id
+console.debug( 'load symposium ', s_id );
+						self.symposium = self.Symposium.get({ _id: s_id }, function() { self.work._changes-- });
+					}
+				});
+			}
 			else this.reset();
 		}
 	},
 	reset: function() {
 		console.debug( this.Work );
-		var symposium = null;
+		var current_symposium = null;
 		if ( this.work && this.work.type == 'symposium' ) {
-			symposium = this.work.symposium;
-			if ( this.work._id ) symposium.work_nr++;
+			current_symposium = this.work.symposium;
+			if ( this.work._id ) current_symposium.work_nr++;
 			// if is required because reset is called twice -- once with saved records and once with new empty one
-console.debug( 'symposium', symposium, this.work )
+console.debug( 'current_symposium', current_symposium, this.work )
 		}
 		this.work = new this.Work( this.master );
-		if ( symposium ) {
-			this.work.symposium = symposium;
+		if ( current_symposium ) {
+			this.work.symposium = current_symposium;
 			this.work.type = 'symposium';
 		}
-console.debug( 'reset', symposium, this.work, this.$location.hashPath );
+console.debug( 'reset', current_symposium, this.work, this.$location.hashPath );
 	},
 	save: function(){
-		var l = this.$location;
+		var self = this;
 		this.work.$save(function(work){
-			l.hashPath = work._id;
+			self.$location.hashPath = work._id;
 			work._changes = -1;	// it seems that save call issues one ng:eval
+
+			// save symposium to separate resource
+			if ( work.type != 'symposium' ) return;
+			if ( ! self.symposium ) { 
+				self.work.symposium._id = work._id; // reuse _id of first work for symposium
+				self.symposium = new self.Symposium( work.symposium );
+				self.symposium.works = [];
+			}
+			self.symposium.works[ work.symposium.work_nr - 1 ] = work;
+	console.debug('save_symposium', self.symposium );
+			self.symposium.$save(function() { work._changes-- });
 		});
-	}
+	},
+	get_symposium: function() { this.symposium },
 };
 
 
@@ -67,7 +92,7 @@ console.debug( 'reset', symposium, this.work, this.$location.hashPath );
 </select>
 -->
 
-Tema simpozija: <input name="work.symposium.title" size="60"><br/>
+Tema simpozija: <input name="work.symposium.title" size="60" ng:required><br/>
    
 Sažetak: <br/>
 <textarea name="work.symposium.abstract" cols="50" rows="5"></textarea> <br/>
@@ -91,6 +116,14 @@ Organizator:
 	<input type="radio" name="work.type" value="round"> Okrugli stol <br/>
 
 <hr>
+
+<div ng:show="symposium">
+Radovi prijavljeni u ovom simpoziju:
+<ol>
+<li ng:repeat="w in symposium.works"><a href="#{{w._id}}">{{w.title}}</a></li>
+</ol>
+
+</div>
 
 <h2>Autori <span ng:show="work.type == 'symposium'">{{work.symposium.work_nr}}. </span>rada</h2>
 
@@ -133,7 +166,7 @@ Organizator:
 <hr>    
 
 
-   Naslov: <input name="work.title" size="60"><br/>
+   Naslov: <input name="work.title" size="60" ng:required><br/>
 
    Sazetak: <br/>
     <textarea name="work.abstract" cols="50" rows="5"></textarea> <br/>
