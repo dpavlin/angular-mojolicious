@@ -46,6 +46,7 @@ console.debug( 'reset', symposium, this.work, this.$location.hashPath );
 		var l = this.$location;
 		this.work.$save(function(work){
 			l.hashPath = work._id;
+			work._changes = -1;	// it seems that save call issues one ng:eval
 		});
 	}
 };
@@ -55,7 +56,7 @@ console.debug( 'reset', symposium, this.work, this.$location.hashPath );
 
 <h1>Prijava rada</h1>
 
-<div ng:controller="Work" ng:init="$window.$root = this">
+<div ng:controller="Work" ng:init="$window.$root = this; work._changes = 0" ng:eval="work._changes = work._changes + 1">
 
 <h2>Vrsta rada:</h2>
 <label><input type="radio" name="work.type" value="symposium"> Simpozij</label>
@@ -139,7 +140,7 @@ Organizator:
     <textarea name="work.abstract" cols="50" rows="5"></textarea> <br/>
 
 	<span ng:show="$invalidWidgets.visible() == 0">
-    <input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();">
+    <input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();" ng:show="work._changes" title="{{work._changes}} changes">
     <input type="reset" value="Novi rad" ng:click="reset()" ng:show="work && work._id">
 	</span>
 
