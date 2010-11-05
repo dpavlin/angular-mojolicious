@@ -27,8 +27,11 @@ console.debug( 'hash_change', id, this.work._id );
 				var self = this;
 				this.work = this.Work.get({ _id: id }, function(work) {
 					work._changes = -1
-					if ( work.symposium._id ) {
-						self.symposium = self.Symposium.get({ _id: work.symposium._id }, function() { self.work._changes-- });
+					if ( work.type == 'symposium' ) {
+						var s_id = work.symposium._id || work._id;
+						// first work doesn't have symposium._id, but we used same _id
+console.debug( 'load symposium ', s_id );
+						self.symposium = self.Symposium.get({ _id: s_id }, function() { self.work._changes-- });
 					}
 				});
 			}
