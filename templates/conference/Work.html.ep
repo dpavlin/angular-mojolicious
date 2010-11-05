@@ -40,7 +40,6 @@ console.debug( 'symposium', symposium, this.work )
 			this.work.type = 'symposium';
 		}
 console.debug( 'reset', symposium, this.work, this.$location.hashPath );
-		this.$location.hashPath = '';
 	},
 	save: function(){
 		var l = this.$location;
