@@ -31,7 +31,9 @@ console.debug( 'hash_change', id, this.work._id );
 						var s_id = work.symposium._id || work._id;
 						// first work doesn't have symposium._id, but we used same _id
 console.debug( 'load symposium ', s_id );
-						self.symposium = self.Symposium.get({ _id: s_id }, function() { self.work._changes-- });
+						self.symposium = self.Symposium.get({ _id: s_id }, function() {
+							self.work._changes--;
+						});
 					}
 				});
 			}
@@ -43,8 +45,7 @@ console.debug( 'load symposium ', s_id );
 		var current_symposium = null;
 		if ( this.work && this.work.type == 'symposium' ) {
 			current_symposium = this.work.symposium;
-			if ( this.work._id ) current_symposium.work_nr++;
-			// if is required because reset is called twice -- once with saved records and once with new empty one
+			if ( this.work._id ) current_symposium.work_nr++; // only if saved
 console.debug( 'current_symposium', current_symposium, this.work )
 		}
 		this.work = new this.Work( this.master );
@@ -137,33 +138,6 @@ Works which are part of this symposium:
 <input name="author.email" ng:required>
 </div>
 [<a href="" ng:click="work.authors.$add()">Add another author</a>]
-<!--
-
-    <table>
-      <tr>
-        <th> </th>
-        <th>Ime</th>
-        <th>Prezime</th>
-        <th>Ustanova</th>
-        <th>email</th>
-      </tr>
-      <tr ng:repeat="author in work.authors">
-        <td>[<a href="" ng:click="work.authors.$remove(author)">X</a>]</td>
-        <td><input name="author.name" ng:required></td>
-        <td><input name="author.surname" ng:required></td>
-        <td><input name="author.inst" ></td>
-        <td><input name="author.email" ng:required></td>
-      </tr>
-      <tr>
-        <td> </td>
-        <td>[<a href="" ng:click="work.authors.$add()">Add another author</a>]</td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-      </tr>
-    </table>
-
--->
 
 <hr>    
 
