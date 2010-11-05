@@ -127,7 +127,7 @@ Works which are part of this symposium:
 
 </div>
 
-<h2>Autori <span ng:show="work.type == 'symposium'">{{work.symposium.work_nr}}. </span>rada</h2>
+<h2>Autors<span ng:show="work.type == 'symposium'"> of {{work.symposium.work_nr}}. work </span></h2>
 
 <div ng:repeat="author in work.authors">
 [<a href="" ng:click="work.authors.$remove(author)">X</a>]
@@ -177,7 +177,7 @@ Works which are part of this symposium:
 
 <span ng:show="$invalidWidgets.visible() == 0">
 <input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();" ng:show="work._changes" title="{{work._changes}} changes">
-<input type="reset" value="Novi rad" ng:click="reset()" ng:show="work && work._id">
+<input type="reset" value="Add another work" ng:click="reset()" ng:show="work && work._id">
 </span>
 
 <b ng:show="$invalidWidgets.visible() &gt; 0" style="color:#800">{{$invalidWidgets.visible()}} errors to fix in submission form</b>
