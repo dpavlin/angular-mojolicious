@@ -9,8 +9,8 @@ function Work($resource){
 		abstract: '',
 		authors:[ { name:'', surname:'', inst:'', email:'' } ],
 		symposium: { organizer: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1, },
-		_changes: 0,
 	};
+	this.last_saved_work = {};
 	this.Work = $resource( '/data/conference/Work/:_id', { _id:'' } );
 	this.Symposium = $resource( '/data/conference/Symposium/:_id', { _id:'' } );
 	this.reset();
@@ -26,14 +26,12 @@ console.debug( 'hash_change', id, this.work._id );
 			if (id) {
 				var self = this;
 				this.work = this.Work.get({ _id: id }, function(work) {
-					work._changes = -1
+					self.last_saved_work = angular.copy(work);
 					if ( work.type == 'symposium' ) {
 						var s_id = work.symposium._id || work._id;
 						// first work doesn't have symposium._id, but we used same _id
 console.debug( 'load symposium ', s_id );
-						self.symposium = self.Symposium.get({ _id: s_id }, function() {
-							self.work._changes--;
-						});
+						self.symposium = self.Symposium.get({ _id: s_id });
 					}
 				});
 			}
@@ -53,13 +51,14 @@ console.debug( 'current_symposium', current_symposium, this.work )
 			this.work.symposium = current_symposium;
 			this.work.type = 'symposium';
 		}
+		this.last_saved_work = {};
 console.debug( 'reset', current_symposium, this.work, this.$location.hashPath );
 	},
 	save: function(){
 		var self = this;
 		this.work.$save(function(work){
 			self.$location.hashPath = work._id;
-			work._changes = -1;	// it seems that save call issues one ng:eval
+			self.last_saved_work = angular.copy(work);
 
 			// save symposium to separate resource
 			if ( work.type != 'symposium' ) return;
@@ -70,7 +69,7 @@ console.debug( 'reset', current_symposium, this.work, this.$location.hashPath );
 			}
 			self.symposium.works[ work.symposium.work_nr - 1 ] = work;
 	console.debug('save_symposium', self.symposium );
-			self.symposium.$save(function() { work._changes-- });
+			self.symposium.$save();
 		});
 	},
 	get_symposium: function() { this.symposium },
@@ -81,7 +80,7 @@ console.debug( 'reset', current_symposium, this.work, this.$location.hashPath );
 
 <h1>Conference work submission</h1>
 
-<div ng:controller="Work" ng:init="$window.$root = this; work._changes = 0" ng:eval="work._changes = work._changes + 1">
+<div ng:controller="Work" ng:init="$window.$root = this;">
 
 <h2>Type of work:</h2>
 <label><input type="radio" name="work.type" value="symposium"> Symposium</label>
@@ -150,7 +149,7 @@ Works which are part of this symposium:
 <br/>
 
 <span ng:show="$invalidWidgets.visible() == 0">
-<input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();" ng:show="work._changes" title="{{work._changes}} changes">
+<input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();" ng:show="! last_saved_work.$equals(work)">
 <input type="reset" value="Add another work" ng:click="reset()" ng:show="work && work._id">
 </span>
 
@@ -163,10 +162,15 @@ Permalink to <a href="#{{work._id}}">{{work.title}}</a> which you can bookmark
 <hr>
 Debug Information:
 {{$window.location.href}}
-<pre>work = {{work}}</pre>
-<pre>master = {{master}}</pre>
-
 <pre>
+work = {{work}}
+
+dirty={{! last_saved_work.$equals(work)}}
+
+last_saved_work = {{last_saved_work}}
+
+master = {{master}}
+
 $id={{$id}}
 work.$id={{work.$id}}
 work._id={{work._id}}
