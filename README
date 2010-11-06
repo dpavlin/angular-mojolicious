@@ -32,3 +32,14 @@ Start it with:
 
 	./angular-server.pl daemon --reload  
 
+
+Angular examples available:
+
+- template/Cookbook - examples from wiki working against github version of angular
+- template/Work - conference submission example using mojolicious REST API server
+
+
+Planned features:
+
+- data persistence, probably to CouchDB (currently all data is stored in-memory)
+- run queries against data using REST API (currently only simple get is supported)
