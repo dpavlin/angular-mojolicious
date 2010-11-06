@@ -35,8 +35,8 @@ Start it with:
 
 Angular examples available:
 
-- template/Cookbook - examples working against github version of angular
-- template/Work - conference submission exaple using REST API server
+- template/Cookbook - examples from wiki working against github version of angular
+- template/Work - conference submission example using mojolicious REST API server
 
 
 Planned features:
