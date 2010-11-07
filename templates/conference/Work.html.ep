@@ -58,18 +58,20 @@ console.debug( 'reset', current_symposium, this.work, this.$location.hashPath );
 		var self = this;
 		this.work.$save(function(work){
 			self.$location.hashPath = work._id;
-			self.last_saved_work = angular.copy(work);
 
 			// save symposium to separate resource
-			if ( work.type != 'symposium' ) return;
-			if ( ! self.symposium ) { 
-				self.work.symposium._id = work._id; // reuse _id of first work for symposium
-				self.symposium = new self.Symposium( work.symposium );
-				self.symposium.works = [];
+			if ( work.type == 'symposium' ) {
+				if ( ! self.symposium ) { 
+					self.work.symposium._id = work._id; // reuse _id of first work for symposium
+					self.symposium = new self.Symposium( work.symposium );
+					self.symposium.works = [];
+				}
+				self.symposium.works[ work.symposium.work_nr - 1 ] = work;
+		console.debug('save_symposium', self.symposium );
+				self.symposium.$save();
 			}
-			self.symposium.works[ work.symposium.work_nr - 1 ] = work;
-	console.debug('save_symposium', self.symposium );
-			self.symposium.$save();
+
+			self.last_saved_work = angular.copy(work);
 		});
 	},
 	get_symposium: function() { this.symposium },
