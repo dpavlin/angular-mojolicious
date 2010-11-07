@@ -1,0 +1,328 @@
+<script>
+
+if (typeof (console) === 'undefined') console = { debug: function() {} }; // mock console.debug
+
+function Registration($resource){
+	this.master = {
+		name: '', surname: '', inst: '', email: '',
+
+		work: {
+			type: '', 
+			title: '',
+			abstract: '',
+			authors:[ { name:'', surname:'', inst:'', email:'' } ],
+		},
+		symposium: { organizers: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1, },
+	};
+	this.last_saved = {};
+	this.Registration = $resource( '/data/conference/Registration/:id', { id:'' } );
+	this.Symposium = $resource( '/data/conference/Symposium/:id', { id:'' } );
+	this.reset();
+	this.$watch('$location.hashPath', this.hash_change);
+}
+Registration.$inject=['$resource'];
+
+Registration.prototype = {
+	hash_change: function() {
+		var id = this.$location.hashPath;
+console.debug( 'hash_change', id, this.registration.$id );
+		if ( id != this.registration.$id ) {
+			if (id) {
+				var self = this;
+				this.registration = this.Registration.get({ id: id }, function(registration) {
+					self.last_saved = angular.copy(registration);
+					if ( registration.work.type == 'symposium' ) {
+						var s_id = registration.symposium.$id || registration.$id;
+						// first registration doesn't have symposium.$id, but we used same $id
+console.debug( 'load symposium ', s_id );
+						self.symposium = self.Symposium.get({ id: s_id });
+					}
+				});
+			}
+			else this.reset();
+		}
+	},
+	reset: function() {
+		console.debug( this.Registration );
+		var current_symposium = null;
+		if ( this.registration && this.registration.work.type == 'symposium' ) {
+			current_symposium = this.registration.symposium;
+			if ( this.registration.$id ) current_symposium.work_nr++; // only if saved
+console.debug( 'current_symposium', current_symposium, this.registration )
+		}
+		this.registration = new this.Registration( this.master );
+		if ( current_symposium ) {
+			this.registration.symposium = current_symposium;
+			this.registration.work.type = 'symposium';
+		}
+		this.last_saved = {};
+console.debug( 'reset', current_symposium, this.registration, this.$location.hashPath );
+	},
+	save: function(){
+		var self = this;
+		this.registration.$save(function(registration){
+			self.$location.hashPath = registration.$id;
+
+			// save symposium to separate resource
+			if ( registration.work.type == 'symposium' ) {
+				if ( ! self.symposium ) { 
+					self.registration.symposium.$id = registration.$id; // reuse $id of first work for symposium
+					self.symposium = new self.Symposium( registration.symposium );
+					self.symposium.works = [];
+				}
+				self.symposium.works[ work.symposium.work_nr - 1 ] = registration.work;
+console.debug('save_symposium', self.symposium );
+				self.symposium.$save();
+			}
+
+			self.last_saved = angular.copy(registration);
+		});
+	},
+};
+
+
+</script>
+
+
+<style type="text/css">
+
+body {
+	background: #F6F6F6;
+	margin: 40px;
+	font-family: Arial;
+	color: #374E5A;
+	font-size: 14px;
+	line-height: 16px;
+}
+label, h2 {
+	display: block;
+	color: #D74F25;
+	color: #374E5A;
+	color: #afafaf;
+	margin-top: 10px;
+	font-size: 14px;
+	font-family: Arial;
+	font-weight: normal;
+}
+
+h2 {
+	margin-top: 40px;
+	color: #374E5A;
+	color: #D74F25;
+}
+
+a {
+	color: #D74F25;
+	font-size: 80%;
+}
+
+.symposium, .work {
+	width: 615px;
+}
+
+label {
+	color: #374E5A;
+}
+
+.authors-label .name, .authors-label .surname, .authors-label .inst, .authors-label .email {
+	color: #afafaf;
+	float: left;
+	margin: 2px;
+	padding: 0 6px;
+}
+
+.name, .surname, .email {
+	width: 18%;
+}
+
+.inst {
+	width: 30%;
+}
+
+.title, .summary {
+	width: 93%;
+}
+
+.authors {
+	clear: both;
+	margin-bottom: 6px;
+}
+
+.authors-label {
+	clear: right;
+}
+
+
+
+.addNew {
+	padding-right: 30px;
+}
+
+input, textarea
+{
+	font: 14px arial;
+	color: #000000;
+	border: solid 1px #dedede;
+	padding: 6px;
+	background: #f6f6f6;
+}
+
+input:focus, textarea:focus
+{
+	
+	background: #ffffff;
+	font-family: arial;
+	color: #000000;
+	border: 1px solid #46d0fe;
+}
+
+input.ng-validation-error {
+	border: 1px solid #D74F25;
+	border: 1px solid #FF6666;
+	border: 1px solid #FF9966;
+	border: 1px solid #EDC8BC;
+}
+
+.warrning {
+	color: #FF6666;
+}
+
+.sworks {
+	margin-top: 20px;
+}
+
+.save {
+	margin-top: 10px;
+}
+
+.save input 
+{
+	float: left;
+	color: #ffffff;
+	display: block;
+	text-decoration: none;
+	background: #d74f25;
+}
+
+.save input:hover
+{
+	background: #dc6844;
+}
+
+.newWork {
+	clear: left;
+	margin-top: 50px;
+}
+</style>
+
+
+
+<h1>Registration and Proposal Submission</h1>
+
+<div ng:controller="Registration" ng:init="$window.$root = this;">
+
+<div id="registration">
+
+<input class="name" name="registration.name" ng:required>
+<input class="name" name="registration.surname" ng:required>
+
+<input name="registration.inst">
+<input name="registration.email" ng:validate="email">
+
+</div>
+
+<div id="submission">
+
+<h2>Type of conference submission:</h2>
+
+<input type="radio" name="registration.work.type" value="symposium">Symposia<br/>
+<input type="radio" name="registration.work.type" value="lecture">Oral presentation<br/>
+<input type="radio" name="registration.work.type" value="poster">Poster presentation<br/>
+<input type="radio" name="registration.work.type" value="round">Round table discussion<br/>
+
+
+<div ng:show="registration.work.type == 'symposium'" style="background:#f0f0f0">
+
+<label>Topic of symposium: <input name="registration.symposium.title" size="60" ng:required></label><br/>
+   
+<label>Summary: <br/>
+<textarea name="registration.symposium.abstract" cols="50" rows="5"></textarea>
+</label>
+<br/>
+
+Organizer:
+<div ng:repeat="organizer in registration.symposium.organizers">
+[<a href="" ng:click="registration.symposium.organizer.$remove(author)">X</a>]
+<input name="organizer.name" ng:required>
+<input name="organizer.surname" ng:required>
+<input name="organizer.inst" >
+<input name="organizer.email" ng:required>
+</div>
+[<a href="" ng:click="registration.symposium.organizer.$add()">Add another organizer</a>]
+
+</div>
+<hr>
+
+<div ng:show="symposium">
+Works which are part of this symposium:
+<ol>
+<li ng:repeat="w in symposium.works"><a href="#{{w.$id}}">{{w.title}}</a></li>
+</ol>
+
+</div>
+
+<h2>Autors<span ng:show="registration.work.type == 'symposium'"> of {{registration.symposium.work_nr}}. work </span></h2>
+
+<div ng:repeat="author in registration.work.authors">
+[<a href="" ng:click="registration.work.authors.$remove(author)">X</a>]
+<input name="author.name" ng:required>
+<input name="author.surname" ng:required>
+<input name="author.inst" >
+<input name="author.email" ng:required>
+</div>
+[<a href="" ng:click="registration.work.authors.$add()">Add another author</a>]
+
+<hr>    
+
+
+<label>Title: <input name="registration.work.title" size="60" ng:required></label><br/>
+
+<label>Summary:<br>
+<textarea name="registration.work.abstract" cols="50" rows="5"></textarea>
+</label>
+<br/>
+
+</div>
+
+<div id="buttons">
+
+<span ng:show="$invalidWidgets.visible() == 0">
+<input type="submit" value="Save" ng:click="save();" ng:show="! last_saved.$equals(registration)">
+<input type="reset" value="Add another work" ng:click="reset()" ng:show="registration && registration.$id">
+</span>
+
+<b ng:show="$invalidWidgets.visible() &gt; 0" style="color:#800">{{$invalidWidgets.visible()}} errors to fix in submission form</b>
+</div>
+
+
+<div ng:show="registration.$id">
+Permalink to <a href="#{{registration.$id}}">DRZB2011 registration</a> which you can bookmark
+</div>
+
+<hr>
+Debug Information:
+{{$window.location.href}}
+<pre>
+registration = {{registration}}
+
+dirty={{! last_saved.$equals(registration)}}
+
+last_saved = {{last_saved}}
+
+master = {{master}}
+
+$id={{$id}}
+registration.$id={{registration.$id}}
+</pre>
+
+</div>
