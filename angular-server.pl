@@ -123,7 +123,17 @@ get '/data/:database' => sub {
 
 get '/data/:database/:entity' => sub {
 	my $self = shift;
-	_render_jsonp( $self, _couchdb_get( '/' . $self->param('database') . '/_all_docs' ) ); # FIXME
+
+	my $database = $self->param('database');
+	my $entity   = $self->param('entity');
+
+	my $endkey = $entity;
+	$endkey++;
+
+	my $counts = _couchdb_get qq|/$database/_all_docs?startkey="$entity";endkey="$endkey";include_docs=true|;
+	warn "# counts ",dump($counts);
+
+	_render_jsonp( $self, [ map { $_->{doc} } @{ $counts->{rows} } ] )
 };
 
 get '/data/:database/:entity/:id' => sub {
