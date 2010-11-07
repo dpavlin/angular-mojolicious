@@ -69,12 +69,12 @@ console.debug( 'reset', current_symposium, this.registration, this.$location.has
 
 			// save symposium to separate resource
 			if ( registration.type == 'symposium' ) {
-				if ( ! self.symposium ) { 
+				if ( ! self.symposium.works ) { 
 					self.registration.symposium.$id = registration.$id; // reuse $id of first work for symposium
 					self.symposium = new self.Symposium( registration.symposium );
 					self.symposium.works = [];
 				}
-				self.symposium.works[ work.symposium.work_nr - 1 ] = registration.work;
+				self.symposium.works[ registration.symposium.work_nr - 1 ] = registration.work;
 console.debug('save_symposium', self.symposium );
 				self.symposium.$save();
 			}
@@ -327,6 +327,8 @@ dirty={{! last_saved.$equals(registration)}}
 last_saved = {{last_saved}}
 
 master = {{master}}
+
+symposium = {{symposium}}
 
 $id={{$id}}
 registration.$id={{registration.$id}}
