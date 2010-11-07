@@ -60,6 +60,13 @@ sub _couchdb_put {
 	})->process;
 }
 
+sub _couchdb_get {
+	my ( $self, $database, $entity, $id ) = @_;
+	my $client = Mojo::Client->new;
+	my $return = $client->get( "$couchdb/$database/$entity.$id" )->res->json;
+	warn "# _couchdb_get $couchdb/$database/$entity.$id = ",dump($return);
+	return $return;
+}
 
 our $id2nr;
 
@@ -138,7 +145,12 @@ get '/data/:database/:entity/:id' => sub {
 	my $entity   = $self->param('entity');
 	my $id       = $self->param('id');
 
-	my $e = $data->{$database}->{$entity} || die "no entity $entity";
+	my $e = $data->{$database}->{$entity};
+
+	if ( ! $e ) {
+		$e = _couchdb_get( $self, $database, $entity, $id );
+		return _render_jsonp( $self, $e );
+	}
 
 	if ( ! defined $id2nr->{$database}->{$entity}  ) {
 		foreach my $i ( 0 .. $#$e ) {
