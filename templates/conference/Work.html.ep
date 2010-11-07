@@ -11,8 +11,8 @@ function Work($resource){
 		symposium: { organizer: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1, },
 	};
 	this.last_saved_work = {};
-	this.Work = $resource( '/data/conference/Work/:_id', { _id:'' } );
-	this.Symposium = $resource( '/data/conference/Symposium/:_id', { _id:'' } );
+	this.Work = $resource( '/data/conference/Work/:id', { id:'' } );
+	this.Symposium = $resource( '/data/conference/Symposium/:id', { id:'' } );
 	this.reset();
 	this.$watch('$location.hashPath', this.hash_change);
 }
@@ -21,17 +21,17 @@ Work.$inject=['$resource'];
 Work.prototype = {
 	hash_change: function() {
 		var id = this.$location.hashPath;
-console.debug( 'hash_change', id, this.work._id );
-		if ( id != this.work._id ) {
+console.debug( 'hash_change', id, this.work.$id );
+		if ( id != this.work.$id ) {
 			if (id) {
 				var self = this;
-				this.work = this.Work.get({ _id: id }, function(work) {
+				this.work = this.Work.get({ id: id }, function(work) {
 					self.last_saved_work = angular.copy(work);
 					if ( work.type == 'symposium' ) {
-						var s_id = work.symposium._id || work._id;
-						// first work doesn't have symposium._id, but we used same _id
+						var s_id = work.symposium.$id || work.$id;
+						// first work doesn't have symposium.$id, but we used same $id
 console.debug( 'load symposium ', s_id );
-						self.symposium = self.Symposium.get({ _id: s_id });
+						self.symposium = self.Symposium.get({ id: s_id });
 					}
 				});
 			}
@@ -43,7 +43,7 @@ console.debug( 'load symposium ', s_id );
 		var current_symposium = null;
 		if ( this.work && this.work.type == 'symposium' ) {
 			current_symposium = this.work.symposium;
-			if ( this.work._id ) current_symposium.work_nr++; // only if saved
+			if ( this.work.$id ) current_symposium.work_nr++; // only if saved
 console.debug( 'current_symposium', current_symposium, this.work )
 		}
 		this.work = new this.Work( this.master );
@@ -57,12 +57,12 @@ console.debug( 'reset', current_symposium, this.work, this.$location.hashPath );
 	save: function(){
 		var self = this;
 		this.work.$save(function(work){
-			self.$location.hashPath = work._id;
+			self.$location.hashPath = work.$id;
 
 			// save symposium to separate resource
 			if ( work.type == 'symposium' ) {
 				if ( ! self.symposium ) { 
-					self.work.symposium._id = work._id; // reuse _id of first work for symposium
+					self.work.symposium.$id = work.$id; // reuse $id of first work for symposium
 					self.symposium = new self.Symposium( work.symposium );
 					self.symposium.works = [];
 				}
@@ -88,11 +88,6 @@ console.debug( 'reset', current_symposium, this.work, this.$location.hashPath );
 <label><input type="radio" name="work.type" value="symposium"> Symposium</label>
 
 <div ng:show="work.type == 'symposium'" style="background:#f0f0f0">
-<!--
-<select name="work.symposium_id" ng:show="work.type == 'symposium'" ng:controller="Symposium">
-<option ng:repeat="s in symposiums" value="{{s._id}}">{{s.title}}</option>
-</select>
--->
 
 <label>Topic of symposium: <input name="work.symposium.title" size="60" ng:required></label><br/>
    
@@ -124,7 +119,7 @@ Organizer:
 <div ng:show="symposium">
 Works which are part of this symposium:
 <ol>
-<li ng:repeat="w in symposium.works"><a href="#{{w._id}}">{{w.title}}</a></li>
+<li ng:repeat="w in symposium.works"><a href="#{{w.$id}}">{{w.title}}</a></li>
 </ol>
 
 </div>
@@ -151,14 +146,14 @@ Works which are part of this symposium:
 <br/>
 
 <span ng:show="$invalidWidgets.visible() == 0">
-<input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();" ng:show="! last_saved_work.$equals(work)">
-<input type="reset" value="Add another work" ng:click="reset()" ng:show="work && work._id">
+<input type="submit" value="Save" ng:click="save();" ng:show="! last_saved_work.$equals(work)">
+<input type="reset" value="Add another work" ng:click="reset()" ng:show="work && work.$id">
 </span>
 
 <b ng:show="$invalidWidgets.visible() &gt; 0" style="color:#800">{{$invalidWidgets.visible()}} errors to fix in submission form</b>
 
-<div ng:show="work._id">
-Permalink to <a href="#{{work._id}}">{{work.title}}</a> which you can bookmark
+<div ng:show="work.$id">
+Permalink to <a href="#{{work.$id}}">{{work.title}}</a> which you can bookmark
 </div>
 
 <hr>
@@ -175,7 +170,7 @@ master = {{master}}
 
 $id={{$id}}
 work.$id={{work.$id}}
-work._id={{work._id}}
+work.$id={{work.$id}}
 </pre>
 
 </div>
