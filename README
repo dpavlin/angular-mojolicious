@@ -13,7 +13,7 @@ This is my attempt to implement REST API described at:
 
 http://docs.getangular.com/REST.Basic
 
-using simple in-memory model for experimenting with local datasets using
+using CouchDB as storage for experimenting with local datasets using
 <angular/>
 
 
@@ -41,5 +41,4 @@ Angular examples available:
 
 Planned features:
 
-- data persistence, probably to CouchDB (currently all data is stored in-memory)
 - run queries against data using REST API (currently only simple get is supported)
