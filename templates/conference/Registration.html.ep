@@ -4,10 +4,10 @@ if (typeof (console) === 'undefined') console = { debug: function() {} }; // moc
 
 function Registration($resource){
 	this.master = {
-		name: '', surname: '', inst: '', email: '',
-
+		person: {
+			name: '', surname: '', inst: '', email: '',
+		},
 		type: '', // just attending
-
 		work: {
 			title: '',
 			abstract: '',
@@ -46,8 +46,10 @@ console.debug( 'load symposium ', s_id );
 	reset: function() {
 		console.debug( this.Registration );
 		var current_symposium = null;
+		var current_person = null;
 		if ( this.registration && this.registration.type == 'symposium' ) {
 			current_symposium = this.registration.symposium;
+			current_person = this.registration.person;
 			if ( this.registration.$id ) current_symposium.work_nr++; // only if saved
 console.debug( 'current_symposium', current_symposium, this.registration )
 		}
@@ -55,6 +57,7 @@ console.debug( 'current_symposium', current_symposium, this.registration )
 		if ( current_symposium ) {
 			this.registration.symposium = current_symposium;
 			this.registration.type = 'symposium';
+			this.registration.person = current_person;
 		}
 		this.last_saved = {};
 console.debug( 'reset', current_symposium, this.registration, this.$location.hashPath );
@@ -224,11 +227,11 @@ input.ng-validation-error {
 
 <div id="registration">
 
-<input class="name" name="registration.name" ng:required>
-<input class="name" name="registration.surname" ng:required>
+<input class="name" name="registration.person.name" ng:required>
+<input class="name" name="registration.person.surname" ng:required>
 
-<input name="registration.inst">
-<input name="registration.email" ng:validate="email">
+<input name="registration.person.inst">
+<input name="registration.person.email" ng:validate="email">
 
 </div>
 
