@@ -17,10 +17,8 @@ my $couchdb = 'http://localhost:5984';
 our $couchdb_rev;
 
 sub _couchdb_put {
-	my ( $database, $entity, $id, $hash ) = @_;
+	my ( $database, $entity, $id, $data ) = @_;
 
-	my $data = clone $hash;
-	delete $data->{_id}; # CouchDB doesn't like _ prefixed attributes, and will generate it's own _id
 	$data->{'$entity'} = $entity;
 	if ( my $rev = $couchdb_rev->{$database}->{$entity}->{$id} ) {
 		$data->{_rev} = $rev;
@@ -130,12 +128,10 @@ any [ 'post' ] => '/data/:database/:entity' => sub {
 	my $self = shift;
 	my $json = $self->req->json;
 	my $id = $json->{'$id'} # XXX we don't get it back from angular.js
-		|| $json->{'_id'}  # so we use our version
 		|| new_uuid;
 	warn "## $id body ",dump($self->req->body, $json);
 
-	$json->{'$id'} ||= $id;	# angular.js doesn't resend this one
-	$json->{'_id'} = $id;	# but does this one :-)
+	$json->{'$id'} ||= $id;	# make sure $id is in there
 
 	_couchdb_put( $self->param('database'), $self->param('entity'), $id, $json );
 
