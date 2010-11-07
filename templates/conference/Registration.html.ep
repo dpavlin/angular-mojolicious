@@ -69,7 +69,7 @@ console.debug( 'reset', current_symposium, this.registration, this.$location.has
 
 			// save symposium to separate resource
 			if ( registration.type == 'symposium' ) {
-				if ( ! self.symposium.works ) { 
+				if ( ! self.symposium ) { 
 					self.registration.symposium.$id = registration.$id; // reuse $id of first work for symposium
 					self.symposium = new self.Symposium( registration.symposium );
 					self.symposium.works = [];
