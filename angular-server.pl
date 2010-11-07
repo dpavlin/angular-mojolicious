@@ -14,38 +14,33 @@ sub new_uuid { Time::HiRes::time * 100000 }
 # http://angular.getangular.com/data
 
 my $couchdb = 'http://localhost:5984';
-our $couchdb_rev;
+my $client = Mojo::Client->new;
 
 sub _couchdb_put {
-	my ( $database, $entity, $id, $data ) = @_;
+	my ( $url, $data ) = @_;
 
-	$data->{'$entity'} = $entity;
-	if ( my $rev = $couchdb_rev->{$database}->{$entity}->{$id} ) {
-		$data->{_rev} = $rev;
-	}
+	$data->{'$entity'} = $1 if $url =~ m{/(\w+)\.\d+/$/};
 
 	my $json = Mojo::JSON->new->encode( $data );
-	my $client = Mojo::Client->new;
 
-	warn "# _couchdb_put $couchdb/$database/$entity.$id = $json";
-	$client->put( "$couchdb/$database/$entity.$id" => $json => sub {
+	warn "# _couchdb_put $url = $json";
+	$client->put( "$couchdb/$url" => $json => sub {
 		my ($client,$tx) = @_;
 		if ($tx->error) {
-			die $tx->error;
+			die "ERROR CouchDB ",$tx->error;
 		}
 		my $response = $tx->res->json;
 		warn "## CouchDB response ",dump($response);
-		$couchdb_rev->{$database}->{$entity}->{$id} = $response->{rev} || die "no rev";
 	})->process;
 }
 
 sub _couchdb_get {
 	my ( $url ) = @_;
-	my $client = Mojo::Client->new;
 	my $return = $client->get( "$couchdb/$url" )->res->json;
 	warn "# _couchdb_get $url = ",dump($return);
 	return $return;
 }
+
 
 our $id2nr;
 
@@ -93,20 +88,37 @@ get '/data/' => sub {
 };
 
 get '/data/:database' => sub {
-	die "FIXME";
-=for FIXME
 	my $self = shift;
 	my $database = $self->param('database');
+
 	my $list_databases = { name => $database };
-	foreach my $entity ( keys %{ $data->{ $database }} ) {
-warn "# entry $entity ", dump( $data->{$database}->{$entity} );
-		my $count = $#{ $data->{$database}->{$entity} } + 1;
-		$list_databases->{entities}->{$entity} = $count;
-		$list_databases->{document_count} += $count;
+
+	my $counts = _couchdb_get("/$database/_design/entity/_view/counts?group=true");
+	if ( exists $counts->{error} ) {
+		warn "creating CouchDB view because of ", dump($counts);
+		_couchdb_put "/$database/_design/entity", {
+			_id => '_design/entity',
+			language => 'javascript',
+			views => {
+				counts => {
+					map    => q| function(doc) { emit(doc.$entity,1); } |,
+					reduce => q| function(keys,values,rereduce) { return sum(values); } |,
+				}
+			}
+		};
+		$counts = _couchdb_get("/$database/_design/entity/_view/counts?group=true")
+		|| die "give up!";
+	}
+
+	warn "# counts ",dump($counts);
+
+	foreach my $row ( @{ $counts->{rows} } ) {
+		my $n = $row->{value};
+		$list_databases->{entities}->{ $row->{key} } = $n;
+		$list_databases->{document_counts} += $n;
 	}
 	warn dump($list_databases);
 	_render_jsonp( $self,  $list_databases );
-=cut
 };
 
 get '/data/:database/:entity' => sub {
@@ -126,14 +138,16 @@ get '/data/:database/:entity/:id' => sub {
 
 any [ 'post' ] => '/data/:database/:entity' => sub {
 	my $self = shift;
+	my $database = $self->param('database');
+	my $entity   = $self->param('entity');
 	my $json = $self->req->json;
 	my $id = $json->{'$id'} # XXX we don't get it back from angular.js
 		|| new_uuid;
-	warn "## $id body ",dump($self->req->body, $json);
+	warn "## $database $entity $id body ",dump($self->req->body, $json);
 
 	$json->{'$id'} ||= $id;	# make sure $id is in there
 
-	_couchdb_put( $self->param('database'), $self->param('entity'), $id, $json );
+	_couchdb_put "/$database/$entity.$id" => $json;
 
 	_render_jsonp( $self,  $json );
 };
