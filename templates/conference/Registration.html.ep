@@ -74,6 +74,7 @@ console.debug( 'reset', current_symposium, this.registration, this.$location.has
 					self.symposium = new self.Symposium( registration.symposium );
 					self.symposium.works = [];
 				}
+				registration.work.$id = registration.$id; // preserve $id
 				self.symposium.works[ registration.symposium.work_nr - 1 ] = registration.work;
 console.debug('save_symposium', self.symposium );
 				self.symposium.$save();
@@ -272,7 +273,10 @@ Organizer:
 <div ng:show="symposium">
 Works which are part of this symposium:
 <ol>
-<li ng:repeat="w in symposium.works"><a href="#{{w.$id}}">{{w.title}}</a></li>
+<li ng:repeat="w in symposium.works">
+<a ng:show="registration.$id != w.$id" href="#{{w.$id}}" >{{w.title}}</a>
+<b ng:show="registration.$id == w.$id">{{w.title}}</b>
+</li>
 </ol>
 
 </div>
