@@ -13,10 +13,14 @@ This is my attempt to implement REST API described at:
 
 http://docs.getangular.com/REST.Basic
 
-using CouchDB as storage for experimenting with local datasets using
-<angular/>
+using CouchDB HTTP view API
 
-At it's current stage it provides support for $resource get, query and $save
+http://wiki.apache.org/couchdb/HTTP_view_API
+
+to provide storage for experimenting with local datasets using angular.
+
+
+At it's current stage it provides support for angular $resource get, query and $save
 
 http://angularjs.org/Service:$resource
 
