@@ -31,7 +31,38 @@ our $data = {
 		]
 	}
 };
+
+my $couchdb = 'http://localhost:5984';
+our $couchdb_rev;
+
+sub _couchdb_put {
+	my ( $self, $database, $entity, $id, $hash ) = @_;
+
+	my $data = clone $hash;
+	delete $data->{_id}; # CouchDB doesn't like _ prefixed attributes, and will generate it's own _id
+	$data->{'$entity'} = $entity;
+	if ( my $rev = $couchdb_rev->{$database}->{$entity}->{$id} ) {
+		$data->{_rev} = $rev;
+	}
+
+	my $json = Mojo::JSON->new->encode( $data );
+	my $client = Mojo::Client->new;
+
+	warn "# _couchdb_put $couchdb/$database/$entity.$id = $json";
+	$client->put( "$couchdb/$database/$entity.$id" => $json => sub {
+		my ($client,$tx) = @_;
+		if ($tx->error) {
+			die $tx->error;
+		}
+		my $response = $tx->res->json;
+		warn "## CouchDB response ",dump($response);
+		$couchdb_rev->{$database}->{$entity}->{$id} = $response->{rev} || die "no rev";
+	})->process;
+}
+
+
 our $id2nr;
+
 
 sub _render_jsonp {
 	my ( $self, $json ) = @_;
@@ -149,6 +180,9 @@ any [ 'post' ] => '/data/:database/:entity' => sub {
 		$id2nr->{$database}->{$entity}->{$id} = $nr;
 		warn "# added $nr $id ",dump($json);
 	}
+
+	_couchdb_put( $self, $database, $entity, $id, $json );
+
 	_render_jsonp( $self,  $json );
 };
 
