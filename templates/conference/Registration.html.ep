@@ -258,13 +258,13 @@ input.ng-validation-error {
 
 Organizer:
 <div ng:repeat="organizer in registration.symposium.organizers">
-[<a href="" ng:click="registration.symposium.organizer.$remove(author)">X</a>]
+[<a href="" ng:click="registration.symposium.organizers.$remove(author)">X</a>]
 <input name="organizer.name" ng:required>
 <input name="organizer.surname" ng:required>
 <input name="organizer.inst" >
 <input name="organizer.email" ng:required>
 </div>
-[<a href="" ng:click="registration.symposium.organizer.$add()">Add another organizer</a>]
+[<a href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a>]
 
 </div>
 <hr>
