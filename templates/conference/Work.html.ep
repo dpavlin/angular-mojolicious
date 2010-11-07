@@ -119,7 +119,10 @@ Organizer:
 <div ng:show="symposium">
 Works which are part of this symposium:
 <ol>
-<li ng:repeat="w in symposium.works"><a href="#{{w.$id}}">{{w.title}}</a></li>
+<li ng:repeat="w in symposium.works">
+<a ng:show="work.$id != w.$id" href="#{{w.$id}}" >{{w.title}}</a>
+<b ng:show="work.$id == w.$id">{{w.title}}</b>
+</li>
 </ol>
 
 </div>
