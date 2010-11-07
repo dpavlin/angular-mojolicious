@@ -102,7 +102,7 @@ Organizer:
 <input name="author.name" ng:required>
 <input name="author.surname" ng:required>
 <input name="author.inst" >
-<input name="author.email" ng:required>
+<input name="author.email" ng:required ng:validate="email">
 </div>
 [<a href="" ng:click="work.symposium.organizer.$add()">Add another organizer</a>]
 
@@ -134,7 +134,7 @@ Works which are part of this symposium:
 <input name="author.name" ng:required>
 <input name="author.surname" ng:required>
 <input name="author.inst" >
-<input name="author.email" ng:required>
+<input name="author.email" ng:required ng:validate="email">
 </div>
 [<a href="" ng:click="work.authors.$add()">Add another author</a>]
 
