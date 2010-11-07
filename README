@@ -16,6 +16,11 @@ http://docs.getangular.com/REST.Basic
 using CouchDB as storage for experimenting with local datasets using
 <angular/>
 
+At it's current stage it provides support for $resource get, query and $save
+
+http://angularjs.org/Service:$resource
+
+
 
 Installation:
 
@@ -36,7 +41,7 @@ Start it with:
 Angular examples available:
 
 - template/Cookbook - examples from wiki working against github version of angular
-- template/Work - conference submission example using mojolicious REST API server
+- template/conferece - conference submission example using mojolicious REST API server
 
 
 Planned features:
