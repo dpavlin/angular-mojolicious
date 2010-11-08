@@ -64,7 +64,6 @@ get '/_replicate' => sub {
 	if ( my $from = $self->param('from') ) {
 		my $got = $self->client->get( $from )->res->json;
 		warn "# from $from ",dump($got);
-		_render_jsonp( $self,  $got );
 
 		my $database = $got->{name};
 		my $entities = $got->{entities};
@@ -74,11 +73,15 @@ get '/_replicate' => sub {
 				my $url = $from;
 				$url =~ s{/?$}{/}; # add slash at end
 				$url .= $entity;
-				my $e = $self->client->get( $url )->res->json;
-				warn "# replicated $url ", dump($e);
-				_chouchdb_put( $self, $database, $entity, $e->{'$id'}, $e );
+				my $all = $self->client->get( $url )->res->json;
+				warn "# replicated $url ", dump($all);
+				foreach my $e ( @$all ) {
+					delete $e->{_id}; # sanitize data from older implementation
+					_couchdb_put( "/$database/$entity." . $e->{'$id'} => $e );
+				}
 			}
 		}
+		_render_jsonp( $self,  $got );
 	}
 };
 

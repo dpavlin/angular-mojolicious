@@ -25,6 +25,13 @@ At it's current stage it provides support for angular $resource get, query and $
 http://angularjs.org/Service:$resource
 
 
+Server also supports replication using same API which can be triggered with
+
+ http://localhost:3000/_replicate?from=http://dpavlin.getangular.com/data/conference/
+
+Replication is currently good only for initial import of data since it doesn't
+support incremental replication and dies if data is allready present.
+
 
 Installation:
 
