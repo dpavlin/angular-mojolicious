@@ -85,6 +85,11 @@ console.debug('save_symposium', self.symposium );
 	},
 };
 
+angular.validator.max_length = function(input, len) {
+	var ok = input.length <= len;
+console.debug( 'max_length', ok, input.length, len );
+	return ok ? '' : 'must be shorter than '+len+' characters';
+}
 
 </script>
 
@@ -339,7 +344,7 @@ input.ng-validation-error {
 		</div>
 		<a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a>
 		<label>Summary:</label>
-			<textarea class="fl1" name="registration.symposium.abstract" rows="5" ></textarea>
+			<textarea class="fl1" name="registration.symposium.abstract" rows="5" ng:validate="max_length:2000"></textarea>
 		<div ng:show="symposium">
 			<label>List of already submitted works</label>
 			<ol>
@@ -372,7 +377,7 @@ input.ng-validation-error {
 
 
 	<label>Summary:</label>
-		<textarea class="fl1" name="registration.work.abstract" rows="5"></textarea>
+		<textarea class="fl1" name="registration.work.abstract" rows="5" ng:validate="max_length:2000"></textarea>
 </div>
 <div ng:show="registration.$id && registration.type == 'symposium'" class="saved">
 	<i>{{registration.symposium.work_nr}}. {{registration.work.title}}</i> has been submited successfully.<br>
