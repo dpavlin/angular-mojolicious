@@ -1,0 +1,9 @@
+<script>
+  angular.validator.upsTrackingNo = function(input, format) {
+    var regexp = new RegExp("^" + format.replace(/9/g, '\\d') + "$");
+    return input.match(regexp)?"":"The format must match " + format;
+  };
+</script>
+<input type="text" name="trackNo" size="40"
+       ng:validate="upsTrackingNo:'1Z 999 999 99 9999 999 9'" 
+       value="1Z 123 456 78 9012 345 6"/>
