@@ -4,6 +4,7 @@ if (typeof (console) === 'undefined') console = { debug: function() {} }; // moc
 
 function Registration($resource){
 	this.master = {
+//		category: null,
 		person: {
 			name: '', surname: '', inst: '', email: '',
 		},
@@ -57,7 +58,7 @@ console.debug( 'load symposium ', s_id );
 			if ( last.type == 'symposium' )
 			this.registration.symposium = last.symposium;
 		}
-		this.last_saved = {};
+		this.last_saved = angular.copy( this.registration ); // FIXME was: {};
 console.debug( 'reset', this.registration, this.$location.hashPath, last );
 	},
 	save: function(){
@@ -318,17 +319,17 @@ input.ng-validation-error {
 <div id="submission" ng:show="registration.category == 'submission'">
 	<div>
 		<h2>Choose submittion type:</h2>
-		<input type="radio" name="registration.type" value="symposium" ng:required>Symposia<br/>
-		<input type="radio" name="registration.type" value="lecture" ng:required>Oral presentation<br/>
-		<input type="radio" name="registration.type" value="poster" ng:required>Poster presentation<br/>
-		<input type="radio" name="registration.type" value="round" ng:required>Round table discussion<br/>
+		<label><input type="radio" name="registration.type" value="symposium" ng:required>Symposia</label>
+		<label><input type="radio" name="registration.type" value="lecture" ng:required>Oral presentation</label>
+		<label><input type="radio" name="registration.type" value="poster" ng:required>Poster presentation</label>
+		<label><input type="radio" name="registration.type" value="round" ng:required>Round table discussion</label>
 	</div>
 </div>
 
 
 
 
-<div id="work" ng:show="registration.categegory == 'submission'">
+<div id="work" ng:show="registration.category == 'submission'">
 	<div ng:show="registration.type == 'symposium'">
 
 		<h2>Symposia Submission</h2>
@@ -358,10 +359,15 @@ input.ng-validation-error {
 			</ol>
 		</div>
 	</div>
-        <h2 ng:show="registration.type == 'symposium'">Work no. {{registration.symposium.work_nr}}.  in <i>{{registration.symposium.title}}</i> </h2>
-        <h2 ng:show="registration.type == 'lecture'">Oral Presentation Sumbission</h2>
-        <h2 ng:show="registration.type == 'poster'">Poster Presentation Sumbission</h2>
-        <h2 ng:show="registration.type == 'round'">Round Table Disscussion Sumbission</h2>
+
+
+	<h2 ng:show="registration.type == 'symposium'">Work no. {{registration.symposium.work_nr}}.  in <i>{{registration.symposium.title}}</i> </h2>
+	<h2 ng:show="registration.type == 'lecture'">Oral Presentation Sumbission</h2>
+	<h2 ng:show="registration.type == 'poster'">Poster Presentation Sumbission</h2>
+	<h2 ng:show="registration.type == 'round'">Round Table Disscussion Sumbission</h2>
+
+
+  <div ng:show="registration.type">
 
 	<label>Title:</label>
 		<input class="fl1" name="registration.work.title" ng:required>
@@ -383,10 +389,7 @@ input.ng-validation-error {
 		<textarea class="fl1" name="registration.work.abstract" rows="5" ng:validate="max_length:2000"></textarea>
 
 
-	<div ng:show="registration.$id" class="saved">
-		<i>{{registration.work.title}}</i> has been submited successfully.<br>
-	</div>
-
+  </div> <!-- ng:show="registration.type" -->
 </div>
 
 <input type="submit" value="Save" ng:click="save();" ng:show="! last_saved.$equals(registration) && $invalidWidgets.visible() == 0">
@@ -399,16 +402,22 @@ input.ng-validation-error {
 
 <div style="margin-bottom: 40px" ng:show="registration.$id && last_saved.$equals(registration)">
 	<div class="saved" ng:show="registration.category == 'participant'">
-	Your registration has been submitted successfully.
+		Your registration has been submitted successfully.
 	</div>
+
+	<div class="saved" ng:show="registration.category == 'submission'" class="saved">
+		<i>{{registration.work.title}}</i> has been submited successfully.<br>
+	</div>
+
 	Please review your data, correct and save if needed or <a href="http://psihologija.ffzg.hr/drzb2011/">go to conference home page</a>.
+
 	<div>
 	Registration ID: <a href="#{{registration.$id}}">{{registration.$id}}</a>.<br>You can bookmark this page and review it later.
 	</div>
 </div>
 
 
-<input type="reset" value="Another work proposal to submit?" ng:click="reset()" ng:show="registration.$id && registration.category == 'submission'">
+<input type="reset" value="Another work proposal to submit?" ng:click="reset()" ng:show="registration.$id && registration.category == 'submission' && last_saved.$equals(registration)">
 
 <!--
 <div ng:show="registration.$id">
@@ -417,12 +426,13 @@ Permalink to <a href="#{{registration.$id}}">DRZB2011 registration</a> which you
 -->
 
 <hr>
-Debug Information:
-{{$window.location.href}}
-<pre>
-registration = {{registration}}
 
-dirty={{! last_saved.$equals(registration)}}
+<input type=checkbox name=debug>
+<pre ng:show="debug">
+
+dirty={{! last_saved.$equals(registration)}} invalid={{$invalidWidgets.visible()}}
+
+registration = {{registration}}
 
 last_saved = {{last_saved}}
 
@@ -434,4 +444,3 @@ $id={{$id}}
 registration.$id={{registration.$id}}
 </pre>
 
-</div>
