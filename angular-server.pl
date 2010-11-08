@@ -23,15 +23,23 @@ sub _couchdb_put {
 
 	my $json = Mojo::JSON->new->encode( $data );
 
+	my $rev;
+
 	warn "# _couchdb_put $url = $json";
 	$client->put( "$couchdb/$url" => $json => sub {
 		my ($client,$tx) = @_;
-		if ($tx->error) {
-			die "ERROR CouchDB ",$tx->error;
-		}
+		my ($message, $code) = $tx->error;
 		my $response = $tx->res->json;
-		warn "## CouchDB response ",dump($response);
+		warn "## response $code ",dump($response);
+		if ($tx->error) {
+			die "ERROR $code $message";
+		}
+		return
+		$rev = $response->{rev};
 	})->process;
+
+	warn "## rev = $rev";
+	return $rev;
 }
 
 sub _couchdb_get {
@@ -160,7 +168,8 @@ any [ 'post' ] => '/data/:database/:entity' => sub {
 
 	$json->{'$id'} ||= $id;	# make sure $id is in there
 
-	_couchdb_put "/$database/$entity.$id" => $json;
+	my $rev = _couchdb_put "/$database/$entity.$id" => $json;
+	$json->{_rev} = $rev;
 
 	_render_jsonp( $self,  $json );
 };
