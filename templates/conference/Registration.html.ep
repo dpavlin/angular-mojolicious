@@ -281,7 +281,7 @@ input.ng-validation-error {
 	</div>
 </div>
 <div id="participant" ng:show="registration.category == 'participant' || registration.type">
-	<h2>Participant Registration</h2>
+	<h2>Contact Information</h2>
 	<div class="labelTop">
 		<div class="pname">First name</div>
 		<div class="pname">Surname</div>
@@ -389,19 +389,24 @@ input.ng-validation-error {
 <div id="buttons" ng:show="registration.category == 'participant' || registration.type">
 	<span ng:show="$invalidWidgets.visible() == 0">
 	<input type="submit" value="Save" ng:click="save();" ng:show="! last_saved.$equals(registration)">
+	</span>
 	<span ng:show="registration.work && registration.work.$id">
 		<input type="reset" value="Add another work" ng:click="reset()">
-		or <a href="http://psihologija.ffzg.hr/drzb2011/">go to conference home page</a></span>.<br>
+		or <a href="http://psihologija.ffzg.hr/drzb2011/">go to conference home page</a>.<br>
 	</span>
 
 	<div ng:show="$invalidWidgets.visible() &gt; 0" style="color:red; margin-top: 20px">Please fill all required fields ({{$invalidWidgets.visible()}} fields left).
 	</div>
 </div>
 
-<div ng:show="registration.$id" class="saved">
-	<span ng:show="registration.category == 'participant'">Your registration has been submitted successfully.<br><br>
-		Please review your data, correct and save if needed or <a href="http://psihologija.ffzg.hr/drzb2011/">go to conference home page</a>.<br><br>
-	 </span>
+<div ng:show="registration.$id" style="margin-bottom: 40px">
+	<span class="saved" ng:show="registration.category == 'participant'">Your registration has been submitted successfully.<br><br>
+	</span>
+	<span class="saved" ng:show="registration.type != 'symposium' && registration.category != 'participant'">
+	Your work has been submitted successfully.<br><br>
+	</span>
+	Please review your data, correct and save if needed or <a href="http://psihologija.ffzg.hr/drzb2011/">go to conference home page</a>.<br><br>
+	Registration ID: <a href="#{{registration.$id}}">{{registration.$id}}</a>.<br>You can bookmark this page and review it later.
 </div>
 
 
