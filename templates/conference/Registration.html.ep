@@ -107,7 +107,6 @@ label, h2 {
 	margin-top: 10px;
 	font-size: 14px;
 	font-family: Arial;
-	font-weight: normal;
 }
 
 h2 {
@@ -118,7 +117,6 @@ h2 {
 
 a {
 	color: #D74F25;
-	font-size: 80%;
 }
 
 label {
@@ -184,11 +182,11 @@ label {
 	margin-bottom: 6px;
 }
 
-
-
-
-.addNew {
-	padding-right: 30px;
+.addPerson {
+	color: #D74F25;
+	color: #EDC8BC;
+	color: #EAB3A2;
+	font-size: 90%;
 }
 
 input, textarea
@@ -212,8 +210,9 @@ input:focus, textarea:focus
 input.ng-validation-error {
 	border: 1px solid #D74F25;
 	border: 1px solid #FF6666;
-	border: 1px solid #FF9966;
 	border: 1px solid #EDC8BC;
+	border: 1px solid #FF9966;
+	border: 1px solid #EAB3A2;
 }
 
 .warrning {
@@ -261,7 +260,7 @@ input.ng-validation-error {
 
 <div ng:controller="Registration" ng:init="$window.$root = this;">
 
-<div id="choose" ng:show="! registration.category && ! registration.symposium.$id">
+<div id="choose" ng:show="! registration.symposium.$id">
 	<h2>Please choose:</h2>
 	<input type="radio" name="registration.category" value="participant">Just attending the conference<br/>
 	<input type="radio" name="registration.category" value="submission">I want to submit a work<br/>
@@ -276,7 +275,7 @@ input.ng-validation-error {
 		<input type="radio" name="registration.type" value="round" ng:required>Round table discussion<br/>
 	</div>
 </div>
-<div id="participant" ng:show="registration.category">
+<div id="participant" ng:show="registration.category == 'participant' || registration.type">
 	<h2>Participant Registration</h2>
 	<div class="labelTop">
 		<div class="pname">First name</div>
@@ -338,7 +337,7 @@ input.ng-validation-error {
 			<input class="fl2" name="organizer.email" ng:required>
 			<a href="" ng:click="registration.symposium.organizers.$remove(organizer)">X</a>
 		</div>
-		<a href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a>
+		<a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a>
 		<label>Summary:</label>
 			<textarea class="fl1" name="registration.symposium.abstract" rows="5" ></textarea>
 		<div ng:show="symposium">
@@ -367,28 +366,38 @@ input.ng-validation-error {
 		<input class="fl2" name="author.surname" ng:required>
 		<input class="fl3" name="author.inst" >
 		<input class="fl2" name="author.email" ng:required>
-		[<a href="" ng:click="registration.work.authors.$remove(author)">X</a>]
+		<a href="" ng:click="registration.work.authors.$remove(author)">X</a>
 	</div>
-	[<a href="" ng:click="registration.work.authors.$add()">Add another author</a>]
+	<a class="addPerson" href="" ng:click="registration.work.authors.$add()">Add another author</a>
 
 
 	<label>Summary:</label>
 		<textarea class="fl1" name="registration.work.abstract" rows="5"></textarea>
 </div>
-
-<div ng:show="registration.$id" class="saved">
-Registration has been sumbited. Your registration ID is {{registration.$id}}.
+<div ng:show="registration.$id && registration.type == 'symposium'" class="saved">
+	<i>{{registration.symposium.work_nr}}. {{registration.work.title}}</i> has been submited successfully.<br>
 </div>
 
-<div id="buttons" ng:show="registration.category || registration.symposium.$id">
+<!--
+<div id="buttons" ng:show="registration.category == 'participant' || registration.type">
+-->
+<div id="buttons" ng:show="registration.category == 'participant' || registration.type">
 	<span ng:show="$invalidWidgets.visible() == 0">
 	<input type="submit" value="Save" ng:click="save();" ng:show="! last_saved.$equals(registration)">
-	<input type="reset" value="Add another work" ng:click="reset()" ng:show="registration.work && registration.work.$id">
+	<span ng:show="registration.work && registration.work.$id">
+		<input type="reset" value="Add another work" ng:click="reset()">
+		or <a href="http://psihologija.ffzg.hr/drzb2011/">go to conference home page</a></span>.<br>
 	</span>
 
-	<div ng:show="$invalidWidgets.visible() &gt; 0" style="color:red; margin-top: 20px">Please fill all required fields ({{$invalidWidgets.visible()}} fields left).</div>
+	<div ng:show="$invalidWidgets.visible() &gt; 0" style="color:red; margin-top: 20px">Please fill all required fields ({{$invalidWidgets.visible()}} fields left).
+	</div>
 </div>
 
+<div ng:show="registration.$id" class="saved">
+	<span ng:show="registration.category == 'participant'">Your registration has been submitted successfully.<br><br>
+		Please review your data, correct and save if needed or <a href="http://psihologija.ffzg.hr/drzb2011/">go to conference home page</a>.<br><br>
+	 </span>
+</div>
 
 
 <!--
