@@ -13,8 +13,17 @@ This is my attempt to implement REST API described at:
 
 http://docs.getangular.com/REST.Basic
 
-using simple in-memory model for experimenting with local datasets using
-<angular/>
+using CouchDB HTTP view API
+
+http://wiki.apache.org/couchdb/HTTP_view_API
+
+to provide storage for experimenting with local datasets using angular.
+
+
+At it's current stage it provides support for angular $resource get, query and $save
+
+http://angularjs.org/Service:$resource
+
 
 
 Installation:
@@ -36,10 +45,9 @@ Start it with:
 Angular examples available:
 
 - template/Cookbook - examples from wiki working against github version of angular
-- template/Work - conference submission example using mojolicious REST API server
+- template/conferece - conference submission example using mojolicious REST API server
 
 
 Planned features:
 
-- data persistence, probably to CouchDB (currently all data is stored in-memory)
 - run queries against data using REST API (currently only simple get is supported)

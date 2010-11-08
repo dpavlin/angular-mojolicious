@@ -13,25 +13,37 @@ sub new_uuid { Time::HiRes::time * 100000 }
 # http://docs.getangular.com/REST.Basic
 # http://angular.getangular.com/data
 
-our $data = {
-	'Cookbook' => {
-		test => [
-				{ '$id' => 1, foo => 1, bar => 2, baz => 3 },
-				{ '$id' => 2, foo => 1                     },
-				{ '$id' => 3,           bar => 2           },
-				{ '$id' => 4,                     baz => 3 },
-		],
-	},
-	'AddressBook' => {
-		people => [
-			{name=>'Misko'},
-			{name=>'Igor'},
-			{name=>'Adam'},
-			{name=>'Elliott'}
-		]
-	}
-};
+my $couchdb = 'http://localhost:5984';
+my $client = Mojo::Client->new;
+
+sub _couchdb_put {
+	my ( $url, $data ) = @_;
+
+	$data->{'$entity'} = $1 if $url =~ m{/(\w+)\.\d+/$/};
+
+	my $json = Mojo::JSON->new->encode( $data );
+
+	warn "# _couchdb_put $url = $json";
+	$client->put( "$couchdb/$url" => $json => sub {
+		my ($client,$tx) = @_;
+		if ($tx->error) {
+			die "ERROR CouchDB ",$tx->error;
+		}
+		my $response = $tx->res->json;
+		warn "## CouchDB response ",dump($response);
+	})->process;
+}
+
+sub _couchdb_get {
+	my ( $url ) = @_;
+	my $return = $client->get( "$couchdb/$url" )->res->json;
+	warn "# _couchdb_get $url = ",dump($return);
+	return $return;
+}
+
+
 our $id2nr;
+
 
 sub _render_jsonp {
 	my ( $self, $json ) = @_;
@@ -64,32 +76,46 @@ get '/_replicate' => sub {
 				$url .= $entity;
 				my $e = $self->client->get( $url )->res->json;
 				warn "# replicated $url ", dump($e);
-				$data->{$database}->{$entity} = $e;
-				delete $id2nr->{$database}->{$entity};
+				_chouchdb_put( $self, $database, $entity, $e->{'$id'}, $e );
 			}
 		}
 	}
 };
 
-get '/_data' => sub {
-	my $self = shift;
-	_render_jsonp( $self, $data )
-};
-
 get '/data/' => sub {
 	my $self = shift;
-	_render_jsonp( $self,  [ keys %$data ] );
+	_render_jsonp( $self, _couchdb_get('/_all_dbs') );
 };
 
 get '/data/:database' => sub {
 	my $self = shift;
 	my $database = $self->param('database');
+
 	my $list_databases = { name => $database };
-	foreach my $entity ( keys %{ $data->{ $database }} ) {
-warn "# entry $entity ", dump( $data->{$database}->{$entity} );
-		my $count = $#{ $data->{$database}->{$entity} } + 1;
-		$list_databases->{entities}->{$entity} = $count;
-		$list_databases->{document_count} += $count;
+
+	my $counts = _couchdb_get("/$database/_design/entity/_view/counts?group=true");
+	if ( exists $counts->{error} ) {
+		warn "creating CouchDB view because of ", dump($counts);
+		_couchdb_put "/$database/_design/entity", {
+			_id => '_design/entity',
+			language => 'javascript',
+			views => {
+				counts => {
+					map    => q| function(doc) { emit(doc.$entity,1); } |,
+					reduce => q| function(keys,values,rereduce) { return sum(values); } |,
+				}
+			}
+		};
+		$counts = _couchdb_get("/$database/_design/entity/_view/counts?group=true")
+		|| die "give up!";
+	}
+
+	warn "# counts ",dump($counts);
+
+	foreach my $row ( @{ $counts->{rows} } ) {
+		my $n = $row->{value};
+		$list_databases->{entities}->{ $row->{key} } = $n;
+		$list_databases->{document_counts} += $n;
 	}
 	warn dump($list_databases);
 	_render_jsonp( $self,  $list_databases );
@@ -97,7 +123,17 @@ warn "# entry $entity ", dump( $data->{$database}->{$entity} );
 
 get '/data/:database/:entity' => sub {
 	my $self = shift;
-	_render_jsonp( $self,  $data->{ $self->param('database') }->{ $self->param('entity' ) } );
+
+	my $database = $self->param('database');
+	my $entity   = $self->param('entity');
+
+	my $endkey = $entity;
+	$endkey++;
+
+	my $counts = _couchdb_get qq|/$database/_all_docs?startkey="$entity";endkey="$endkey";include_docs=true|;
+	warn "# counts ",dump($counts);
+
+	_render_jsonp( $self, [ map { $_->{doc} } @{ $counts->{rows} } ] )
 };
 
 get '/data/:database/:entity/:id' => sub {
@@ -107,57 +143,28 @@ get '/data/:database/:entity/:id' => sub {
 	my $entity   = $self->param('entity');
 	my $id       = $self->param('id');
 
-	my $e = $data->{$database}->{$entity} || die "no entity $entity";
-
-	if ( ! defined $id2nr->{$database}->{$entity}  ) {
-		foreach my $i ( 0 .. $#$e ) {
-			$id2nr->{$database}->{$entity}->{ $e->[$i]->{'$id'} } = $i;
-		}
-	}
-
-	if ( exists $id2nr->{$database}->{$entity}->{$id} ) {
-		my $nr = $id2nr->{$database}->{$entity}->{$id};
-		warn "# entity $id -> $nr\n";
-		_render_jsonp( $self,  $data->{$database}->{$entity}->[$nr] );
-	} else {
-		die "no entity $entity $id in ", dump( $id2nr->{$database}->{$entity} );
-	}
+	_render_jsonp( $self, _couchdb_get( "/$database/$entity.$id" ) );
 };
 
 any [ 'post' ] => '/data/:database/:entity' => sub {
 	my $self = shift;
-	my $json = $self->req->json;
-	my $id = $json->{'$id'} # XXX we don't get it back from angular.js
-		|| $json->{'_id'}  # so we use our version
-		|| new_uuid;
-	warn "## $id body ",dump($self->req->body, $json);
-	die "no data" unless $data;
-
-	$json->{'$id'} ||= $id;	# angular.js doesn't resend this one
-	$json->{'_id'} = $id;	# but does this one :-)
-
 	my $database = $self->param('database');
 	my $entity   = $self->param('entity');
+	my $json = $self->req->json;
+	my $id = $json->{'$id'} # XXX we don't get it back from angular.js
+		|| new_uuid;
+	warn "## $database $entity $id body ",dump($self->req->body, $json);
 
-	my $nr = $id2nr->{$database}->{$entity}->{$id};
-	if ( defined $nr ) {
-		$data->{$database}->{$entity}->[$nr] = $json;
-		warn "# update $nr $id ",dump($json);
-	} else {
-		push @{ $data->{$database}->{$entity} }, $json;
-		my $nr = $#{ $data->{$database}->{$entity} };
-		$id2nr->{$database}->{$entity}->{$id} = $nr;
-		warn "# added $nr $id ",dump($json);
-	}
+	$json->{'$id'} ||= $id;	# make sure $id is in there
+
+	_couchdb_put "/$database/$entity.$id" => $json;
+
 	_render_jsonp( $self,  $json );
 };
 
-get '/demo/:groovy' => sub {
-	my $self = shift;
-    $self->render(text => $self->param('groovy'), layout => 'funky');
-};
 
 get '/' => sub { shift->redirect_to('/Cookbook') };
+
 get '/Cookbook' => 'Cookbook';
 get '/Cookbook/:example' => sub {
 	my $self = shift;
