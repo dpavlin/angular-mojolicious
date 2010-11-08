@@ -45,22 +45,21 @@ console.debug( 'load symposium ', s_id );
 	},
 	reset: function() {
 		console.debug( this.Registration );
-		var current_symposium = null;
-		var current_person = null;
-		if ( this.registration && this.registration.type == 'symposium' ) {
-			current_symposium = this.registration.symposium;
-			current_person = this.registration.person;
-			if ( this.registration.$id ) current_symposium.work_nr++; // only if saved
-console.debug( 'current_symposium', current_symposium, this.registration )
+		var last = this.registration;
+		if ( last && last.type == 'symposium' ) {
+			if ( last.$id ) last.symposium.work_nr++; // only if saved
 		}
 		this.registration = new this.Registration( this.master );
-		if ( current_symposium ) {
-			this.registration.symposium = current_symposium;
-			this.registration.type = 'symposium';
-			this.registration.person = current_person;
+		if ( last ) {
+			this.registration.category  = last.category;
+			this.registration.type      = last.type;
+			this.registration.person    = last.person;
+
+			if ( last.type == 'symposium' )
+			this.registration.symposium = last.symposium;
 		}
 		this.last_saved = {};
-console.debug( 'reset', current_symposium, this.registration, this.$location.hashPath );
+console.debug( 'reset', this.registration, this.$location.hashPath, last );
 	},
 	save: function(){
 		var self = this;
@@ -409,6 +408,7 @@ input.ng-validation-error {
 	Registration ID: <a href="#{{registration.$id}}">{{registration.$id}}</a>.<br>You can bookmark this page and review it later.
 </div>
 
+<input type="reset" value="Another work proposal to submit?" ng:click="reset()" ng:show="registration.$id">
 
 <!--
 <div ng:show="registration.$id">
