@@ -4,11 +4,10 @@ if (typeof (console) === 'undefined') console = { debug: function() {} }; // moc
 
 function Registration($resource){
 	this.master = {
-//		category: null,
 		person: {
 			name: '', surname: '', inst: '', email: '',
 		},
-		type: '', // just attending
+		type: 'participant',
 		work: {
 			title: '',
 			abstract: '',
@@ -51,7 +50,6 @@ console.debug( 'load symposium ', s_id );
 		}
 		this.registration = new this.Registration( this.master );
 		if ( last ) {
-			this.registration.category  = last.category;
 			this.registration.type      = last.type;
 			this.registration.person    = last.person;
 
@@ -265,14 +263,7 @@ input.ng-validation-error {
 <div ng:controller="Registration" ng:init="$window.$root = this;">
 
 
-<div id="choose"> <!-- ng:show="! registration.symposium.$id"> -->
-	<h2>Please choose:</h2>
-	<label><input type="radio" name="registration.category" value="participant" ng:required>Just attending the conference</label>
-	<label><input type="radio" name="registration.category" value="submission">I want to submit a work</label>
-</div>
-
-
-<div id="participant" ng:show="registration.category">
+<div id="participant">
 	<h2>Contact Information</h2>
 	<div class="labelTop">
 		<div class="pname">First name</div>
@@ -316,9 +307,10 @@ input.ng-validation-error {
 </div>
 
 
-<div id="submission" ng:show="registration.category == 'submission'">
+<div id="submission">
 	<div>
 		<h2>Choose submittion type:</h2>
+		<label><input type="radio" name="registration.type" value="participant" ng:required>Participant</label>
 		<label><input type="radio" name="registration.type" value="symposium" ng:required>Symposia</label>
 		<label><input type="radio" name="registration.type" value="lecture" ng:required>Oral presentation</label>
 		<label><input type="radio" name="registration.type" value="poster" ng:required>Poster presentation</label>
@@ -329,7 +321,7 @@ input.ng-validation-error {
 
 
 
-<div id="work" ng:show="registration.category == 'submission'">
+<div id="work" ng:show="registration.type != 'participant'">
 	<div ng:show="registration.type == 'symposium'">
 
 		<h2>Symposia Submission</h2>
@@ -401,11 +393,11 @@ input.ng-validation-error {
 
 
 <div style="margin-bottom: 40px" ng:show="registration.$id && last_saved.$equals(registration)">
-	<div class="saved" ng:show="registration.category == 'participant'">
+	<div class="saved" ng:show="registration.type == 'participant'">
 		Your registration has been submitted successfully.
 	</div>
 
-	<div class="saved" ng:show="registration.category == 'submission'" class="saved">
+	<div class="saved" ng:show="registration.type != 'participant'" class="saved">
 		<i>{{registration.work.title}}</i> has been submited successfully.<br>
 	</div>
 
@@ -417,7 +409,7 @@ input.ng-validation-error {
 </div>
 
 
-<input type="reset" value="Another work proposal to submit?" ng:click="reset()" ng:show="registration.$id && registration.category == 'submission' && last_saved.$equals(registration)">
+<input type="reset" value="Another work proposal to submit?" ng:click="reset()" ng:show="registration.$id && registration.type != 'participant' && last_saved.$equals(registration)">
 
 <!--
 <div ng:show="registration.$id">
