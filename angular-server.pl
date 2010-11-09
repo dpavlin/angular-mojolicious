@@ -66,32 +66,6 @@ warn "## _render_json $data";
 
 #get '/' => 'index';
 
-get '/_replicate' => sub {
-	my $self = shift;
-
-	if ( my $from = $self->param('from') ) {
-		my $got = $self->client->get( $from )->res->json;
-		warn "# from $from ",dump($got);
-
-		my $database = $got->{name};
-		my $entities = $got->{entities};
-
-		if ( $database && $entities ) {
-			foreach my $entity ( keys %$entities ) {
-				my $url = $from;
-				$url =~ s{/?$}{/}; # add slash at end
-				$url .= $entity;
-				my $all = $self->client->get( $url )->res->json;
-				warn "# replicated $url ", dump($all);
-				foreach my $e ( @$all ) {
-					delete $e->{_id}; # sanitize data from older implementation
-					_couchdb_put( "/$database/$entity." . $e->{'$id'} => $e );
-				}
-			}
-		}
-		_render_jsonp( $self,  $got );
-	}
-};
 
 get '/data/' => sub {
 	my $self = shift;
