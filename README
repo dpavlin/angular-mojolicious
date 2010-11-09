@@ -25,9 +25,14 @@ At it's current stage it provides support for angular $resource get, query and $
 http://angularjs.org/Service:$resource
 
 
-Server also supports replication using same API which can be triggered with
+Replication of data between instances using angular REST API can be done with:
 
- http://localhost:3000/_replicate?from=http://dpavlin.getangular.com/data/conference/
+	# create local CouchDB database
+	curl -X PUT http://localhost:5984/test
+
+	./angular-replicate.pl \
+		http://dpavlin.getangular.com/data/conference \
+		http://localhost:3000/data/test
 
 Replication is currently good only for initial import of data since it doesn't
 support incremental replication and dies if data is allready present.
