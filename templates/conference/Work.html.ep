@@ -8,9 +8,11 @@ function Work($resource){
 		title: '',
 		abstract: '',
 		authors:[ { name:'', surname:'', inst:'', email:'' } ],
-		symposium: { authors: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1, },
+		symposium: { organizer: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1, },
 	};
-	this.Work = $resource( '/data/conference/Work/:_id', { _id:'' } );
+	this.last_saved_work = {};
+	this.Work = $resource( '/data/conference/Work/:id', { id:'' } );
+	this.Symposium = $resource( '/data/conference/Symposium/:id', { id:'' } );
 	this.reset();
 	this.$watch('$location.hashPath', this.hash_change);
 }
@@ -19,147 +21,159 @@ Work.$inject=['$resource'];
 Work.prototype = {
 	hash_change: function() {
 		var id = this.$location.hashPath;
-console.debug( 'hash_change', id, this.work._id );
-		if ( id != this.work._id ) {
-			if (id) this.work = this.Work.get({ _id: id })
+console.debug( 'hash_change', id, this.work.$id );
+		if ( id != this.work.$id ) {
+			if (id) {
+				var self = this;
+				this.work = this.Work.get({ id: id }, function(work) {
+					self.last_saved_work = angular.copy(work);
+					if ( work.type == 'symposium' ) {
+						var s_id = work.symposium.$id || work.$id;
+						// first work doesn't have symposium.$id, but we used same $id
+console.debug( 'load symposium ', s_id );
+						self.symposium = self.Symposium.get({ id: s_id });
+					}
+				});
+			}
 			else this.reset();
 		}
 	},
 	reset: function() {
 		console.debug( this.Work );
-		var symposium = null;
+		var current_symposium = null;
 		if ( this.work && this.work.type == 'symposium' ) {
-			symposium = this.work.symposium;
-			if ( this.work._id ) symposium.work_nr++;
-			// if is required because reset is called twice -- once with saved records and once with new empty one
-console.debug( 'symposium', symposium, this.work )
+			current_symposium = this.work.symposium;
+			if ( this.work.$id ) current_symposium.work_nr++; // only if saved
+console.debug( 'current_symposium', current_symposium, this.work )
 		}
 		this.work = new this.Work( this.master );
-		if ( symposium ) {
-			this.work.symposium = symposium;
+		if ( current_symposium ) {
+			this.work.symposium = current_symposium;
 			this.work.type = 'symposium';
 		}
-console.debug( 'reset', symposium, this.work, this.$location.hashPath );
-		this.$location.hashPath = '';
+		this.last_saved_work = {};
+console.debug( 'reset', current_symposium, this.work, this.$location.hashPath );
 	},
 	save: function(){
-		var l = this.$location;
+		var self = this;
 		this.work.$save(function(work){
-			l.hashPath = work._id;
-			work._changes = -1;	// it seems that save call issues one ng:eval
+			self.$location.hashPath = work.$id;
+
+			// save symposium to separate resource
+			if ( work.type == 'symposium' ) {
+				if ( ! self.symposium ) { 
+					self.work.symposium.$id = work.$id; // reuse $id of first work for symposium
+					self.symposium = new self.Symposium( work.symposium );
+					self.symposium.works = [];
+				}
+				self.symposium.works[ work.symposium.work_nr - 1 ] = work;
+		console.debug('save_symposium', self.symposium );
+				self.symposium.$save();
+			}
+
+			self.last_saved_work = angular.copy(work);
 		});
-	}
+	},
+	get_symposium: function() { this.symposium },
 };
 
 
 </script>
 
-<h1>Prijava rada</h1>
+<h1>Conference work submission</h1>
 
-<div ng:controller="Work" ng:init="$window.$root = this; work._changes = 0" ng:eval="work._changes = work._changes + 1">
+<div ng:controller="Work" ng:init="$window.$root = this;">
 
-<h2>Vrsta rada:</h2>
-<input type="radio" name="work.type" value="symposium"> Simpozij
+<h2>Type of work:</h2>
+<label><input type="radio" name="work.type" value="symposium"> Symposium</label>
 
 <div ng:show="work.type == 'symposium'" style="background:#f0f0f0">
-<!--
-<select name="work.symposium_id" ng:show="work.type == 'symposium'" ng:controller="Symposium">
-<option ng:repeat="s in symposiums" value="{{s._id}}">{{s.title}}</option>
-</select>
--->
 
-Tema simpozija: <input name="work.symposium.title" size="60"><br/>
+<label>Topic of symposium: <input name="work.symposium.title" size="60" ng:required></label><br/>
    
-Sažetak: <br/>
-<textarea name="work.symposium.abstract" cols="50" rows="5"></textarea> <br/>
+<label>Summary: <br/>
+<textarea name="work.symposium.abstract" cols="50" rows="5"></textarea>
+</label>
+<br/>
 
-Organizator:
-<div ng:repeat="author in work.symposium.authors">
-[<a href="" ng:click="work.symposium.authors.$remove(author)">X</a>]
+Organizer:
+<div ng:repeat="author in work.symposium.organizer">
+[<a href="" ng:click="work.symposium.organizer.$remove(author)">X</a>]
 <input name="author.name" ng:required>
 <input name="author.surname" ng:required>
 <input name="author.inst" >
-<input name="author.email" ng:required>
+<input name="author.email" ng:required ng:validate="email">
 </div>
-[<a href="" ng:click="work.symposium.authors.$add()">Add another organizer</a>]
+[<a href="" ng:click="work.symposium.organizer.$add()">Add another organizer</a>]
 
 </div>
 
 <br/>
 
-	<input type="radio" name="work.type" value="lecture"> Predavanje <br/>
-	<input type="radio" name="work.type" value="poster"> Poster <br/>
-	<input type="radio" name="work.type" value="round"> Okrugli stol <br/>
+<label><input type="radio" name="work.type" value="lecture"> Lecture</label><br/>
+<label><input type="radio" name="work.type" value="poster"> Poster</label><br/>
+<label><input type="radio" name="work.type" value="round"> Round table</label><br/>
 
 <hr>
 
-<h2>Autori <span ng:show="work.type == 'symposium'">{{work.symposium.work_nr}}. </span>rada</h2>
+<div ng:show="symposium">
+Works which are part of this symposium:
+<ol>
+<li ng:repeat="w in symposium.works">
+<a ng:show="work.$id != w.$id" href="#{{w.$id}}" >{{w.title}}</a>
+<b ng:show="work.$id == w.$id">{{w.title}}</b>
+</li>
+</ol>
+
+</div>
+
+<h2>Autors<span ng:show="work.type == 'symposium'"> of {{work.symposium.work_nr}}. work </span></h2>
 
 <div ng:repeat="author in work.authors">
 [<a href="" ng:click="work.authors.$remove(author)">X</a>]
 <input name="author.name" ng:required>
 <input name="author.surname" ng:required>
 <input name="author.inst" >
-<input name="author.email" ng:required>
+<input name="author.email" ng:required ng:validate="email">
 </div>
 [<a href="" ng:click="work.authors.$add()">Add another author</a>]
-<!--
-
-    <table>
-      <tr>
-        <th> </th>
-        <th>Ime</th>
-        <th>Prezime</th>
-        <th>Ustanova</th>
-        <th>email</th>
-      </tr>
-      <tr ng:repeat="author in work.authors">
-        <td>[<a href="" ng:click="work.authors.$remove(author)">X</a>]</td>
-        <td><input name="author.name" ng:required></td>
-        <td><input name="author.surname" ng:required></td>
-        <td><input name="author.inst" ></td>
-        <td><input name="author.email" ng:required></td>
-      </tr>
-      <tr>
-        <td> </td>
-        <td>[<a href="" ng:click="work.authors.$add()">Add another author</a>]</td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-      </tr>
-    </table>
-
--->
 
 <hr>    
 
 
-   Naslov: <input name="work.title" size="60"><br/>
+<label>Title: <input name="work.title" size="60" ng:required></label><br/>
 
-   Sazetak: <br/>
-    <textarea name="work.abstract" cols="50" rows="5"></textarea> <br/>
+<label>Summary:<br>
+<textarea name="work.abstract" cols="50" rows="5"></textarea>
+</label>
+<br/>
 
-	<span ng:show="$invalidWidgets.visible() == 0">
-    <input type="submit" value="Save" ng:click="work.symposium_id=symposium._id; save();" ng:show="work._changes" title="{{work._changes}} changes">
-    <input type="reset" value="Novi rad" ng:click="reset()" ng:show="work && work._id">
-	</span>
+<span ng:show="$invalidWidgets.visible() == 0">
+<input type="submit" value="Save" ng:click="save();" ng:show="! last_saved_work.$equals(work)">
+<input type="reset" value="Add another work" ng:click="reset()" ng:show="work && work.$id">
+</span>
 
-	<b ng:show="$invalidWidgets.visible() &gt; 0" style="color:#800">{{$invalidWidgets.visible()}} errors to fix in submission form</b>
+<b ng:show="$invalidWidgets.visible() &gt; 0" style="color:#800">{{$invalidWidgets.visible()}} errors to fix in submission form</b>
 
-	<div ng:show="work._id">
-	<a href="#{{work._id}}">permalink to {{work.title}}</a>
-	</div>
+<div ng:show="work.$id">
+Permalink to <a href="#{{work.$id}}">{{work.title}}</a> which you can bookmark
+</div>
 
 <hr>
 Debug Information:
 {{$window.location.href}}
-<pre>work = {{work}}</pre>
-<pre>master = {{master}}</pre>
-
 <pre>
+work = {{work}}
+
+dirty={{! last_saved_work.$equals(work)}}
+
+last_saved_work = {{last_saved_work}}
+
+master = {{master}}
+
 $id={{$id}}
 work.$id={{work.$id}}
-work._id={{work._id}}
+work.$id={{work.$id}}
 </pre>
 
 </div>
