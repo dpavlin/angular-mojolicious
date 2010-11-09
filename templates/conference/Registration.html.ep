@@ -125,59 +125,39 @@ label {
 	color: #374E5A;
 }
 
-.fl {
+.input {
 	color: #afafaf;
 	float: left;
 	margin: 2px;
 	padding: 0 6px;
 }
 
-.fl1 {
+.input1 {
 	width: 40.8em;
 }
 
-.fl2 {
+.input2 {
 	width: 8em;
 }
 
-.fl3 {
+.input3 {
 	width: 13em;
 }
+.input4 {
+	width: 10em;
+}
 
-.flClear {
+.input5 {
+	width: 21.4em;
+}
+.input6 {
+	width: 6.3em;
+}
+
+.clear {
 	clear: both;
 }
 
-.labelTop .pname, .labelTop .name, .labelTop .surname, .labelTop .pinst, .labelTop .email, .labelTop .city, .labelTop .address, .labelTop .contact {
-	color: #afafaf;
-	float: left;
-	margin: 2px;
-	padding: 0 6px;
-}
-
-.pname, .name, .surname, .email {
-	width: 10em;
-}
-
-.pinst {
-	width: 21.4em;
-}
-
-.address {
-	width: 14.1em;
-}
-
-.city {
-	width: 9em;
-}
-
-.contact {
-	width: 10em;
-}
-
-.title, .summary {
-	width: 93%;
-}
 
 .authors {
 	clear: both;
@@ -191,7 +171,7 @@ label {
 	font-size: 90%;
 }
 
-input, textarea
+input, textarea, .gohome
 {
 	font: 14px arial;
 	color: #000000;
@@ -229,9 +209,23 @@ input:focus, textarea:focus
 	background: #d74f25;
 }
 
-.button input:hover {
+.button input:hover, .gohome:hover {
 	background: #dc6844;
 }
+
+.gohome  {
+	float: left;
+	color: #ffffff;
+	display: block;
+	text-decoration: none;
+	background: #d74f25;
+}
+
+.gohome a {
+	color: #fff;
+	text-decoration: none;
+}
+
 
 .warrning {
 	color: #FF6666;
@@ -263,43 +257,42 @@ input:focus, textarea:focus
 <div id="participant">
 	<h2>Contact Information</h2>
 	<div class="labelTop">
-		<div class="pname">First name</div>
-		<div class="pname">Surname</div>
+		<div class="input input4">First name</div>
+		<div class="input input4">Surname</div>
 	</div>
 	<div style="clear: both">
-		<input class="pname" name="registration.person.name" ng:required>
-		<input class="pname" name="registration.person.surname" ng:required>
+		<input class="input4" name="registration.person.name" ng:required>
+		<input class="input4" name="registration.person.surname" ng:required>
 	</div>
 	<div class="labelTop">
-		<div class="pinst">Institution</div>
+		<div class="input input5">Institution</div>
 	</div>  
 	<div style="clear: both">
-		<input class="pinst" name="registration.person.inst">
+		<input class="input5" name="registration.person.inst">
 	</div>
 	<div class="labelTop">
-		<div class="address">Address</div>
+		<div class="input input5">Address</div>
 	</div>  
 	<div style="clear: both">
-		<input class="address" name="registration.person.address1" ng:required>
-		<input class="address" name="registration.person.address2">
+		<input class="input5" name="registration.person.address1" ng:required>
 	</div>
 	<div class="labelTop">
-		<div class="city">City</div>
-		<div class="city">ZIP</div>
-		<div class="city">Country</div>
+		<div class="input input6">City</div>
+		<div class="input input6">ZIP</div>
+		<div class="input input6">Country</div>
 	</div>
 	<div style="clear: both">
-		<input class="city" name="registration.person.city" ng:required>
-		<input class="city" name="registration.person.zip">
-		<input class="city" name="registration.person.country">
+		<input class="input6" name="registration.person.city" ng:required>
+		<input class="input6" name="registration.person.zip">
+		<input class="input6" name="registration.person.country">
 	</div>
 	<div class="labelTop">
-		<div class="contact">E-mail</div>
-		<div class="contact">Phone number</div>
+		<div class="input input4">E-mail</div>
+		<div class="input input4">Phone number</div>
 	</div>
 	<div style="clear: both">
-		<input class="contact" name="registration.person.email" ng:validate="email" ng:required>
-		<input class="contact" name="registration.person.phone">
+		<input class="input4" name="registration.person.email" ng:validate="email" ng:required>
+		<input class="input4" name="registration.person.phone">
 	</div>
 </div>
 
@@ -323,21 +316,21 @@ input:focus, textarea:focus
 
 		<h2>Symposia</h2>
 		<label>Topic:</label>
-			<input class="fl1" name="registration.symposium.title" ng:required>
+			<input class="input1" name="registration.symposium.title" ng:required>
 		<label>Organizer:</label>
 		<div>
-			<div class="fl fl2">First name</div><div class="fl fl2">Surname</div><div class="fl fl3">Institution</div><div class="fl fl2">E-mail</div>
+			<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
 		</div>
-		<div class="flClear" ng:repeat="organizer in registration.symposium.organizers">
-			<input class="fl2" name="organizer.name" ng:required>
-			<input class="fl2" name="organizer.surname" ng:required>
-			<input class="fl3" name="organizer.inst" >
-			<input class="fl2" name="organizer.email" ng:required ng:validate="email">
+		<div class="clear" ng:repeat="organizer in registration.symposium.organizers">
+			<input class="input2" name="organizer.name" ng:required>
+			<input class="input2" name="organizer.surname" ng:required>
+			<input class="input3" name="organizer.inst" >
+			<input class="input2" name="organizer.email" ng:required ng:validate="email">
 			<a href="" ng:click="registration.symposium.organizers.$remove(organizer)">X</a>
 		</div>
 		<a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a>
-		<label>Summary:</label>
-			<textarea class="fl1" name="registration.symposium.abstract" rows="5" ng:validate="max_length:2000" ng:required></textarea>
+		<label>Summary (2000 characters max.)</label>
+			<textarea class="input1" name="registration.symposium.abstract" rows="5" ng:validate="max_length:2000" ng:required></textarea>
 		<div ng:show="symposium">
 			<label>List of already submitted works</label>
 			<ol>
@@ -359,23 +352,23 @@ input:focus, textarea:focus
   <div ng:show="registration.type">
 
 	<label>Title:</label>
-		<input class="fl1" name="registration.work.title" ng:required>
+		<input class="input1" name="registration.work.title" ng:required>
 	<label>Authors</label>
 	<div>
-		<div class="fl fl2">First name</div><div class="fl fl2">Surname</div><div class="fl fl3">Institution</div><div class="fl fl2">E-mail</div>
+		<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
 	</div>
-	<div class="flClear" ng:repeat="author in registration.work.authors">
-		<input class="fl2" name="author.name" ng:required>
-		<input class="fl2" name="author.surname" ng:required>
-		<input class="fl3" name="author.inst" >
-		<input class="fl2" name="author.email" ng:required ng:validate="email">
+	<div class="clear" ng:repeat="author in registration.work.authors">
+		<input class="input2" name="author.name" ng:required>
+		<input class="input2" name="author.surname" ng:required>
+		<input class="input3" name="author.inst" >
+		<input class="input2" name="author.email" ng:required ng:validate="email">
 		<a href="" ng:click="registration.work.authors.$remove(author)">X</a>
 	</div>
 	<a class="addPerson" href="" ng:click="registration.work.authors.$add()">Add another author</a>
 
 
-	<label>Abstract:</label>
-		<textarea class="fl1" name="registration.work.abstract" rows="5" ng:validate="max_length:2000" ng:required></textarea>
+	<label>Abstract (2000 characters max.):</label>
+		<textarea class="input1" name="registration.work.abstract" rows="5" ng:validate="max_length:2000" ng:required></textarea>
 
 
   </div> <!-- ng:show="registration.type" -->
@@ -397,19 +390,21 @@ input:focus, textarea:focus
 	</div>
 
 	<div class="saved" ng:show="registration.type != 'participant'" class="saved">
-		<i>{{registration.work.title}}</i> submitted successfully.<br>
+		<i>{{registration.work.title}}</i> submitted successfully.
 	</div>
-
-	Please review your data, correct and save if needed.
-	
+<!--
+	Please review your data, correct and save if needed (just start typing and Save button will show automatically).
+-->
+<!--	
 	<div>
-	Registration ID: <a href="#{{registration.$id}}">{{registration.$id}}</a>. You can bookmark this page and review it later.
+	Registration ID: {{registration.$id}}. You can bookmark this page and review it later.
 	</div>
+-->
 </div>
 
 <div class="button" ng:show="registration.$id && registration.type != 'participant' && last_saved.$equals(registration)">
-<input type="reset" value="Submit another paper" ng:click="reset()">
-<div style="margin-left: 10px; margin-top: 8px; float: left;"> or <a href="http://psihologija.ffzg.hr/drzb2011/">Go to conference home page</a></div>
+	<input type="reset" value="Submit another paper" ng:click="reset()">
+	<div class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011/">Finish and go to the conference home page</a></div>
 </div>
 
 <!--
