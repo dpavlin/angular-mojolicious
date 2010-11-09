@@ -218,6 +218,7 @@ input:focus, textarea:focus
 }
 
 .button {
+	margin-top: 20px;
 	width: 40.8em;
 }
 
@@ -322,7 +323,7 @@ input:focus, textarea:focus
 	<div>
 		<h2>Registration Type</h2>
 		<label><input type="radio" name="registration.type" value="participant" ng:required>Attendance with no presentation</label>
-		<label><input type="radio" name="registration.type" value="participant" ng:required>Symposium participant</label>
+		<label><input type="radio" name="registration.type" value="sparticipant" ng:required>Symposium participant</label>
 		<label><input type="radio" name="registration.type" value="symposium" ng:required>Symposium organizer</label>
 		<label><input type="radio" name="registration.type" value="lecture" ng:required>Oral presentation</label>
 		<label><input type="radio" name="registration.type" value="poster" ng:required>Poster presentation</label>
@@ -333,7 +334,12 @@ input:focus, textarea:focus
 
 
 
-<div id="work" ng:show="registration.type != 'participant'">
+	<div ng:show="registration.type == 'sparticipant'">
+		<h2>Symposia</h2>
+		<label for="registration.symposium.title">Topic:</label>
+			<input class="input1" name="registration.symposium.title" ng:required>
+	</div>
+<div id="work" ng:show="registration.type != 'participant' && registration.type != 'sparticipant'">
 	<div ng:show="registration.type == 'symposium'">
 
 		<h2>Symposia</h2>
@@ -405,11 +411,11 @@ input:focus, textarea:focus
 
 
 <div style="margin-bottom: 40px" ng:show="registration.$id && last_saved.$equals(registration)">
-	<div class="saved" ng:show="registration.type == 'participant'">
+	<div class="saved" ng:show="registration.type == 'participant' || registration.type == 'sparticipant'">
 		Your registration has been submitted successfully.
 	</div>
 
-	<div class="saved" ng:show="registration.type != 'participant'" class="saved">
+	<div class="saved" ng:show="registration.type != 'participant' && registration.type != 'sparticipant'" class="saved">
 		<i>{{registration.work.title}}</i> submitted successfully.
 	</div>
 <!--
@@ -422,7 +428,7 @@ input:focus, textarea:focus
 -->
 </div>
 
-<div class="button" ng:show="registration.$id && registration.type != 'participant' && last_saved.$equals(registration)">
+<div class="button" ng:show="registration.$id && registration.type != 'participant' && registration.type != 'sparticipant' && last_saved.$equals(registration)">
 	<input type="reset" value="Submit another paper" ng:click="reset()">
 	<div class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011/">Finish and go to the conference home page</a></div>
 </div>
