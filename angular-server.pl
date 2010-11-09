@@ -86,7 +86,7 @@ get '/data/:database' => sub {
 			language => 'javascript',
 			views => {
 				counts => {
-					map    => q| function(doc) { emit(doc.$entity,1); } |,
+					map    => q| function(doc) { emit(doc._id.split('.')[0],1); } |,
 					reduce => q| function(keys,values,rereduce) { return sum(values); } |,
 				}
 			}
