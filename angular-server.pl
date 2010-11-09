@@ -32,7 +32,7 @@ sub _couchdb_put {
 		my $response = $tx->res->json;
 		warn "## response $code ",dump($response);
 		if ($tx->error) {
-			die "ERROR $code $message";
+			warn "ERROR $code $message";
 		}
 		return
 		$rev = $response->{rev};
