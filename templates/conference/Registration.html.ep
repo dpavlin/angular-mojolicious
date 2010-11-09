@@ -209,12 +209,28 @@ input:focus, textarea:focus
 	border: 1px solid #46d0fe;
 }
 
-input.ng-validation-error {
+.ng-validation-error {
 	border: 1px solid #D74F25;
 	border: 1px solid #FF6666;
 	border: 1px solid #EDC8BC;
 	border: 1px solid #FF9966;
 	border: 1px solid #EAB3A2;
+}
+
+#work, #submission {
+	margin-bottom: 20px;
+}
+
+.button input {
+	float: left;
+	color: #ffffff;
+	display: block;
+	text-decoration: none;
+	background: #d74f25;
+}
+
+.button input:hover {
+	background: #dc6844;
 }
 
 .warrning {
@@ -225,23 +241,6 @@ input.ng-validation-error {
 	margin-top: 20px;
 }
 
-.save {
-	margin-top: 10px;
-}
-
-.save input 
-{
-	float: left;
-	color: #ffffff;
-	display: block;
-	text-decoration: none;
-	background: #d74f25;
-}
-
-.save input:hover
-{
-	background: #dc6844;
-}
 
 .newWork {
 	clear: left;
@@ -250,9 +249,7 @@ input.ng-validation-error {
 .saved {
 	color: #D74F25; 
 	margin-top: 20px;
-}
-#buttons {
-	margin-top: 20px;
+	margin-bottom: 20px;
 }
 </style>
 
@@ -271,7 +268,7 @@ input.ng-validation-error {
 	</div>
 	<div style="clear: both">
 		<input class="pname" name="registration.person.name" ng:required>
-		<input class="pname" name="registration.person.surname">
+		<input class="pname" name="registration.person.surname" ng:required>
 	</div>
 	<div class="labelTop">
 		<div class="pinst">Institution</div>
@@ -283,7 +280,7 @@ input.ng-validation-error {
 		<div class="address">Address</div>
 	</div>  
 	<div style="clear: both">
-		<input class="address" name="registration.person.address1">
+		<input class="address" name="registration.person.address1" ng:required>
 		<input class="address" name="registration.person.address2">
 	</div>
 	<div class="labelTop">
@@ -292,7 +289,7 @@ input.ng-validation-error {
 		<div class="city">Country</div>
 	</div>
 	<div style="clear: both">
-		<input class="city" name="registration.person.city">
+		<input class="city" name="registration.person.city" ng:required>
 		<input class="city" name="registration.person.zip">
 		<input class="city" name="registration.person.country">
 	</div>
@@ -309,9 +306,9 @@ input.ng-validation-error {
 
 <div id="submission">
 	<div>
-		<h2>Choose submittion type:</h2>
-		<label><input type="radio" name="registration.type" value="participant" ng:required>Participant</label>
-		<label><input type="radio" name="registration.type" value="symposium" ng:required>Symposia</label>
+		<h2>Please choose:</h2>
+		<label><input type="radio" name="registration.type" value="participant" ng:required>Just attending or my work was submitted by another person</label>
+		<label><input type="radio" name="registration.type" value="symposium" ng:required>Symposia paper</label>
 		<label><input type="radio" name="registration.type" value="lecture" ng:required>Oral presentation</label>
 		<label><input type="radio" name="registration.type" value="poster" ng:required>Poster presentation</label>
 		<label><input type="radio" name="registration.type" value="round" ng:required>Round table discussion</label>
@@ -324,7 +321,7 @@ input.ng-validation-error {
 <div id="work" ng:show="registration.type != 'participant'">
 	<div ng:show="registration.type == 'symposium'">
 
-		<h2>Symposia Submission</h2>
+		<h2>Symposia</h2>
 		<label>Topic:</label>
 			<input class="fl1" name="registration.symposium.title" ng:required>
 		<label>Organizer:</label>
@@ -335,12 +332,12 @@ input.ng-validation-error {
 			<input class="fl2" name="organizer.name" ng:required>
 			<input class="fl2" name="organizer.surname" ng:required>
 			<input class="fl3" name="organizer.inst" >
-			<input class="fl2" name="organizer.email" ng:required>
+			<input class="fl2" name="organizer.email" ng:required ng:validate="email">
 			<a href="" ng:click="registration.symposium.organizers.$remove(organizer)">X</a>
 		</div>
 		<a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a>
 		<label>Summary:</label>
-			<textarea class="fl1" name="registration.symposium.abstract" rows="5" ng:validate="max_length:2000"></textarea>
+			<textarea class="fl1" name="registration.symposium.abstract" rows="5" ng:validate="max_length:2000" ng:required></textarea>
 		<div ng:show="symposium">
 			<label>List of already submitted works</label>
 			<ol>
@@ -353,7 +350,7 @@ input.ng-validation-error {
 	</div>
 
 
-	<h2 ng:show="registration.type == 'symposium'">Work no. {{registration.symposium.work_nr}}.  in <i>{{registration.symposium.title}}</i> </h2>
+	<h2 ng:show="registration.type == 'symposium'">Symposia paper ({{registration.symposium.work_nr}})</h2>
 	<h2 ng:show="registration.type == 'lecture'">Oral Presentation Sumbission</h2>
 	<h2 ng:show="registration.type == 'poster'">Poster Presentation Sumbission</h2>
 	<h2 ng:show="registration.type == 'round'">Round Table Disscussion Sumbission</h2>
@@ -371,20 +368,22 @@ input.ng-validation-error {
 		<input class="fl2" name="author.name" ng:required>
 		<input class="fl2" name="author.surname" ng:required>
 		<input class="fl3" name="author.inst" >
-		<input class="fl2" name="author.email" ng:required>
+		<input class="fl2" name="author.email" ng:required ng:validate="email">
 		<a href="" ng:click="registration.work.authors.$remove(author)">X</a>
 	</div>
 	<a class="addPerson" href="" ng:click="registration.work.authors.$add()">Add another author</a>
 
 
-	<label>Summary:</label>
-		<textarea class="fl1" name="registration.work.abstract" rows="5" ng:validate="max_length:2000"></textarea>
+	<label>Abstract:</label>
+		<textarea class="fl1" name="registration.work.abstract" rows="5" ng:validate="max_length:2000" ng:required></textarea>
 
 
   </div> <!-- ng:show="registration.type" -->
 </div>
 
+<div class="button">
 <input type="submit" value="Save" ng:click="save();" ng:show="! last_saved.$equals(registration) && $invalidWidgets.visible() == 0">
+</div>
 
 <div ng:show="$invalidWidgets.visible() &gt; 0" style="color:red; margin-top: 20px">Please fill all required fields ({{$invalidWidgets.visible()}} fields left).
 </div>
@@ -398,18 +397,20 @@ input.ng-validation-error {
 	</div>
 
 	<div class="saved" ng:show="registration.type != 'participant'" class="saved">
-		<i>{{registration.work.title}}</i> has been submited successfully.<br>
+		<i>{{registration.work.title}}</i> submitted successfully.<br>
 	</div>
 
-	Please review your data, correct and save if needed or <a href="http://psihologija.ffzg.hr/drzb2011/">go to conference home page</a>.
-
+	Please review your data, correct and save if needed.
+	
 	<div>
-	Registration ID: <a href="#{{registration.$id}}">{{registration.$id}}</a>.<br>You can bookmark this page and review it later.
+	Registration ID: <a href="#{{registration.$id}}">{{registration.$id}}</a>. You can bookmark this page and review it later.
 	</div>
 </div>
 
-
-<input type="reset" value="Another work proposal to submit?" ng:click="reset()" ng:show="registration.$id && registration.type != 'participant' && last_saved.$equals(registration)">
+<div class="button" ng:show="registration.$id && registration.type != 'participant' && last_saved.$equals(registration)">
+<input type="reset" value="Submit another paper" ng:click="reset()">
+<div style="margin-left: 10px; margin-top: 8px; float: left;"> or <a href="http://psihologija.ffzg.hr/drzb2011/">Go to conference home page</a></div>
+</div>
 
 <!--
 <div ng:show="registration.$id">
@@ -417,9 +418,8 @@ Permalink to <a href="#{{registration.$id}}">DRZB2011 registration</a> which you
 </div>
 -->
 
-<hr>
 
-<input type=checkbox name=debug>
+<input type=checkbox name=debug style="float: right; clear: both">
 <pre ng:show="debug">
 
 dirty={{! last_saved.$equals(registration)}} invalid={{$invalidWidgets.visible()}}
