@@ -223,7 +223,7 @@ input:focus, textarea:focus
 }
 
 .button input {
-	margin-bottom: 120px;
+	margin-bottom: 10px;
 	float: left;
 	color: #ffffff;
 	display: block;
@@ -235,8 +235,14 @@ input:focus, textarea:focus
 	background: #dc6844;
 }
 
-.button2 {
+.button2 input {
+	background: #F6F6F6;
+	color: #374E5A;
+	border: 1px solid #d74f25;
+	display: inline;
+	float: none;
 }
+
 
 .gohome  {
 	float: left;
@@ -271,25 +277,27 @@ input:focus, textarea:focus
 	margin-top: 50px;
 }
 .saved {
-	color: #D74F25; 
 	margin-bottom: 20px;
-	font-weight: bold;
+	margin-top: 20px;
 }
 .saved2 {
 	color: #374E5A;
+	color: #d74f25;
+	font-weight: bold;
 	font-style: italic;
 	display: block;
 }
 .saved3 {
 	color: #374E5A;
-	display: block;
 	font-weight: normal;
 	margin-top: 20px;
 }
 .footer {
 	height: 10px;
 }
-
+hr {
+	border: 1px solid #ccc;
+}
 </style>
 
 
@@ -304,13 +312,21 @@ input:focus, textarea:focus
 <p>Organizatori simpozija/okruglog stola prijavljuju i sažetak simpozija i/ili okruglog stola,  i sažetak svakog pripadajućeg rada. Autori radova unutar simpozija ne prijavljuju pojedinačno svoje sažetke.</p>
  
 <p>Duljina sažetka ne može prelaziti 2000 znakova.</p>
+
+<p>Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može biti prvi ili jedini autor.</p>
+
 </div>
 
 
 <div class="root" ng:controller="Registration" ng:init="$window.$root = this;">
 
 
-<div id="participant">
+<div ng:show="last_saved.$id || symposium">
+	<h2>{{registration.person.name}} {{registration.person.surname}}</h2>
+</div>
+
+
+<div id="participant" ng:show="! last_saved.$id && ! symposium">
 	<h2>Contact Information</h2>
 	<div class="labelTop">
 		<div class="input input4">First name</div>
@@ -353,7 +369,7 @@ input:focus, textarea:focus
 </div>
 
 
-<div id="submission" ng:show="registration.type != 'symposium'">
+<div id="submission" ng:show="registration.type != 'symposium' && ! last_saved.$id">
 	<div>
 		<h2>Registration Type</h2>
 		<label><input type="radio" name="registration.type" value="participant" ng:required>Attendance with no presentation</label>
@@ -366,72 +382,75 @@ input:focus, textarea:focus
 </div>
 
 	<!-- dodano za syposium participants -->
-	<div ng:show="registration.type == 'sparticipant'">
+	<div ng:show="registration.type == 'sparticipant' && ! last_saved.$id">
 		<h2>Symposia</h2>
-		<label for="registration.symposium.title">Topic:</label>
-			<input class="input1" name="registration.symposium.title" ng:required>
+		<label for="registration.sympattend">Topic:</label>
+		<input class="input1" name="registration.sympattend" ng:required>
 	</div>
 
 
 <div id="work" ng:show="registration.type != 'participant' && registration.type != 'sparticipant'">
-	<div ng:show="registration.type == 'symposium'">
+<div ng:show="registration.type == 'symposium' && ! last_saved.$id && registration.symposium.work_nr < 2">
 
-		<h2>Symposia</h2>
-		<label for="registration.symposium.title">Topic:</label>
-			<input class="input1" name="registration.symposium.title" ng:required>
-		<label>Organizer:</label>
-			<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
-			<div class="clear" ng:repeat="organizer in registration.symposium.organizers">
-			<input class="input2" name="organizer.name" ng:required>
-			<input class="input2" name="organizer.surname" ng:required>
-			<input class="input3" name="organizer.inst" >
-			<input class="input2" name="organizer.email" ng:required ng:validate="email">
-			<a href="" ng:click="registration.symposium.organizers.$remove(organizer)">X</a>
-			</div>
-		<a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a>
-		<label>Summary (2000 characters max.)</label>
-			<textarea class="input1" name="registration.symposium.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
-	</div>
+	<h2>Symposia</h2>
+	<label for="registration.symposium.title">Topic:</label>
+		<input class="input1" name="registration.symposium.title" ng:required>
+	<label>Organizer:</label>
+		<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
+		<div class="clear" ng:repeat="organizer in registration.symposium.organizers">
+		<input class="input2" name="organizer.name" ng:required>
+		<input class="input2" name="organizer.surname" ng:required>
+		<input class="input3" name="organizer.inst" >
+		<input class="input2" name="organizer.email" ng:required ng:validate="email">
+		<a href="" ng:click="registration.symposium.organizers.$remove(organizer)">X</a>
+		</div>
+	<a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a>
+	<label>Summary (2000 characters max.)</label>
+		<textarea class="input1" name="registration.symposium.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
+</div>
+
+
+<div ng:show="registration.type && ! last_saved.$id">
 
 		<div ng:show="symposium">
-			<label class="list">List of already submitted papers for symposium {{registration.symposium.title}}</label>
+			<b>Symposium:</b> {{registration.symposium.title}}
+			<blockquote>
+			<label>Submitted papers for this symposium:</label>
 			<ol>
 			<li ng:repeat="w in symposium.works">
 			<a ng:show="registration.$id != w.$id" href="#{{w.$id}}" >{{w.title}}</a>
 			<b ng:show="registration.$id == w.$id">{{w.title}}</b>
 			</li>
 			</ol>
+			</blockquote>
 		</div>
-
-  <div ng:show="registration.type">
-
-	<h2 ng:show="registration.type == 'symposium'">Symposia paper ({{registration.symposium.work_nr}})</h2>
-	<h2 ng:show="registration.type == 'lecture'">Oral Presentation Sumbission</h2>
-	<h2 ng:show="registration.type == 'poster'">Poster Presentation Sumbission</h2>
-	<h2 ng:show="registration.type == 'round'">Round Table Disscussion Sumbission</h2>
+<h2 ng:show="registration.type == 'symposium'">Add Symposia Paper ({{registration.symposium.work_nr}})</h2>
+<h2 ng:show="registration.type == 'lecture'">Oral Presentation Sumbission</h2>
+<h2 ng:show="registration.type == 'poster'">Poster Presentation Sumbission</h2>
+<h2 ng:show="registration.type == 'round'">Round Table Disscussion Sumbission</h2>
 
 
-	<label>Title:</label>
-		<input class="input1" name="registration.work.title" ng:required>
-	<label>Authors</label>
-	<div>
-		<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
-	</div>
-	<div class="clear" ng:repeat="author in registration.work.authors">
-		<input class="input2" name="author.name" ng:required>
-		<input class="input2" name="author.surname" ng:required>
-		<input class="input3" name="author.inst" >
-		<input class="input2" name="author.email" ng:required ng:validate="email">
-		<a href="" ng:click="registration.work.authors.$remove(author)">X</a>
-	</div>
-	<a class="addPerson" href="" ng:click="registration.work.authors.$add()">Add another author</a>
+<label>Title:</label>
+	<input class="input1" name="registration.work.title" ng:required>
+<label>Authors</label>
+<div>
+	<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
+</div>
+<div class="clear" ng:repeat="author in registration.work.authors">
+	<input class="input2" name="author.name" ng:required>
+	<input class="input2" name="author.surname" ng:required>
+	<input class="input3" name="author.inst" >
+	<input class="input2" name="author.email" ng:required ng:validate="email">
+	<a href="" ng:click="registration.work.authors.$remove(author)">X</a>
+</div>
+<a class="addPerson" href="" ng:click="registration.work.authors.$add()">Add another author</a>
 
 
-	<label>Abstract (2000 characters max.):</label>
-		<textarea class="input1" name="registration.work.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
+<label>Abstract (2000 characters max.):</label>
+	<textarea class="input1" name="registration.work.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
 
 
-  </div> <!-- ng:show="registration.type" -->
+</div> <!-- ng:show="registration.type" -->
 </div>
 
 <div class="button" ng:show="! last_saved.$equals(registration) && $invalidWidgets.visible() == 0">
@@ -445,30 +464,48 @@ input:focus, textarea:focus
 
 
 <div style="margin-bottom: 40px" ng:show="registration.$id && last_saved.$equals(registration)">
-	<div class="saved" ng:show="registration.type == 'participant' || registration.type == 'sparticipant'">
-		<span class="saved2">{{registration.person.name}} {{registration.person.surname}}</span> you finished your registration successfully. 
-		<span class="saved3">Registration ID: {{registration.$id}}.</span>
+<div class="saved" ng:show="registration.type == 'participant' || registration.type == 'sparticipant'">
+		<span class="saved2">Your registration has been submitted successfully!</span>
+		<br><br>
+		<span ng:show="registration.sympattend">You will participate in the symosium <b>"{{registration.sympattend}}"</b><br><br><br></span>
+		<span class="saved3">
+		Thank you. We look forward to seeing you at the conference<br><br>
+		.. Kotizacija upute ..
+		</span>
 	</div>
 
 	<div class="saved" ng:show="registration.type != 'participant' && registration.type != 'sparticipant'">
-		You finished your registration successfully.
-<!--
-		<span class="saved3">Submitted paper: <b>{{registration.work.title}}</b></span>
-		<span class="saved3">Registration ID: {{registration.$id}}.</span>
--->
+		<span class="saved2">You submitted the paper successfully! <br><br></span>
+
+		<b>Paper title</b>: {{registration.work.title}} <br><br>
+		<div ng:show="symposium">
+			<b>Symposium:</b> {{registration.symposium.title}}
+			<blockquote>
+			<label>Already submitted papers for this symposium:</label>
+			<ol>
+			<li ng:repeat="w in symposium.works">
+			<!--
+			<a ng:show="registration.$id != w.$id" href="#{{w.$id}}" >{{w.title}}</a>
+			-->
+			<span ng:show="registration.$id != w.$id">{{w.title}}</span>
+			<b ng:show="registration.$id == w.$id">{{w.title}}</b>
+			</li>
+			</ol>
+			</blockquote>
+		</div>
 	</div>
-<!--
-	Please review your data, correct and save if needed (just start typing and Save button will show automatically).
--->
-<!--	
+	<div class="button button2" ng:show="registration.$id && registration.type != 'participant' && registration.type != 'sparticipant' && last_saved.$equals(registration)">
+		You can <input type="reset" value="Submit another paper" ng:click="reset()"> or <a href="http://psihologija.ffzg.hr/drzb2011/">just leave</a> this page. <br><br> ... conference fee ... instructions ...<br><br>
+	</div>
+	<!--	
 	<div>
 	Registration ID: {{registration.$id}}. You can bookmark this page and review it later.
 	</div>
--->
-	<div class="button" ng:show="registration.$id && registration.type != 'participant' && registration.type != 'sparticipant' && last_saved.$equals(registration)">
-		<input type="reset" value="Submit another paper" ng:click="reset()">
-	</div>
-	<div class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011/">Go to conference home page</a></div>
+	-->
+
+	<!--
+	<div class=""><a href="http://psihologija.ffzg.hr/drzb2011/">Go to conference home page</a></div>
+	-->
 </div>
 <!--
 <div class="button2" ng:show="registration.$id && registration.type != 'participant' && registration.type != 'sparticipant' && last_saved.$equals(registration)">
