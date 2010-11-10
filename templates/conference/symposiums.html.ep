@@ -1,0 +1,35 @@
+<script type="text/javascript"> 
+	TestCntl.$inject = ['$xhr', '$route']; 
+
+	function TestCntl(xhr, route){ 
+
+		this.route = route; 
+		this.xhr = xhr; 
+
+		var data = {}
+		this.data = data;
+
+		this.xhr("JSON"
+			, "http://localhost:5984/conference/_design/symposium/_view/work_nr%2Ctitle?callback=JSON_CALLBACK"
+			, function(code, response){ 
+				console.log(code, response, data);
+				data.response = response;
+			}
+		); 
+
+	} 
+</script> 
+
+<div ng:controller="TestCntl"> 
+
+<div ng:repeat="s in data.response.rows">
+<h1 ng:show="s.key[1] == 1">{{s.key[0]}}</h1>
+{{s.key[1]}}. {{s.value}}
+</div>
+
+<input name=debug type=checkbox>
+<pre ng:show="debug">
+data={{data}}
+</pre>
+
+</div> 
