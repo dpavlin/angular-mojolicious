@@ -1,7 +1,7 @@
 
 if (typeof (console) === 'undefined') console = { debug: function() {} }; // mock console.debug
 
-function Registration($resource){
+function Registration($resource,$xhr){
 	this.master = {
 		person: {
 			name: '', surname: '', inst: '', email: ''
@@ -15,11 +15,11 @@ function Registration($resource){
 		symposium: { organizers: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1 }
 	};
 	this.Registration = $resource( '/data/conference/Registration/:id', { id:'' } );
-	this.Symposium = $resource( '/data/conference/Symposium/:id', { id:'' } );
 	this.reset();
 	this.$watch('$location.hashPath', this.hash_change);
+	this.$xhr = $xhr;
 }
-Registration.$inject=['$resource'];
+Registration.$inject=['$resource','$xhr'];
 
 Registration.prototype = {
 	hash_change: function() {
@@ -31,10 +31,8 @@ console.debug( 'hash_change', id, this.registration.$id );
 				this.registration = this.Registration.get({ id: id }, function(registration) {
 					self.last_saved = angular.copy(registration);
 					if ( registration.type == 'symposium' ) {
-						var s_id = registration.symposium.$id || registration.$id;
-						// first registration doesn't have symposium.$id, but we used same $id
-console.debug( 'load symposium ', s_id );
-						self.symposium = self.Symposium.get({ id: s_id });
+						//self.symposium = self.Symposium.get({ id: s_id });
+						self.load_symposium();
 					}
 				});
 			}
@@ -66,18 +64,48 @@ console.debug( 'reset', this.registration, this.$location.hashPath, last );
 			// save symposium to separate resource
 			if ( registration.type == 'symposium' ) {
 				if ( ! self.symposium ) { 
-					self.registration.symposium.$id = registration.$id; // reuse $id of first work for symposium
-					self.symposium = new self.Symposium( registration.symposium );
+					registration.symposium.$id = registration.$id; // reuse $id of first work for symposium
+					self.symposium = angular.copy( self.registration.symposium );
 					self.symposium.works = [];
 				}
 				registration.work.$id = registration.$id; // preserve $id
 				self.symposium.works[ registration.symposium.work_nr - 1 ] = registration.work;
-console.debug('save_symposium', self.symposium );
-				self.symposium.$save();
+
+				//self.symposium.$save();
+				//self.load_symposium();
 			}
 
 			self.last_saved = angular.copy(registration);
 		});
+	},
+	load_symposium: function() {
+		var self = this;
+		var s_id = self.registration.symposium.$id || self.registration.$id;
+
+		if ( s_id = self.symposium.$id ) {
+			console.debug('load_symposium ', s_id, ' allready loaded');
+			return;
+		}
+
+		self.symposium = angular.copy( self.registration.symposium );
+		self.symposium.works = [];
+		// first registration doesn't have symposium.$id, but we used same $id
+console.debug( 'load_symposium ', s_id, self.symposium );
+
+console.debug( self.$xhr );
+
+		self.$xhr("JSON"
+			, "http://localhost:5984/conference/_design/symposium/_view/works?callback=JSON_CALLBACK;key=" + s_id
+			, function(code, response){ 
+console.log('symposium/_view/works', code, response);
+				angular.foreach( response.rows, function(row) {
+					var work = row.value.work;
+					work.$id = row.value.$id; // copy $id so we can select correct one in list
+					self.symposium.works.push( work );
+				} );
+console.debug( 'symposium', self.symposium );
+			}
+		); 
 	}
 };
 
