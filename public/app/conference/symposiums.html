@@ -1,26 +1,13 @@
-<script type="text/javascript"> 
-	TestCntl.$inject = ['$xhr', '$route']; 
+<!DOCTYPE HTML>
+<html xmlns:ng="http://angularjs.org">
+<head>
+<meta charset="utf-8">
+<script src="angular.js" ng:autobind></script>
 
-	function TestCntl(xhr, route){ 
+<title>Conference registration</title>
+<script type="text/javascript" src="symposiums.js"></script> 
 
-		this.route = route; 
-		this.xhr = xhr; 
-
-		var data = {}
-		this.data = data;
-
-		this.xhr("JSON"
-			, "http://localhost:5984/conference/_design/symposium/_view/work_nr%2Ctitle?callback=JSON_CALLBACK"
-			, function(code, response){ 
-				console.log(code, response, data);
-				data.response = response;
-			}
-		); 
-
-	} 
-</script> 
-
-<div ng:controller="TestCntl"> 
+<div ng:controller="Symposiums"> 
 
 <div ng:repeat="s in data.response.rows">
 <h1 ng:show="s.key[1] == 1">{{s.key[0]}}</h1>
@@ -33,3 +20,7 @@ data={{data}}
 </pre>
 
 </div> 
+
+
+</body>
+</html>
