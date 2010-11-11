@@ -59,6 +59,9 @@ Angular examples available:
 - template/Cookbook - examples from wiki working against github version of angular
 - template/conferece - conference submission example using mojolicious REST API server
 
+	curl -X PUT http://localhost:5984/conference/_design/symposium \
+		-d @public/app/conference/_design/symposium
+
 
 Planned features:
 
