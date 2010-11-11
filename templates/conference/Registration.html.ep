@@ -464,6 +464,11 @@ hr {
 
 
 <div style="margin-bottom: 40px" ng:show="registration.$id && last_saved.$equals(registration)">
+
+<div>
+<input type="checkbox" name="last_saved.$id"> Hide submitted registration
+</div>
+
 <div class="saved" ng:show="registration.type == 'participant' || registration.type == 'sparticipant'">
 		<span class="saved2">Your registration has been submitted successfully!</span>
 		<br><br>
