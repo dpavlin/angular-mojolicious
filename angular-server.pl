@@ -162,6 +162,15 @@ get '/conference/:page' => sub {
 	$self->render( "conference/" . $self->param('page'), layout => 'angular' );
 };
 
+# /app/
+
+get '/app/:database/angular.js' => sub {
+	my $self = shift;
+	my $ANGULAR_JS = $ENV{ANGULAR_JS} || ( -e 'public/angular/build/angular.js' ? '/angular/build/angular.js' : '/angular/src/angular-bootstrap.js' );
+	warn "# $ANGULAR_JS";
+	$self->render_static( $ANGULAR_JS );
+};
+
 app->start;
 __DATA__
 
