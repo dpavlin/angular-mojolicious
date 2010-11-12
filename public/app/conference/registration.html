@@ -325,7 +325,7 @@ hr {
 		<a href="" ng:click="registration.symposium.organizers.$remove(organizer)">X</a>
 		</div>
 	<a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a>
-	<label>Summary (2000 characters max.)</label>
+	<label>Summary ({{registration.symposium.abstract.length}}/2000 characters max.)</label>
 		<textarea class="input1" name="registration.symposium.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
 </div>
 
@@ -366,7 +366,7 @@ hr {
 <a class="addPerson" href="" ng:click="registration.work.authors.$add()">Add another author</a>
 
 
-<label>Abstract (2000 characters max.):</label>
+<label>Abstract ({{registration.work.abstract.length}}/2000 characters max.):</label>
 	<textarea class="input1" name="registration.work.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
 
 
