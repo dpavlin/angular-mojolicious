@@ -17,7 +17,8 @@ using CouchDB HTTP view API
 
 http://wiki.apache.org/couchdb/HTTP_view_API
 
-to provide storage for experimenting with local datasets using angular.
+to provide storage for experimenting with local datasets using angular $resource API.
+You can also query CouchDB views $xhr("JSON", ...) in angular through angular-server.pl
 
 
 At it's current stage it provides support for angular $resource get, query and $save
@@ -58,11 +59,14 @@ Angular examples available:
 
 - template/Cookbook - examples from wiki working against github version of angular
 - template/conferece - conference submission example using mojolicious REST API server
+- public/app/conference - new application layout with latest example confernce submission
 
 	curl -X PUT http://localhost:5984/conference/_design/symposium \
 		-d @public/app/conference/_design/symposium
 
 
-Planned features:
+Roadmap:
 
-- run queries against data using REST API (currently only simple get is supported)
++ implement angular-server.pl which implements REST API supported by $resource in angular
++ persistency to local CouchDB, and use views to query data
+- tests
