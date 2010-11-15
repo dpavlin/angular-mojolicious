@@ -176,8 +176,12 @@ get '/app/:database/angular.js' => sub {
 get '/:database/_design/:design/_view/:view' => sub {
 	my $self = shift;
 	my $url = $self->param('url');
-	warn "# /couchdb $url";
-	_render_jsonp( $self, _couchdb_get( $self->param('database') . '/_design/' . $self->param('design') . '/_view/' . $self->param('view') ) );
+	my $param = $self->req->url->query->to_string;
+	warn "# /couchdb $url ", 
+	_render_jsonp( $self, _couchdb_get(
+		$self->param('database') . '/_design/' . $self->param('design') . '/_view/' . $self->param('view')
+		. ( $param ? '?'.$param : '' )
+	));
 };
 
 app->start;
