@@ -171,6 +171,15 @@ get '/app/:database/angular.js' => sub {
 	$self->render_static( $ANGULAR_JS );
 };
 
+# CouchDB proxy for _design _view
+
+get '/:database/_design/:design/_view/:view' => sub {
+	my $self = shift;
+	my $url = $self->param('url');
+	warn "# /couchdb $url";
+	_render_jsonp( $self, _couchdb_get( $self->param('database') . '/_design/' . $self->param('design') . '/_view/' . $self->param('view') ) );
+};
+
 app->start;
 __DATA__
 

@@ -10,7 +10,7 @@ function Symposiums(xhr, route){
 	this.data = data;
 
 	this.xhr("JSON"
-		, "http://localhost:5984/conference/_design/symposium/_view/work_nr%2Ctitle?callback=JSON_CALLBACK"
+		, "/conference/_design/symposium/_view/work_nr%2Ctitle?callback=JSON_CALLBACK"
 		, function(code, response){ 
 			console.log(code, response, data);
 			data.response = response;
