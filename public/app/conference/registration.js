@@ -28,12 +28,11 @@ console.debug( 'hash_change', id, this.registration.$id );
 		if ( id != this.registration.$id ) {
 			if (id) {
 				var self = this;
-				this.registration = this.Registration.get({ id: id }, function(registration) {
+				this.Registration.get({ id: id }, function(registration) {
+console.debug('registration', id, registration);
 					self.last_saved = angular.copy(registration);
-					if ( registration.type == 'symposium' ) {
-						//self.symposium = self.Symposium.get({ id: s_id });
-						self.load_symposium();
-					}
+					self.registration = registration; // needed for load_symposium below
+					self.load_symposium();
 				});
 			}
 			else this.reset();
@@ -80,9 +79,12 @@ console.debug( 'reset', this.registration, this.$location.hashPath, last );
 	},
 	load_symposium: function() {
 		var self = this;
-		var s_id = self.registration.symposium.$id || self.registration.$id;
+		if ( self.registration.type != 'symposium' ) return;
 
-		if ( s_id = self.symposium.$id ) {
+		var s_id = self.registration.$id;
+		if ( self.registration.symposium ) s_id = self.registration.symposium.$id;
+
+		if ( self.symposium && self.symposium.$id == s_id ) {
 			console.debug('load_symposium ', s_id, ' allready loaded');
 			return;
 		}
