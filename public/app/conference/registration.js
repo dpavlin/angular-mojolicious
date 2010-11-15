@@ -97,7 +97,7 @@ console.debug( 'load_symposium ', s_id, self.symposium );
 console.debug( self.$xhr );
 
 		self.$xhr("JSON"
-			, "http://localhost:5984/conference/_design/symposium/_view/works?callback=JSON_CALLBACK;key=" + s_id
+			, "/conference/_design/symposium/_view/works?callback=JSON_CALLBACK;key=" + s_id
 			, function(code, response){ 
 console.log('symposium/_view/works', code, response);
 				angular.foreach( response.rows, function(row) {
