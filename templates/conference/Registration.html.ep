@@ -328,7 +328,7 @@ hr {
 
 
 <div ng:show="! registration.$id && ! symposium.$id">
-Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači, moreju se registrirati kroz sustav elektroničke prijave.
+Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači, moraju se registrirati kroz sustav elektroničke prijave.
 
 <p>Sažetak izlaganja/postera prijavljuje samo prvi autor, odnosno onaj autor koji će rad izložiti. Ostali suautori ne trebaju prijaviti sažetak, nego se samo registrirati.</p>
 
@@ -541,19 +541,35 @@ Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači,
 
 <label>Title:</label>
 	<input class="input1" name="registration.work.title" ng:required>
+<div ng:show="registration.type != 'round'">
 <label>Authors</label>
-<div>
+	<div>
+		<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
+	</div>
+	<div class="clear" ng:repeat="author in registration.work.authors">
+		<input class="input2" name="author.name" ng:required>
+		<input class="input2" name="author.surname" ng:required>
+		<input class="input3" name="author.inst" >
+		<input class="input2" name="author.email" ng:required ng:validate="email">
+		<a href="" ng:click="registration.work.authors.$remove(author)">X</a>
+	</div>
+	<a class="addPerson" href="" ng:click="registration.work.authors.$add()">Add another author</a>
+</div>
+<div ng:show="registration.type == 'round'">
+<label>Organizer:</label>
+	<!--
 	<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
+	-->
+	<div class="inputOrg">{{registration.person.name}} {{registration.person.surname}}, {{registration.person.inst}}, {{registration.person.email}}</div>
+	<div class="clear" ng:repeat="organizer in registration.organizers">
+	<input class="input2" name="organizer.name" ng:required>
+	<input class="input2" name="organizer.surname" ng:required>
+	<input class="input3" name="organizer.inst" >
+	<input class="input2" name="organizer.email" ng:required ng:validate="email">
+	<a href="" ng:click="registration.organizers.$remove(organizer)">X</a>
+	</div>
+	<div class="clear"><a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a></div>
 </div>
-<div class="clear" ng:repeat="author in registration.work.authors">
-	<input class="input2" name="author.name" ng:required>
-	<input class="input2" name="author.surname" ng:required>
-	<input class="input3" name="author.inst" >
-	<input class="input2" name="author.email" ng:required ng:validate="email">
-	<a href="" ng:click="registration.work.authors.$remove(author)">X</a>
-</div>
-<a class="addPerson" href="" ng:click="registration.work.authors.$add()">Add another author</a>
-
 
 <label>Abstract (2000 characters max.):</label>
 	<textarea class="input1" name="registration.work.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
