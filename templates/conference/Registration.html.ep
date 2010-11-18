@@ -11,7 +11,8 @@
 			work: {
 				title: '',
 				abstract: '',
-				authors:[ { name:'', surname:'', inst:'', email:'' } ]
+				authors:[ { name:'', surname:'', inst:'', email:'' } ],
+				organizers: []
 			},
 			symposium: { 
 				//organizers: [ {name:'', surname:'', inst:'', email:'' } ], 
@@ -223,6 +224,9 @@ input:focus, textarea:focus
 	border: 1px solid #DE7F61;
 }
 
+.ng-exception {
+	border: 0;
+}
 
 
 #work, #submission {
@@ -328,17 +332,29 @@ hr {
 
 
 <div ng:show="! registration.$id && ! symposium.$id">
-Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači, moraju se registrirati kroz sustav elektroničke prijave.
+<p>
+All participants (presenters, coauthors and visitors) have to register via on-line register system.
+</p>
 
-<p>Sažetak izlaganja/postera prijavljuje samo prvi autor, odnosno onaj autor koji će rad izložiti. Ostali suautori ne trebaju prijaviti sažetak, nego se samo registrirati.</p>
+<p>
+Abstract of oral presentation/poster has to be submitted only by first author or by presenting coauthor. Other coauthors do not have to submit the abstract, only register.
+</p>
 
-<p>Organizatori simpozija prijavljuju i sažetak simpozija i sažetak svakog pripadajućeg rada (mora ih biti četiri). Autori pojedinih radova unutar simpozija NE prijavljuju pojedinačno svoje sažetke, nego se u sustav registraju kao sudionici simpozija/symposium participant.</p>
+<p>
+The organizers of symposia have to submit not only the symposium’s abstract, but the abstracts of every single paper within it (it has to be four of them). Authors of papers within symposium DO NOT submit their abstracts on their own, but register as symposium participants.
+</p>
 
-<p>Organizatori okruglog stola prijavljuju samo sažetak okruglog stola, a sudionici se registriraju kao sudionici okruglog stola/round table participant.</p>
+<p>
+The organizers of round tables have to submit only abstract of the round table, while its participants have to register as round table participants.
+</p>
 
-<p>Duljina sažetka ne može prelaziti 2000 znakova.</p>
+<p>
+The abstracts length should be between 1800 and 2000 characters (space included). 
+</p>
 
-<p>Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može biti prvi ili jedini autor ili autor koji će izlagati.</p>
+<p>
+One person can be author of maximum three papers, only one of them as first/presenting/single author.
+</p>
 
 
 
@@ -358,11 +374,13 @@ Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači,
 	<label>Institution: {{registration.person.inst}}</label>
 	<label>Address: {{registration.person.address1}}, {{registration.person.city}}, {{registration.person.zip}}, {{registration.person.country}}</label>
 	-->
-	<label ng:show="registration.type == 'participant'">Registration only</label>
-	<label ng:show="registration.type == 'sparticipant'">Symposium participant</label>
-	<label ng:show="registration.type == 'round'">Round table organizer</label>
-	<label ng:show="registration.type == 'lecture'">Oral presentation</label>
-	<label ng:show="registration.type == 'poster'">Poster presentation</label>
+	<label ng:show="registration.type == 'participant'">Registration type: Registration only</label>
+	<label ng:show="registration.type == 'accomp'">Registration type: Accompanying person</label>
+	<label ng:show="registration.type == 'student'">Registration type: Student</label>
+	<label ng:show="registration.type == 'sparticipant'">Registration type: Symposium participant<span ng:show="registration.student == true">, student</span></label>
+	<label ng:show="registration.type == 'round'">Registration type: Round table organizer<span ng:show="registration.student == true">, student</span><p><b>Round table topic:</b> {{registration.work.title}}</label>
+	<label ng:show="registration.type == 'lecture'">Registration type: Oral presentation<span ng:show="registration.student == true">, student</span></label>
+	<label ng:show="registration.type == 'poster'">Registration type: Poster presentation<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'poster' || registration.type == 'lecture'"><b>Title: </b>{{registration.work.title}}</label>
 	<div ng:show="registration.type == 'symposium'">
 		<p>Symposium organizer</p>
@@ -415,13 +433,15 @@ Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači,
 <div id="submission" ng:show="! registration.$id && ! symposium.$id">
 	<div>
 		<h2>Registration Type</h2>
-		<label><input type="radio" name="registration.type" value="participant" ng:required>Registration only (no paper)</label>
-		<label><input type="radio" name="registration.type" value="sparticipant" ng:required>Symposium/round table contributor</label>
+		<label><input type="radio" name="registration.type" value="participant" ng:required>Registration only</label>
+		<label><input type="radio" name="registration.type" value="sparticipant" ng:required>Symposium/round table participant</label>
 		<label><input type="radio" name="registration.type" value="symposium" ng:required>Symposium organizer</label>
 		<label><input type="radio" name="registration.type" value="round" ng:required>Round table organizer</label>
 		<label><input type="radio" name="registration.type" value="lecture" ng:required>Oral presentation</label>
 		<label><input type="radio" name="registration.type" value="poster" ng:required>Poster presentation</label>
 	</div>
+		<label><input type="radio" name="registration.type" value="student" ng:required ng:change="registration.dinner = 'no'">Student registration only</label>
+		<label><input type="radio" name="registration.type" value="accomp" ng:required>Accompanying person</label>
 </div>
 
 <div id="participant" ng:show="! registration.$id && ! symposium.$id">
@@ -433,7 +453,7 @@ Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači,
 		<div class="input input4">Surname</div>
 	</div>
 	<div style="clear: both">
-		<input class="input4" name="registration.person.name" ng:required ng:change="registration.symposium.organizers[0].name = registration.person.name">
+		<input class="input4" name="registration.person.name" ng:required>
 		<input class="input4" name="registration.person.surname" ng:required>
 	</div>
 	<div class="labelTop">
@@ -466,19 +486,31 @@ Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači,
 		<input class="input4" name="registration.person.email" ng:validate="email" ng:required>
 		<input class="input4" name="registration.person.phone">
 	</div>
+	<div ng:show="registration.type == 'lecture' || registration.type == 'poster' || registration.type == 'sparticipant' || registration.type == 'symposium' || registration.type == 'round'">
+		<br><input type="checkbox" name="registration.student">Check this box if you are student.
+	</div>
+	<div style="clear: both; margin-top: 20px;">
+		Will you join us for the welcome reception on Thursday at 20 hrs?<br/>
+		<input type="radio" name="registration.reception" value="yes">Yes
+		<input type="radio" name="registration.reception" value="no">No
+	</div>
+	<div ng:show="registration.type != 'student'" style="clear: both; margin-top: 20px;">
+		Will you join us for the conference dinner on Friday at 20 hrs? (Dinner is included in the regostration fee.)<br/>
+		<input type="radio" name="registration.dinner" value="yes">Yes
+		<input type="radio" name="registration.dinner" value="no">No
+	</div>
+	
 </div>
 
 
-
-	<!-- dodano za syposium participants -->
+	
 	<div ng:show="registration.type == 'sparticipant' && ! last_saved.$id">
-		<h2>Symposium</h2>
-		<label for="registration.sympattend">Topic:</label>
+		<h2>Symposium/round table topic</h2>
 		<input class="input1" name="registration.sympattend" ng:required>
 	</div>
 
 
-<div id="work" ng:show="registration.type != 'participant' && registration.type != 'sparticipant'">
+<div id="work" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.type != 'student' && registration.type != 'accomp'">
 <div ng:show="registration.type == 'symposium' && registration.symposium.work_nr < 4 && ! symposium.$id">
 
 	<h2>Symposium</h2>
@@ -488,7 +520,7 @@ Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači,
 		<!--
 		<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
 		-->
-		<div class="inputOrg">{{registration.person.name}} {{registration.person.surname}}, {{registration.person.inst}}, {{registration.person.email}}</div>
+		<div class="inputOrg"><span ng:show="registration.person.name">{{registration.person.name}} {{registration.person.surname}}</span><span ng:show="registration.person.inst">, {{registration.person.inst}}</span><span ng:show="registration.person.email">, {{registration.person.email}}</span></div>
 		<div class="clear" ng:repeat="organizer in registration.symposium.organizers">
 		<input class="input2" name="organizer.name" ng:required>
 		<input class="input2" name="organizer.surname" ng:required>
@@ -560,15 +592,15 @@ Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači,
 	<!--
 	<div class="input input2">First name</div><div class="input input2">Surname</div><div class="input input3">Institution</div><div class="input input2">E-mail</div>
 	-->
-	<div class="inputOrg">{{registration.person.name}} {{registration.person.surname}}, {{registration.person.inst}}, {{registration.person.email}}</div>
-	<div class="clear" ng:repeat="organizer in registration.organizers">
-	<input class="input2" name="organizer.name" ng:required>
-	<input class="input2" name="organizer.surname" ng:required>
-	<input class="input3" name="organizer.inst" >
-	<input class="input2" name="organizer.email" ng:required ng:validate="email">
-	<a href="" ng:click="registration.organizers.$remove(organizer)">X</a>
+		<div class="inputOrg"><span ng:show="registration.person.name">{{registration.person.name}} {{registration.person.surname}}</span><span ng:show="registration.person.inst">, {{registration.person.inst}}</span><span ng:show="registration.person.email">, {{registration.person.email}}</span></div>
+	<div class="clear" ng:repeat="organizer in registration.work.organizers">
+		<input class="input2" name="organizer.name" ng:required>
+		<input class="input2" name="organizer.surname" ng:required>
+		<input class="input3" name="organizer.inst" >
+		<input class="input2" name="organizer.email" ng:required ng:validate="email">
+		<a href="" ng:click="registration.work.organizers.$remove(organizer)">X</a>
 	</div>
-	<div class="clear"><a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a></div>
+	<div class="clear"><a class="addPerson" href="" ng:click="registration.work.organizers.$add()">Add another organizer</a></div>
 </div>
 
 <label>Abstract (2000 characters max.):</label>
@@ -578,36 +610,46 @@ Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači,
 </div> <!-- ng:show="registration.type" -->
 </div>
 
-<div class="button" ng:show="! last_saved.$equals(registration) && $invalidWidgets.visible() == 0">
+<div class="button" ng:show="! last_saved.$equals(registration) && $invalidWidgets.visible() == 0 && (symposium.$id || (registration.reception != null && registration.dinner != null))">
 <input type="submit" value="Save" ng:click="save();" ng:show="! last_saved.$equals(registration) && $invalidWidgets.visible() == 0" >
 </div>
 
-<div ng:show="$invalidWidgets.visible() &gt; 0" style="color:red; margin-top: 20px">Please fill all required fields correctly ({{$invalidWidgets.visible()}} fields left). Fields with orange border call for your attention.
+<div ng:show="$invalidWidgets.visible() &gt; 0 || (! symposium.$id && (registration.dinner == null || registration.reception == null))" style="color:red; margin-top: 20px">Please fill all required fields correctly. 
+<span ng:show="$invalidWidgets.visible() &gt; 0">Fields with orange border call for your attention. <!-- - {{$invalidWidgets.visible()}} left. --></span>
+<span ng:show="(registration.reception == null || registration.dinner == null) && ! symposium.$id && registration.type != 'student'">
+Decide about going to welcome reception and dinner.</span>
+<span ng:show="(registration.reception == null || registration.dinner == null) && ! symposium.$id && registration.type == 'student'">
+Decide about going to welcome reception.</span>
 </div>
 
 
 <div style="margin-bottom: 40px" ng:show="registration.$id && last_saved.$equals(registration)">
 
-	<div class="saved" ng:show="registration.type == 'participant' || registration.type == 'sparticipant' && ! symposium">
+	<div class="saved" ng:show="registration.type == 'participant' || registration.type == 'sparticipant' || registration.type == 'student' || registration.type == 'accomp' && ! symposium">
 		<span class="saved2">Thank you! Your registration has been submitted successfully!</span>
-		<div class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011-eng/participation/fee">Please read conference fee payment instructions</a></div>
+		<div class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011-eng/registration/fee">Please read registration fee payment instructions</a></div>
+		<div class="gohome" ng:show="registration.type == 'student' || registration.student == true">
+			You must provide a proof of your student status by e-mail sent to <a href="mailto:drzb@ffzg.hr">drzb@ffzg.hr</a>
+		</div>
 		<br><br>
 	</div>
-	<div class="saved" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.symposium.work_nr == 4 && last_saved.$id">
+	<div class="saved" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.type != 'student' && registration.type != 'accomp' && registration.symposium.work_nr == 4 && last_saved.$id">
 		<span class="saved2">Thank you. Your proposal has been submitted successfully! <br></span>
-		<span class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011-eng/participation/fee">Please read conference fee payment instructions</a></span>
+		<span class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011-eng/registration/fee">Please read conference fee payment instructions</a></span>
 		
 	</div>
-	<div class="button button2" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && last_saved.$id && ! symposium">
+	<div class="button button2" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.type != 'student' && registration.type != 'accomp' && last_saved.$id && ! symposium">
 		<span class="saved2">Thank you. Your proposal has been submitted successfully! <br></span>
-		<span class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011-eng/participation/fee">Please read conference fee payment instructions</a></span>
+		<div class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011-eng/registration/fee">Please read registration fee payment instructions</a></div>
+		<div class="gohome" ng:show="registration.type == 'student' || registration.student == true">
+			You must provide a proof of your student status by e-mail sent to <a href="mailto:drzb@ffzg.hr">drzb@ffzg.hr</a>
 		<br>
 	</div>
 	
-	<div class="button button2" ng:show="last_saved.$id && symposium && registration.symposium.work_nr < 4">
-		<input type="reset" value="Submit aanother paper" ng:click="reset()"> 
-	</div>
 </div>
+	<div class="button button2" ng:show="last_saved.$id && symposium.$id && registration.symposium.work_nr < 4">
+		<input type="reset" value="Submit another paper" ng:click="reset()"> 
+	</div>
 <!--
 <div class="button2" ng:show="registration.$id && registration.type != 'participant' && registration.type != 'sparticipant' && last_saved.$equals(registration)">
 	<input type="reset" value="Submit another paper" ng:click="reset()">
@@ -615,14 +657,12 @@ Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači,
 </div>
 -->
 
-<div class="footer"></div>
-
+</div>
 <!--
 <div ng:show="registration.$id">
 Permalink to <a href="#{{registration.$id}}">DRZB2011 registration</a> which you can bookmark
 </div>
 -->
-
 <input type=checkbox name=debug style="float: right; clear: both">
 <pre ng:show="debug">
 
