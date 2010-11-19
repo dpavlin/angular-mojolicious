@@ -14,10 +14,11 @@ function Registration($resource,$xhr){
 		},
 		symposium: { organizers: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1 }
 	};
-	this.Registration = $resource( '/data/conference/Registration/:id', { id:'' } );
+	this.Registration = $resource( '/data/:database/Registration/:id', { id:'', database: database } );
 	this.reset();
 	this.$watch('$location.hashPath', this.hash_change);
 	this.$xhr = $xhr;
+	console.debug( 'database', database );
 }
 Registration.$inject=['$resource','$xhr'];
 
