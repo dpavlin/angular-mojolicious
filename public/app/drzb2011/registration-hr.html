@@ -222,7 +222,7 @@ Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može
 		<a href="" ng:click="registration.symposium.organizers.$remove(organizer)">X</a>
 		</div>
 		<div class="clear"><a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Dodaj drugog organizatora</a></div>
-	<label>Sažetak (uneseno <span class="lengthCount">{{registration.symposium.abstract.length}}</span> / maks. 2000 znakova)</label>
+	<label>Sažetak (<span class="lengthCount">{{registration.symposium.abstract.length}}</span> / maks. 2000 znakova)</label>
 		<textarea class="input1" name="registration.symposium.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
 		
 		<div ng:show="symposium">

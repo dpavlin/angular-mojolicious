@@ -222,7 +222,7 @@ One person can be author of maximum three papers, only one of them as first/pres
 		<a href="" ng:click="registration.symposium.organizers.$remove(organizer)">X</a>
 		</div>
 		<div class="clear"><a class="addPerson" href="" ng:click="registration.symposium.organizers.$add()">Add another organizer</a></div>
-	<label>Summary (2000 characters max.)</label>
+	<label>Summary (<span class="lengthCount">{{registration.symposium.abstract.length}}</span> / max. 2000 characters)</label>
 		<textarea class="input1" name="registration.symposium.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
 		
 		<div ng:show="symposium">
@@ -296,7 +296,7 @@ One person can be author of maximum three papers, only one of them as first/pres
 	<div class="clear"><a class="addPerson" href="" ng:click="registration.work.organizers.$add()">Add another organizer</a></div>
 </div>
 
-<label>Abstract (2000 characters max.):</label>
+<label>Abstract (<span class="lengthCount">{{registration.work.abstract.length}}</span> / max. 2000 characters)</label>
 	<textarea class="input1" name="registration.work.abstract" rows="10" ng:validate="max_length:2000" ng:required></textarea>
 
 

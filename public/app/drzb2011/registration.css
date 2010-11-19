@@ -220,4 +220,6 @@ input:focus, textarea:focus
 hr {
 	border: 1px solid #ccc;
 }
-
+.lengthCount {
+	color:red;
+}
