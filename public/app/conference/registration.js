@@ -10,9 +10,13 @@ function Registration($resource,$xhr){
 		work: {
 			title: '',
 			abstract: '',
-			authors:[ { name:'', surname:'', inst:'', email:'' } ]
+			authors:[ { name:'', surname:'', inst:'', email:'' } ],
+			organizers: []
 		},
-		symposium: { organizers: [ {name:'', surname:'', inst:'', email:'' } ], work_nr: 1 }
+		symposium: { 
+			organizers: [], 
+			work_nr: 1 
+		}
 	};
 	this.Registration = $resource( '/data/:database/Registration/:id', { id:'', database: database } );
 	this.reset();
