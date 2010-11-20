@@ -14,9 +14,64 @@
 </head>
 <body>
 
+<div id="wrapper">
+    <div id="header-eng">
+        <a href="http://psihologija.ffzg.hr/drzb2011-eng"><img src="http://psihologija.ffzg.hr/uploads/qS/LE/qSLEDLKdPrP88dVyNI542g/header-eng2.jpg" alt="Dani Ramira i Zorana Bujasa" class="float_left" /></a>
+    </div>
 
+    <div id="mainNav">
+<div id="navigation">
+<ul>
+<li class="level"><a href="http://psihologija.ffzg.hr/drzb2011-eng">Home</a></li>
+	<li>
+	<a class="level4" href="http://psihologija.ffzg.hr/drzb2011-eng/registration">Registration</a>
 
-<h1>Registration and Proposal Submission</h1>
+	<ul>
+
+	<li>
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011-eng/registration/types">Forms of participation</a>
+
+	<li>
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011-eng/registration/fee">Registration fee</a>
+	<li>
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011-eng/registration/points">Points</a>
+
+   </ul></li>
+
+	<li>
+	<a class="level4" href="http://psihologija.ffzg.hr/drzb2011-eng/submission">Proposal Submission</a>
+	<ul>
+
+	<li>
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011-eng/submission/abstracts">Abstract preparation</a>
+	<li>
+
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011-eng/submission/form">Submission form</a>
+
+   </ul></li>
+	<li>
+		<a class="level4" href="http://psihologija.ffzg.hr/drzb2011-eng/program">Program</a>
+	<li>
+		<a class="level4" href="http://psihologija.ffzg.hr/drzb2011-eng/organisation">Organisation</a>
+	<li>
+		<a target="_blank" class="level4" href="http://psihologija.ffzg.hr/drzb2011-eng/accommodation">Accomodation</a>
+</ul>
+</div>
+
+    </div>
+
+    <div id="mainNav_right">
+        <ul>
+            <li><a href="http://psihologija.ffzg.hr/drzb2011">Hrvatski</a></li>
+            <li><a href="http://psihologija.ffzg.hr/drzb2011-eng" class="active">English</a></li>
+        </ul>
+    </div>
+ 
+</div>
+
+<div class="title">
+<h1>Registration and proposal submissio</h1>
+</div>
 
 
 
@@ -24,7 +79,7 @@
 <div class="root" ng:controller="Registration" ng:init="$window.$root = this;">
 
 
-<div ng:show="! registration.$id && ! symposium.$id">
+<div style="clear: both; padding-top: 10px;" ng:show="! registration.$id && ! symposium.$id">
 <p>
 All participants (presenters, coauthors and visitors) have to register via on-line register system.
 </p>
@@ -61,7 +116,7 @@ One person can be author of maximum three papers, only one of them as first/pres
 
 
 </div>
-<div ng:show="registration.$id || symposium">
+<div ng:show="registration.$id || symposium" style="padding-top: 40px">
 	<h2>{{registration.person.name}} {{registration.person.surname}}</h2>
 	<!--
 	<label>Institution: {{registration.person.inst}}</label>
@@ -71,10 +126,10 @@ One person can be author of maximum three papers, only one of them as first/pres
 	<label ng:show="registration.type == 'accomp'">Registration type: Accompanying person</label>
 	<label ng:show="registration.type == 'student'">Registration type: Student</label>
 	<label ng:show="registration.type == 'sparticipant'">Registration type: Symposium participant<span ng:show="registration.student == true">, student</span></label>
-	<label ng:show="registration.type == 'round'">Registration type: Round table organizer<span ng:show="registration.student == true">, student</span><p><b>Round table topic:</b> {{registration.work.title}}</label>
+	<label ng:show="registration.type == 'round'">Registration type: Round table organizer<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'lecture'">Registration type: Oral presentation<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'poster'">Registration type: Poster presentation<span ng:show="registration.student == true">, student</span></label>
-	<label ng:show="registration.type == 'poster' || registration.type == 'lecture'"><b>Title: </b>{{registration.work.title}}</label>
+	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Title: </b>{{registration.work.title}}</label>
 	<div ng:show="registration.type == 'symposium'">
 		<p>Symposium organizer</p>
 		<label><b>Symposium topic: </b><i>{{registration.symposium.title}}</i></label>
@@ -351,11 +406,20 @@ Decide about going to welcome reception.</span>
 -->
 
 </div>
+<div id="footer">
+        Odsjek za psihologiju, Filozofski fakultet Sveučilišta u Zagrebu, Ivana Lučića 3, 10000 Zagreb ; tel. 01/6120 215 ; fax. 01/6120 037
+        <div id="go_to_top"><a href="#"></a></div>
+   <p id="foot">
+        <a href="http://psihologija.ffzg.hr" target="_blank">http://psihologija.ffzg.hr</a>
+    </p> 
+</div>
 <!--
 <div ng:show="registration.$id">
 Permalink to <a href="#{{registration.$id}}">DRZB2011 registration</a> which you can bookmark
 </div>
 -->
+
+<div style="clear: both">
 <input type=checkbox name=debug style="float: right; clear: both">
 <pre ng:show="debug">
 
@@ -372,7 +436,7 @@ symposium = {{symposium}}
 $id={{$id}}
 registration.$id={{registration.$id}}
 </pre>
-
+</div>
 
 </body>
 </html>
