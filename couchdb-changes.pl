@@ -9,8 +9,6 @@ use lib 'common/mojo/lib';
 
 use Mojo::Client;
 use Mojo::JSON;
-use Data::Dump qw(dump);
-use JSON::XS;
 
 my $url = 'http://localhost:5984/monitor/_changes?feed=continuous;include_docs=true;since=';
 my $seq = 0;
@@ -51,10 +49,10 @@ while( ! $error ) {
 				my $rev = $data->{changes}->[0]->{rev} || warn "no rev?";
 				   $seq = $data->{seq} || warn "no seq?";
 
-				warn "# ",dump( $data ); # FIXME custom code here
+				warn "# doc ", $json->encode( $data->{doc} ); # FIXME custom code here
 
 			} else {
-				warn "UNKNOWN", dump($data);
+				warn "UNKNOWN", $json->encode($data);
 			}
 
 		}
@@ -64,4 +62,4 @@ while( ! $error ) {
 
 }
 
-die dump($error) if $error;
+die "ERROR ", $json->encode($error) if $error;
