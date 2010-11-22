@@ -14,7 +14,6 @@ use JSON::XS;
 
 my $url = 'http://localhost:5984/monitor/_changes?feed=continuous;include_docs=true;since=';
 my $seq = 0;
-our $last_id_rev = '';
 
 my $client = Mojo::Client->new;
 my $json   = Mojo::JSON->new;
@@ -52,12 +51,7 @@ while( ! $error ) {
 				my $rev = $data->{changes}->[0]->{rev} || warn "no rev?";
 				   $seq = $data->{seq} || warn "no seq?";
 
-				if ( $last_id_rev eq "$id $rev" ) {
-					warn "# duplicate $last_id_rev\n";
-				} else {
-					$last_id_rev = "$id $rev";
-					warn "# ",dump( $data );
-				}
+				warn "# ",dump( $data ); # FIXME custom code here
 
 			} else {
 				warn "UNKNOWN", dump($data);
