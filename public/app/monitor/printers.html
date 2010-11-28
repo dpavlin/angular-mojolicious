@@ -61,7 +61,7 @@ show trays
 
 <ul>
 <li ng:repeat="printer in data">
-<tt>{{printer._key}}</tt>
+<a href="http://{{printer._key}}" target="{{printer._key}}"><tt>{{printer._key}}</tt></a>
 {{printer.info}}
 
 <div class=message ng:repeat="m in printer.message">{{m}}</div>
