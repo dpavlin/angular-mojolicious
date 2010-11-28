@@ -222,7 +222,9 @@ get '/json/:database/:entity' => sub {
 		local $/ = undef;
 		my $str = <$fh>;
 		warn "# $path $str";
-		push @$docs, Mojo::JSON->new->decode( $str );
+		my $data = Mojo::JSON->new->decode( $str );
+		$data->{_key} = $1 if $path =~ m{/([^/]+$)};
+		push @$docs, $data;
 	}
 
 	_render_jsonp( $self, $docs )
