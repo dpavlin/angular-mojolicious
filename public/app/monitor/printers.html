@@ -24,13 +24,70 @@ function Printers(xhr){
 
 <title>Printer overview</title>
 
+<style>
+.message {
+	font-size: 80%;
+	font-family: monospace;
+	background: #ffe;
+}
+
+.p0 { color: #800 }
+.p1 { color: #810 }
+.p2 { color: #820 }
+.p3 { color: #840 }
+.p4 { color: #860 }
+.p5 { color: #880 }
+.p6 { color: #680 }
+.p7 { color: #480 }
+.p8 { color: #280 }
+.p9 { color: #180 }
+.p10{ color: #080 }
+</style>
+
 </head>
 <body>
 
 <div ng:controller="Printers"> 
 
+<label>
+<input type=checkbox name=show_consumable>
+show consumable
+</label>
+
+<label>
+<input type=checkbox name=show_trays>
+show trays
+</label>
+
 <ul>
-<li ng:repeat
+<li ng:repeat="printer in data">
+<tt>{{printer._key}}</tt>
+{{printer.info}}
+
+<div class=message ng:repeat="m in printer.message">{{m}}</div>
+
+<ul ng:show="show_consumable">
+<b>Consumable</b>
+<li ng:repeat="c in printer.consumable">
+{{c.name}}
+<tt ng:class="'p'+((c.curr * 10 + 0.0001)/ c.max).toFixed(0)">
+{{ ((c.curr * 100 + 0.0001)/ c.max).toFixed(1) }}%
+</tt>
+</li>
+</ul>
+
+<ul ng:show="show_trays">
+<b>Trays</b>
+<li ng:repeat="t in printer.tray">
+{{t.dim_x}}*{{t.dim_y}}
+<tt ng:class="'p'+((t.capacity * 10 + 0.0001)/ t.max).toFixed(0)">
+{{t.capacity}}/{{t.max}}
+</tt>
+</li>
+</ul>
+
+</li>
+</ul>
 
 <input name=debug type=checkbox>
 <pre ng:show="debug">
