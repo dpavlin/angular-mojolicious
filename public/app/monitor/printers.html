@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:ng="http://angularjs.org">
+<head>
+<meta charset="utf-8">
+<script src="angular.js" ng:autobind></script>
+
+<script>
+Printers.$inject = ['$xhr']; 
+
+function Printers(xhr){ 
+	this.xhr = xhr; 
+	var self = this;
+	this.xhr("JSON"
+		, "/json/monitor/printers?callback=JSON_CALLBACK"
+		, function(code, response){ 
+			console.log('xhr JSON', code, response);
+			self.data = response;
+		}
+	); 
+
+} 
+
+</script>
+
+<title>Printer overview</title>
+
+</head>
+<body>
+
+<div ng:controller="Printers"> 
+
+<ul>
+<li ng:repeat
+
+<input name=debug type=checkbox>
+<pre ng:show="debug">
+data={{data}}
+</pre>
+
+</div>
+
+
+</body>
+</html>
