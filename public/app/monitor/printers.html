@@ -50,13 +50,18 @@ function Printers(xhr){
 <div ng:controller="Printers"> 
 
 <label>
+<input type=checkbox name=show_message>
+message
+</label>
+
+<label>
 <input type=checkbox name=show_consumable>
-show consumable
+consumable
 </label>
 
 <label>
 <input type=checkbox name=show_trays>
-show trays
+trays
 </label>
 
 <ul>
@@ -64,7 +69,7 @@ show trays
 <a href="http://{{printer._key}}" target="{{printer._key}}"><tt>{{printer._key}}</tt></a>
 {{printer.info}}
 
-<div class=message ng:repeat="m in printer.message">{{m}}</div>
+<div class=message ng:show="show_message" ng:repeat="m in printer.message">{{m}}</div>
 
 <ul ng:show="show_consumable">
 <b>Consumable</b>
