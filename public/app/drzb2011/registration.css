@@ -386,6 +386,24 @@ input:focus, textarea:focus
 	background: url(http://mjesec.ffzg.hr/drzb2011/images/footer_bg.jpg) repeat-x;
 	clear: both;
 }
+	
+#foot a
+{
+	position: relative;
+	top: 12px;
+	margin-bottom: 20px;
+	font: 12px arial;
+	color: #374e5a;
+	text-align: center;
+	text-decoration: none;
+}
+
+#foot a:hover
+{
+	color: #374e5a;
+	text-decoration: underline;
+}
+
 
 hr {
 	border: 1px solid #ccc;
