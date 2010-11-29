@@ -23,6 +23,11 @@ sub save_json {
 	warn "# $path ", -s $path, " bytes\n";
 }
 
+sub iso_datetime {
+	my ($ss,$mm,$hh,$d,$m,$y) = localtime(time);
+	return sprintf "%04d-%02d-%02dT%02d:%02d:%02d", $y+1900, $m, $d, $hh, $mm, $ss;
+}
+
 my $debug = $ENV{DEBUG} || 0; 
 
 my $community = 'public';
@@ -140,6 +145,8 @@ foreach my $host ( $resp->hosts ) {
 		delete $status->{$group};
 	}
 
+	$status->{ip} = $host->hostname;
+	$status->{date} = iso_datetime;
 	print "$host = ",dump($status);
 	save_json $host => $status;
 	$collected->{$host} = $status;
