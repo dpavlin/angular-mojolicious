@@ -28,6 +28,9 @@ sub iso_datetime {
 	return sprintf "%04d-%02d-%02dT%02d:%02d:%02d", $y+1900, $m, $d, $hh, $mm, $ss;
 }
 
+my $log_path = join('.', $dir, (split(/T/,iso_datetime,2))[0], 'json');
+open(my $log, '>>', $log_path) || die "$log_path: $!";
+
 my $debug = $ENV{DEBUG} || 0; 
 
 my $community = 'public';
@@ -150,5 +153,9 @@ foreach my $host ( $resp->hosts ) {
 	print "$host = ",dump($status);
 	save_json $host => $status;
 	$collected->{$host} = $status;
+
+	print $log encode_json($status),"\n";
 }
 
+close($log);
+warn "# log $log_path ", -s $log_path, " bytes\n";
