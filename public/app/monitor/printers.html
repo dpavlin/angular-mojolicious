@@ -64,10 +64,25 @@ consumable
 trays
 </label>
 
+<label>
+<input type=checkbox name=show_pages>
+pages
+</label>
+
+<label>
+<input type=checkbox name=show_info>
+info
+</label>
+
 <ul>
 <li ng:repeat="printer in data">
 <a href="http://{{printer._key}}" target="{{printer._key}}"><tt>{{printer._key}}</tt></a>
-{{printer.info}}
+
+{{printer.hostname}}
+
+<tt ng:show="show_pages">{{printer.pages}}</tt>
+
+<span ng:show="show_info">{{printer.info}}</span>
 
 <div class=message ng:show="show_message" ng:repeat="m in printer.message">{{m}}</div>
 
