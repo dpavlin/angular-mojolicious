@@ -74,40 +74,36 @@ pages
 info
 </label>
 
-<ul>
-<li ng:repeat="printer in data">
-<a href="http://{{printer._key}}" target="{{printer._key}}"><tt>{{printer._key}}</tt></a>
+<table>
+<tr ng:repeat="printer in data">
+<td><a href="http://{{printer._key}}" target="{{printer._key}}"><tt>{{printer._key}}</tt></a></td>
+<td>{{printer.hostname}}</td>
 
-{{printer.hostname}}
+<td><div class=message ng:show="show_message" ng:repeat="m in printer.message">{{m}}</div></td>
 
-<tt ng:show="show_pages">{{printer.pages}}</tt>
+<td ng:show="show_consumable">
+	<table>
+	<tr ng:repeat="c in printer.consumable">
+	<td align="right" ng:class="'p'+((c.curr * 10 + 0.0001)/ c.max).toFixed(0)">{{ ((c.curr * 100 + 0.0001)/ c.max).toFixed(1) }}%</td>
+	<td>{{c.name}}</td>
+	</tr>
+	</table>
+</td>
 
-<span ng:show="show_info">{{printer.info}}</span>
+<td ng:show="show_trays">
+	<table>
+	<tr ng:repeat="t in printer.tray">
+	<td align="right" ng:class="'p'+((t.capacity * 10 + 0.0001)/ t.max).toFixed(0)">{{t.capacity}}/{{t.max}}</td>
+	<td>{{t.dim_x}}*{{t.dim_y}}</td>
+	</tr>
+	</table>
+</td>
 
-<div class=message ng:show="show_message" ng:repeat="m in printer.message">{{m}}</div>
+<td ng:show="show_pages">{{printer.pages}}</td>
 
-<ul ng:show="show_consumable">
-<b>Consumable</b>
-<li ng:repeat="c in printer.consumable">
-{{c.name}}
-<tt ng:class="'p'+((c.curr * 10 + 0.0001)/ c.max).toFixed(0)">
-{{ ((c.curr * 100 + 0.0001)/ c.max).toFixed(1) }}%
-</tt>
-</li>
-</ul>
+<td ng:show="show_info">{{printer.info}}</td>
 
-<ul ng:show="show_trays">
-<b>Trays</b>
-<li ng:repeat="t in printer.tray">
-{{t.dim_x}}*{{t.dim_y}}
-<tt ng:class="'p'+((t.capacity * 10 + 0.0001)/ t.max).toFixed(0)">
-{{t.capacity}}/{{t.max}}
-</tt>
-</li>
-</ul>
-
-</li>
-</ul>
+</table>
 
 <input name=debug type=checkbox>
 <pre ng:show="debug">
