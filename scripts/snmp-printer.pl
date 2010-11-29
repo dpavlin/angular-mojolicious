@@ -3,6 +3,9 @@ use warnings;
 use strict;
 
 # pull info from SNMP enabled printers and dump JSON
+#
+# dump all snmp data on printer with:
+# snmpwalk -c public -v 1 10.60.3.15
 
 use SNMP::Multi;
 use Data::Dump qw(dump);
