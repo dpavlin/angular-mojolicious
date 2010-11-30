@@ -245,6 +245,31 @@ Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može
 		<input type="radio" name="registration.dinner" value="yes">Da
 		<input type="radio" name="registration.dinner" value="no">Ne
 	</div>
+	<div ng:show="registration.type != 'student'" style="clear: both; margin-top: 20px;">
+		Trebate li R-1 račun?<br/>
+		<input type="radio" name="registration.r1" value="yes">Da
+		<input type="radio" name="registration.r1" value="no">Ne
+	</div>
+	<div ng:show="registration.r1 == 'yes'">
+		<div class="labelTop">
+			<div class="input input5">Naziv organizacije koja uplaćuje</div>
+		</div>  
+		<div style="clear: both">
+			<input class="input5" name="registration.r1inst" ng:required>
+		</div>
+		<div class="labelTop">
+			<div class="input input5">Adresa organizacije</div>
+		</div>  
+		<div style="clear: both">
+			<input class="input5" name="registration.r1address" ng:required>
+		</div>
+		<div class="labelTop">
+			<div class="input input5">OIB organizacije</div>
+		</div>  
+		<div style="clear: both">
+			<input class="input5" name="registration.r1oib" ng:required>
+		</div>
+	</div>
 	
 </div>
 
