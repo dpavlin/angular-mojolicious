@@ -18,21 +18,14 @@ use lib 'common/mojo/lib';
 use Mojo::Client;
 use Mojo::JSON;
 use Time::HiRes qw(time);
+use Data::Dump qw(dump);
 
-my $url = 'http://localhost:5984/monitor';
+my ( $url, $trigger_path ) = @ARGV;
 
-sub _trigger {
-	my $trigger = $_[0]->{trigger};
-	if ( my $command = $trigger->{command} ) {
-		# FIXME SECURITY HOLE
-		my $output = $trigger->{output} = `$command`;
+$url          ||= 'http://localhost:5984/monitor';
+$trigger_path ||= 'trigger/shell.pm' ;
 
-		$trigger->{output} =
-			[ map { [ split (/\s+/,$_) ] } split(/\n/,$output) ]
-			if $trigger->{format} =~ m/table/i;
-	}
-	return $trigger;
-}
+require $trigger_path if -e $trigger_path;
 
 my $seq = 0;
 
@@ -77,11 +70,11 @@ while( ! $error ) {
 
 				debug 'change' => $change;
 
-				if ( my $trigger = $change->{doc}->{trigger} ) {
-					if ( exists $trigger->{active} ) {
+				if ( filter($change) ) {
+					if ( exists $change->{doc}->{trigger}->{active} ) {
 						debug 'trigger.active',  $change->{doc}->{trigger}->{active};
 					} else {
-						$trigger->{active} = [ time() ];
+						$change->{doc}->{trigger}->{active} = [ time() ];
 
 						debug 'TRIGGER start PUT ', $change->{doc};
 						$client->put( "$url/$id" => $json->encode( $change->{doc} ) => sub {
@@ -97,9 +90,9 @@ while( ! $error ) {
 								$change->{doc}->{_rev} = $res->{rev};
 
 								debug "TRIGGER execute ", $change->{doc};
-								_trigger( $change->{doc} );
+								trigger( $change );
 
-								push @{ $trigger->{active} }, time(), 0; # last timestamp
+								push @{ $change->{doc}->{trigger}->{active} }, time(), 0; # last timestamp
 
 								$client->put( "$url/$id" => $json->encode( $change->{doc} ) => sub {
 									my ($client,$tx) = @_;
