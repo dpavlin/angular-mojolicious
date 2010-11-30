@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html xmlns:ng="http://angularjs.org">
+<head>
+<meta charset="utf-8">
+<script src="angular.js" ng:autobind></script>
+
+<script>
+Printers.$inject = ['$xhr']; 
+
+function Printers(xhr){ 
+	this.xhr = xhr; 
+	var self = this;
+	this.xhr("JSON"
+		, "/json/monitor/printers?callback=JSON_CALLBACK"
+		, function(code, response){ 
+			console.log('xhr JSON', code, response);
+			self.data = response;
+		}
+	); 
+
+} 
+
+</script>
+
+<title>Printer overview</title>
+
+<style>
+.message {
+	font-size: 80%;
+	font-family: monospace;
+	background: #ffe;
+}
+
+.p0 { color: #800 }
+.p1 { color: #810 }
+.p2 { color: #820 }
+.p3 { color: #840 }
+.p4 { color: #860 }
+.p5 { color: #880 }
+.p6 { color: #680 }
+.p7 { color: #480 }
+.p8 { color: #280 }
+.p9 { color: #180 }
+.p10{ color: #080 }
+</style>
+
+</head>
+<body>
+
+<div ng:controller="Printers"> 
+
+<label>
+<input type=checkbox name=show_message>
+message
+</label>
+
+<label>
+<input type=checkbox name=show_consumable>
+consumable
+</label>
+
+<label>
+<input type=checkbox name=show_trays>
+trays
+</label>
+
+<label>
+<input type=checkbox name=show_pages>
+pages
+</label>
+
+<label>
+<input type=checkbox name=show_info>
+info
+</label>
+
+<table>
+<tr ng:repeat="printer in data">
+<td><a href="http://{{printer._key}}" target="{{printer._key}}"><tt>{{printer._key}}</tt></a></td>
+<td>{{printer.hostname}}</td>
+
+<td><div class=message ng:show="show_message" ng:repeat="m in printer.message">{{m}}</div></td>
+
+<td ng:show="show_consumable">
+	<table>
+	<tr ng:repeat="c in printer.consumable">
+	<td align="right" ng:class="'p'+((c.curr * 10 + 0.0001)/ c.max).toFixed(0)">{{ ((c.curr * 100 + 0.0001)/ c.max).toFixed(1) }}%</td>
+	<td>{{c.name}}</td>
+	</tr>
+	</table>
+</td>
+
+<td ng:show="show_trays">
+	<table>
+	<tr ng:repeat="t in printer.tray">
+	<td align="right" ng:class="'p'+((t.capacity * 10 + 0.0001)/ t.max).toFixed(0)">{{t.capacity}}/{{t.max}}</td>
+	<td>{{t.name}}</td>
+	<td>{{t.dim_x}}*{{t.dim_y}}</td>
+	</tr>
+	</table>
+</td>
+
+<td ng:show="show_pages">{{printer.pages}}</td>
+
+<td ng:show="show_info">{{printer.info}}</td>
+
+</table>
+
+<input name=debug type=checkbox>
+<pre ng:show="debug">
+data={{data}}
+</pre>
+
+</div>
+
+
+</body>
+</html>

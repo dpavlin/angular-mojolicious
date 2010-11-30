@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html xmlns:ng="http://angularjs.org">
+<head>
+<meta charset="utf-8">
+<script src="angular.js" ng:autobind></script>
+
+<script>
+Registrations.$inject = ['$xhr']; 
+
+function Registrations(xhr){ 
+	this.xhr = xhr; 
+	var self = this;
+	this.xhr("JSON"
+		, "/data/drzb2011/Registration?callback=JSON_CALLBACK"
+		, function(code, response){ 
+			console.log('xhr JSON', code, response);
+			self.data = response;
+		}
+	); 
+
+} 
+
+</script>
+
+<title>DRZB2011 Registrations</title>
+
+<style>
+.address {
+	font-size: 80%;
+}
+</style>
+
+</head>
+<body>
+
+<div ng:controller="Registrations"> 
+
+<ul>
+<li ng:repeat="registration in data">
+{{registration.person.name}}
+{{registration.person.surname}}
+&lt;{{registration.person.email}}&gt;
+<div class=address>{{registration.person.inst}}</div>
+<div class=address>{{registration.person.zip}} {{registration.person.city}}</div>
+</li>
+</ul>
+
+<input name=debug type=checkbox>
+<pre ng:show="debug">
+data={{data}}
+</pre>
+
+</div>
+
+
+</body>
+</html>

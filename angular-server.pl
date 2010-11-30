@@ -182,6 +182,54 @@ get '/:database/_design/:design/_view/:view' => sub {
 	_render_jsonp( $self, _couchdb_get($url));
 };
 
+# static JSON files from public/json/database/entity/json
+
+get '/json' => sub {
+	_render_jsonp( shift, [ map { s{public/json/}{}; $_ } glob 'public/json/*' ] );
+};
+
+get '/json/:database' => sub {
+	my $self = shift;
+	my $database = $self->param('database');
+
+	my $status = {
+		document_counts => 0,
+		name => $database,
+	};
+
+	foreach my $path ( glob "public/json/$database/*" ) {
+		my @entities = glob "$path/*";
+		$path =~ s{public/json/$database/}{};
+		$status->{entities}->{$path} = scalar @entities;
+		$status->{document_counts}++;
+	}
+
+	_render_jsonp( $self, $status );
+};
+
+get '/json/:database/:entity' => sub {
+	my $self = shift;
+
+	my $database = $self->param('database');
+	my $entity   = $self->param('entity');
+
+	my $path = "public/json/$database/$entity";
+	die "$path: $!" unless -d $path;
+
+	my $docs;
+	foreach my $path ( sort glob "$path/*" ) {
+		open(my $fh, '<', $path) || die $!;
+		local $/ = undef;
+		my $str = <$fh>;
+		warn "# $path $str";
+		my $data = Mojo::JSON->new->decode( $str );
+		$data->{_key} = $1 if $path =~ m{/([^/]+$)};
+		push @$docs, $data;
+	}
+
+	_render_jsonp( $self, $docs )
+};
+
 app->start;
 __DATA__
 
