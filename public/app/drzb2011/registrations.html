@@ -26,8 +26,8 @@ function Registrations(xhr){
 
 <style>
 .address {
-	font-size: 80%;
 }
+
 </style>
 
 </head>
@@ -35,20 +35,41 @@ function Registrations(xhr){
 
 <div ng:controller="Registrations"> 
 
-<ul>
-<li ng:repeat="registration in data">
+<input name="selection" type="radio" value="all">SVI <br>
+<input name="selection" type="radio" value="participant">Samo registracija <br>
+<input name="selection" type="radio" value="sparticipant">Sudionik simpozija/okruglog stola <br>
+<input name="selection" type="radio" value="symposium">Organizator simpozija <br>
+<input name="selection" type="radio" value="round">Organizator okruglog stola<br>
+<input name="selection" type="radio" value="lecture">Usmeno priopćenje <br>
+<input name="selection" type="radio" value="poster">Poster <br>
+<input name="selection" type="radio" value="student">Student - samo registracija<br>
+<input name="selection" type="radio" value="accomp">Osoba u pratnji<br>
+
+
+<ol>
+<li ng:repeat="registration in data" ng:show="registration.type == selection || selection == 'all'">
+{{registration.type}} <span ng:show="registration.student == thrue"> - student</span><br>
 {{registration.person.name}}
 {{registration.person.surname}}
 &lt;{{registration.person.email}}&gt;
 <div class=address>{{registration.person.inst}}</div>
+<div><b>{{registration.work.title}}</b></div>
+<span ng:show="work" ng:repeat="author in registration.work.authors">
+{{author.name}}
+{{author.surname}} ;
+</span>
+<!--
 <div class=address>{{registration.person.zip}} {{registration.person.city}}</div>
+-->
 </li>
-</ul>
+</ol>
 
+<div style="float: right">
 <input name=debug type=checkbox>
 <pre ng:show="debug">
 data={{data}}
 </pre>
+</div>
 
 </div>
 
