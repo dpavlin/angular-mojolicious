@@ -11,7 +11,7 @@ use SNMP::Multi;
 use Data::Dump qw(dump);
 
 my $dir = 'public/json/monitor/printers';
-die "output directory $dir: $!" unless -d $dir;
+$dir = "/tmp/printers-" unless -d $dir;
 
 use JSON;
 sub save_json {
