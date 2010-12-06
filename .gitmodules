@@ -4,3 +4,6 @@
 [submodule "common/mojo"]
 	path = common/mojo
 	url = http://github.com/kraih/mojo.git
+[submodule "common/snmp-json"]
+	path = common/snmp-json
+	url = git://github.com/dpavlin/snmp-json.git
