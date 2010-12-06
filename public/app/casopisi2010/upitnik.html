@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html xmlns:ng="http://angularjs.org">
+<head>
+<meta charset="utf-8">
+<script src="angular.js" ng:autobind></script>
+
+<title>Upitnik o stranim časopisima</title>
+
+<script src="upitnik.js"></script>
+
+<link rel="stylesheet" href="upitnik.css" type="text/css">
+
+</head>
+<body>
+
+<div class="root" ng:controller="Upitnik" ng:init="$window.$root = this;">
+
+<h2>
+1. Koji su Vam strani časopisi najpotrebniji?
+</h2>
+<div>
+<p>Navedite naslove stranih časopisa u kojima nalazite najveći broj članaka potrebnih u Vašem istraživanju i nastavi, koje najčešće citirate ili koje redovito pratite, bez obzira na to da li su Vam sada dostupni ili ne.</p>
+<p>Navedite <b>barem 3 naslova</b>.</p>
+</div>
+
+<div ng:repeat="casopis in upitnik.casopisi">
+<input class="text1" name="casopis.naslov" ng:required>
+<a href="" ng:click="upitnik.casopisi.$remove(casopis)">obriši</a>
+</div>
+<a href="" ng:click="upitnik.casopisi.$add({naslov:''})">Dodaj još jedan naslov</a>
+
+<h2>
+2. Odaberite i obrazložite svoj izbor:
+</h2>
+
+<label class="radio">
+<input type="radio" name="upitnik.inacica" value="elektronicka"> Važnije mi je da knjižnica osigura stalni pristup elektroničkoj inačici časopisa.
+</label>
+
+<label class="radio">
+<input type="radio" name="upitnik.inacica" value="tiskana"> Važnije mi je da knjižnica nabavi tiskani primjerak časopisa.
+</label>
+
+<label class="radio">
+<input type="radio" name="upitnik.inacica" value="svejedno"> Svejedo mi je.
+</label>
+
+<h2>
+3. Koji elektronički izvori informacija su Vam potrebni?
+</h2>
+<div>
+<p>Navedite poznate Vam digitalne zbirke časopisa, knjiga ili drugih vrsta građe, bibliografske baze podataka i slično.</p>
+</div>
+<div ng:repeat="eizvor in upitnik.eizvori">
+	<input name="eizvor.naziv" class="text1">
+	<a href="" ng:click="upitnik.eizvori.$remove(eizvor)">obriši</a>
+</div>
+<a href="" ng:click="upitnik.eizvori.$add({naslov:''})">Dodaj još jedan izvor</a>
+
+
+<div class="button">
+	<input type=submit ng:click="save()" value="save">
+	<input type=reset ng:click="reset()" value="reset">
+</div>
+
+<div style="clear: both">
+<input type=checkbox name=debug style="float: right; clear: both">
+<pre ng:show="debug">
+
+dirty= invalid={{$invalidWidgets.visible()}}
+
+upitnik = {{upitnik}}
+
+</pre>
+</div>
+
+</div><!-- ng:controller="Upitnik" -->
+
+</body>
+</html>
