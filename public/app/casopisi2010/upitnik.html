@@ -39,17 +39,10 @@ Ako želite, upišite svoju e-mail adresu:
 </div>
 
 <div class="labels1">
-<span class="label1">Naslov časopisa</span>
-<span class="label2">Koliko Vam je važan ovaj časopis?</span>
 </div>
 <div ng:repeat="casopis in upitnik.casopisi">
 	<input class="text1" name="casopis.naslov" ng:required>
 	<a href="" title="Brisanje naslova." ng:click="upitnik.casopisi.$remove(casopis)">X</a>
-	<span style="padding-left: 3em">
-	<input name="casopis.vaznost" type="radio" value="jako">Jako
-	<input name="casopis.vaznost" type="radio" value="srednje">Srednje
-	<input name="casopis.vaznost" type="radio" value="malo">Malo
-	</span>
 </div>
 <a href="" title="Dodavanje prostora za unos još jednog naslova." ng:click="upitnik.casopisi.$add({naslov:''})">dodaj još jedno polje</a>
 
