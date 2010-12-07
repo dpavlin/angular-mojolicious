@@ -29,8 +29,6 @@ sub _indexer {
 	);
 };
 
-use JSON;
-
 sub flatten {
 	my ($flat,$data,$prefix) = @_;
 	if ( ref $data eq '' ) {
@@ -57,7 +55,7 @@ sub filter {
 		$schema->spec_field( name => $field, type => $type );
 		warn "# +++ $field\n";
 	}
-	$flat->{doc} = encode_json $doc;
+	$flat->{doc} = $json->encode($doc);
 	warn "# add_doc ",dump($flat);
 	_indexer->add_doc($flat);
 	return 0;
