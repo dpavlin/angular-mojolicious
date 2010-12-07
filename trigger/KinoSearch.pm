@@ -64,6 +64,7 @@ sub filter {
 }
 
 sub commit {
+	return unless $indexer;
 	$indexer->commit;
 	undef $indexer;
 	warn "# commit index done\n";
