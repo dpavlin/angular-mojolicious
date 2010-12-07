@@ -11,8 +11,11 @@ my $polyanalyzer = KinoSearch::Analysis::PolyAnalyzer->new(
 my $type = KinoSearch::Plan::FullTextType->new(
 	analyzer => $polyanalyzer,
 );
-$schema->spec_field( name => '_id',   type => $type );
-$schema->spec_field( name => '_rev', type => $type );
+my $blob_type = KinoSearch::Plan::BlobType->new( stored => 1 );
+my $string_type = KinoSearch::Plan::StringType->new;
+$schema->spec_field( name => '_id',   type => $string_type );
+$schema->spec_field( name => '_rev', type => $string_type );
+$schema->spec_field( name => 'doc', type => $blob_type );
 
 # Create the index and add documents.
 our $indexer;
@@ -54,6 +57,7 @@ sub filter {
 		$schema->spec_field( name => $field, type => $type );
 		warn "# +++ $field\n";
 	}
+	$flat->{doc} = encode_json $doc;
 	warn "# add_doc ",dump($flat);
 	_indexer->add_doc($flat);
 	return 0;
@@ -62,7 +66,7 @@ sub filter {
 sub commit {
 	$indexer->commit;
 	undef $indexer;
-	warn "# commit index done";
+	warn "# commit index done\n";
 }
 
 1;
