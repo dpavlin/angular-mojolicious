@@ -25,6 +25,7 @@ my ( $url, $trigger_path ) = @ARGV;
 $url          ||= 'http://localhost:5984/monitor';
 $trigger_path ||= 'trigger/shell.pm' ;
 
+sub commit { warn "# commit ignored\n"; }
 require $trigger_path if -e $trigger_path;
 
 my $seq = 0;
@@ -113,6 +114,8 @@ while( ! $error ) {
 			}
 
 		}
+
+		commit;
 
 	});
 	$client->start($tx);
