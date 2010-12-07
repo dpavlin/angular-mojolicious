@@ -57,7 +57,7 @@ __END__
 level = debug
 
 [external]
-kinosearch = /home/dpavlin/klin/angular-mojolicious/couchdb-external-kinosearch.pl
+kinosearch = /srv/angular-mojolicious/couchdb-external-kinosearch.pl
 
 [httpd_db_handlers]
 _kinosearch = {couch_httpd_external, handle_external_req, <<"kinosearch">>}
