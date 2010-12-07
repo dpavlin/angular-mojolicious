@@ -46,12 +46,9 @@ while( ! $error ) {
 	$tx->res->body(sub{
 		my ( $content, $body ) = @_;
 
-		debug 'BODY' => $body;
+		return if length($body) == 0; # empty chunk, heartbeat?
 
-		if ( length($body) == 0 ) {
-			warn "# empty chunk, heartbeat?\n";
-			return;
-		}
+		debug 'BODY' => $body;
 
 		foreach ( split(/\r?\n/, $body) ) { # we can get multiple documents in one chunk
 
