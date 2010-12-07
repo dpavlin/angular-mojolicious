@@ -14,17 +14,70 @@
 </head>
 <body>
 
+<div id="wrapper">
+    <div id="header">
+        <a href="http://psihologija.ffzg.hr/drzb2011"><img src="http://psihologija.ffzg.hr/drzb2011/images/header.gif" alt="Dani Ramira i Zorana Bujasa" class="float_left" /></a>
+    </div>
 
+    <div id="mainNav">
+<div id="navigation">
+<ul>
+<li class="level"><a href="http://psihologija.ffzg.hr/drzb2011">Naslovnica</a></li>
+	<li>
+	<a class="level4" href="http://psihologija.ffzg.hr/drzb2011/registracija">Registracija</a>
 
+	<ul>
+
+	<li>
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011/registracija/vrste2">Oblici sudjelovanja</a>
+
+	<li>
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011/registracija/kotizacija">Kotizacija</a>
+	<li>
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011/registracija/bodovanje2">Bodovanje</a>
+
+   </ul></li>
+
+	<li>
+	<a class="level4" href="http://psihologija.ffzg.hr/drzb2011/prijava">Prijava izlaganja</a>
+	<ul>
+
+	<li>
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011/prijava/pripremasazetaka">Priprema sažetaka</a>
+	<li>
+
+		<a class="level5" href="http://psihologija.ffzg.hr/drzb2011/prijava/obrazac">Obrazac za prijavu</a>
+
+   </ul></li>
+	<li>
+		<a class="level4" href="http://psihologija.ffzg.hr/drzb2011/program">Program</a>
+	<li>
+		<a class="level4" href="http://psihologija.ffzg.hr/drzb2011/organizacija">Organizacija</a>
+	<li>
+		<a target="_blank" class="level4" href="http://psihologija.ffzg.hr/drzb2011/smjestaj">Smještaj</a>
+</ul>
+</div>
+
+    </div>
+
+    <div id="mainNav_right">
+        <ul>
+            <li><a href="http://psihologija.ffzg.hr/drzb2011" class="active">Hrvatski</a></li>
+            <li><a href="http://psihologija.ffzg.hr/drzb2011-eng">English</a></li>
+        </ul>
+    </div>
+ 
+</div>
+
+<div class="title">
 <h1>Registracija i prijavljivanje izlaganja</h1>
-
-
+</div>
 
 
 <div class="root" ng:controller="Registration" ng:init="$window.$root = this;">
 
 
-<div ng:show="! registration.$id && ! symposium.$id">
+<div style="clear: both; padding-top: 10px;" ng:show="! registration.$id && ! symposium.$id">
 <p>
 Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači, moraju se registrirati kroz sustav elektroničke prijave.
 </p>
@@ -61,7 +114,7 @@ Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može
 
 
 </div>
-<div ng:show="registration.$id || symposium">
+<div ng:show="registration.$id || symposium" style="padding-top: 40px">
 	<h2>{{registration.person.name}} {{registration.person.surname}}</h2>
 	<!--
 	<label>Institution: {{registration.person.inst}}</label>
@@ -74,7 +127,7 @@ Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može
 	<label ng:show="registration.type == 'round'">Tip registracije: Organizator okruglog stola<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'lecture'">Tip registracije: Usmeno priopćenje<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'poster'">Tip registracije: Prezentacija postera<span ng:show="registration.student == true">, student</span></label>
-	<label ng:show="registration.type == 'poster' || registration.type == 'lecture'"><b>Title: </b>{{registration.work.title}}</label>
+	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Naslov: </b>{{registration.work.title}}</label>
 	<div ng:show="registration.type == 'symposium'">
 		<p>Tip registracije: Organizator simpozija</p>
 		<label><b>Tema simpozija: </b><i>{{registration.symposium.title}}</i></label>
@@ -191,6 +244,31 @@ Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može
 		Hoćete li biti na zajedničkoj večeri u petak u 20 sati? (Večera je uključena u kotizaciju.)<br/>
 		<input type="radio" name="registration.dinner" value="yes">Da
 		<input type="radio" name="registration.dinner" value="no">Ne
+	</div>
+	<div ng:show="registration.type != 'student'" style="clear: both; margin-top: 20px;">
+		Trebate li R-1 račun?<br/>
+		<input type="radio" name="registration.r1" value="yes">Da
+		<input type="radio" name="registration.r1" value="no">Ne
+	</div>
+	<div ng:show="registration.r1 == 'yes'">
+		<div class="labelTop">
+			<div class="input input5">Naziv organizacije koja uplaćuje</div>
+		</div>  
+		<div style="clear: both">
+			<input class="input5" name="registration.r1inst" ng:required>
+		</div>
+		<div class="labelTop">
+			<div class="input input5">Adresa organizacije</div>
+		</div>  
+		<div style="clear: both">
+			<input class="input5" name="registration.r1address" ng:required>
+		</div>
+		<div class="labelTop">
+			<div class="input input5">OIB organizacije</div>
+		</div>  
+		<div style="clear: both">
+			<input class="input5" name="registration.r1oib" ng:required>
+		</div>
 	</div>
 	
 </div>
@@ -322,7 +400,7 @@ Odlučite o dolasku na domjenak.</span>
 		<span class="saved2">Hvala! Vaša registracija je uspješno predana!</span>
 		<div class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011/registracija/kotizacija">Molimo pročitajte upute za plaćanje kotizacije</a></div>
 		<div class="gohome" ng:show="registration.type == 'student' || registration.student == true">
-			Dokaz o studentskom statusu treba poslati na adresu<a href="mailto:drzb@ffzg.hr">drzb@ffzg.hr</a>.
+			Dokaz o studentskom statusu treba poslati na adresu <a href="mailto:drzb@ffzg.hr">drzb@ffzg.hr</a>.
 		</div>
 		<br><br>
 	</div>
@@ -335,7 +413,7 @@ Odlučite o dolasku na domjenak.</span>
 		<span class="saved2">Hvala! Vaš prijedlog je uspješno predan. <br></span>
 		<div class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011/registracija/kotizacija">Molimo pročitajte upute za plaćanje kotizacije.</a></div>
 		<div class="gohome" ng:show="registration.type == 'student' || registration.student == true">
-			Dokaz o studentskom statusu treba poslati na adresu<a href="mailto:drzb@ffzg.hr">drzb@ffzg.hr</a>.
+			Dokaz o studentskom statusu treba poslati na adresu <a href="mailto:drzb@ffzg.hr">drzb@ffzg.hr</a>.
 		<br>
 	</div>
 	
@@ -349,15 +427,22 @@ Odlučite o dolasku na domjenak.</span>
 	<div class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011/">Go to conference home page</a></div>
 </div>
 -->
-
-<div class="footer"></div>
+</div>
+<div id="footer">
+        Odsjek za psihologiju, Filozofski fakultet Sveučilišta u Zagrebu, Ivana Lučića 3, 10000 Zagreb ; tel. 01/6120 215 ; fax. 01/6120 037
+        <div id="go_to_top"><a href="#"></a></div>
+   <p id="foot">
+        <a href="http://psihologija.ffzg.hr" target="_blank">http://psihologija.ffzg.hr</a>
+    </p> 
+</div>
 
 <!--
 <div ng:show="registration.$id">
 Permalink to <a href="#{{registration.$id}}">DRZB2011 registration</a> which you can bookmark
 </div>
 -->
-
+<!--
+<div style="clear: both">
 <input type=checkbox name=debug style="float: right; clear: both">
 <pre ng:show="debug">
 
@@ -374,7 +459,8 @@ symposium = {{symposium}}
 $id={{$id}}
 registration.$id={{registration.$id}}
 </pre>
-
+</div>
+-->
 
 </body>
 </html>

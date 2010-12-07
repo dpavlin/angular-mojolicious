@@ -1,12 +1,151 @@
 
 body {
 	background: #F6F6F6;
-	margin: 40px;
+	margin: 0 auto;
 	font-family: Arial;
 	color: #374E5A;
 	font-size: 14px;
-	line-height: 16px;
+	line-height: 140%;
+	width: 961px;
 }
+
+img {
+	border: 0;
+}
+/* ----- MENU ----- */
+
+#navigation
+{
+	position: relative;
+	float: left;
+	text-align: left;
+	width: 794px;
+	height: 60px;
+	font: 16px arial;
+/*	background: url(http://mjesec.ffzg.hr/drzb2011/images/menu_bg.gif) repeat-x;	*/
+}
+
+#navigation ul 
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	height: 33px;
+	width: 794px;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+#navigation ul li {
+	position: relative;
+	float: left;
+	display: inline;
+	height: 33px;
+	border-right: 1px solid #ccc;
+}
+	
+#navigation li ul {
+	position: absolute;
+	left: -50%;
+	top: 28px;
+	border: 0;
+	display: none;
+}
+
+#navigation li ul li {
+	border: 0;
+	border-right: 1px solid #ccc;
+	height: 19px;
+	margin-top: 10px;
+}
+
+#navigation ul li a {
+	display: block;
+	float: left;
+	text-decoration: none;
+	color: #777;
+	background: #f6f6f6; /* IE6 Bug */
+	padding: 5px 10px;
+	height: 23px;
+}
+
+#navigation ul li a:hover { 
+	color: #d74f25;
+	border-bottom: 1px solid #f6f6f6;
+}
+
+
+#navigation li ul li a {
+	padding: 1px 10px;
+}
+
+		
+#navigation li:hover ul { 
+	display: block; 
+}
+
+/* Holly Hack. IE Requirement \*/
+* html ul li { float: left; height: 1%; }
+* html ul li a { height: 1%; }
+/* End */
+
+#mainNav_right
+{
+	position: relative;
+	float: left;
+	text-align: left;
+	width: 167px;
+	height: 33px;
+	font: 16px arial;
+	display: block;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+#mainNav_right ul 
+{
+	display: inline;
+}
+
+#mainNav_right li 
+{ 
+	display: inline;
+}
+
+#mainNav_right li a
+{
+	float: left;
+  	height: 27px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 6px;
+	color: #91959c;
+	text-align: center;
+	text-decoration: none;
+	display: block;
+}
+
+#mainNav_right li a:hover
+{
+	color: #d74f25;
+	text-decoration: none;
+	display: block;
+}
+
+#mainNav_right li a.active
+{
+	float: left;
+  	height: 27px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 6px;
+	text-align: center;
+	color: #d74f25;
+	text-decoration: none;
+	display: block;
+}
+
 
 
 label {
@@ -18,16 +157,35 @@ label {
 	font-size: 14px;
 	font-family: Arial;
 }
-h1 {
+
+.title {
+	position: relative;
+	float: left;
+	text-align: left;
+	width: 100%;
+/*	background: url(http://mjesec.ffzg.hr/drzb2011/images/crta.gif) repeat-x bottom;	*/
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 4px;
+	margin: 0;
+	margin-top: 10px;
+
+}
+
+h1
+{
+	float: left;
 /*	margin-bottom: 6px;	*/
 	padding-left: 20px;
 	font: 18px arial;
 	color: #0c1426;
+	text-align: center;
 	text-decoration: none;
 	display: block;
 	background: url(http://mjesec.ffzg.hr/drzb2011/images/kvadrat.gif) no-repeat left;
-	border-bottom: 1px solid #CCC;
+	margin: 0;
 }
+
+
 h2, h3 {
 	margin-top: 60px;
 	font-size: 14px;
@@ -214,9 +372,39 @@ input:focus, textarea:focus
 	font-weight: normal;
 	margin-top: 20px;
 }
-.footer {
-	height: 10px;
+#footer {
+	position: relative;
+	float: left;
+	width: 961px;
+	height: 18px;
+	padding-top: 5px;
+	margin-top: 180px;
+	margin-bottom: 20px;
+	font: 10px arial;
+	color: #374e5a;
+	text-align: center;
+	background: url(http://mjesec.ffzg.hr/drzb2011/images/footer_bg.jpg) repeat-x;
+	clear: both;
 }
+	
+#foot a
+{
+	position: relative;
+	top: 12px;
+	margin-bottom: 20px;
+	font: 12px arial;
+	color: #374e5a;
+	text-align: center;
+	text-decoration: none;
+}
+
+#foot a:hover
+{
+	color: #374e5a;
+	text-decoration: underline;
+}
+
+
 hr {
 	border: 1px solid #ccc;
 }
