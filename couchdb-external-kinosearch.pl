@@ -49,3 +49,16 @@ while(<STDIN>) {
 	print $log ">>> $json\n";
 }
 
+
+__END__
+; insert following into /etc/couchdb/local.ini:
+
+[log]
+level = debug
+
+[external]
+kinosearch = /home/dpavlin/klin/angular-mojolicious/couchdb-external-kinosearch.pl
+
+[httpd_db_handlers]
+_kinosearch = {couch_httpd_external, handle_external_req, <<"kinosearch">>}
+
