@@ -65,8 +65,31 @@ Angular examples available:
 		-d @public/app/conference/_design/symposium
 
 
+
+CouchDB examples:
+
+	couchdb-changes.pl - simple _changes feed watcher using Mojo::Client documented at
+
+		http://wiki.apache.org/couchdb/HTTP_database_API#Changes
+
+
+	couchdb-trigger.pl - FSM document with hook for user-defiend triggers
+
+		trigger/shell.pm - execute shell commands
+		trigger/email.pm - skeleton for sending e-email
+		trigger/KinoSearch.pm - full-text search
+
+	$ curl -X PUT http://localhost:5984/trigger_demo
+	{"ok":true}
+
+	$ ./couchdb-trigger.pl http://localhost:5984/trigger_demo trigger/shell.pm
+
+	$ curl -X PUT http://localhost:5984/trigger_demo/t1 -d '{"trigger":{"command":"notify-send CouchDB t1"}}'
+
+
 Roadmap:
 
 + implement angular-server.pl which implements REST API supported by $resource in angular
 + persistency to local CouchDB, and use views to query data
++ implement CouchDB _changes and FSM inside document as base for queue or triggers
 - tests
