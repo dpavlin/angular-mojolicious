@@ -87,6 +87,10 @@ CouchDB examples:
 	$ curl -X PUT http://localhost:5984/trigger_demo/t1 -d '{"trigger":{"command":"notify-send CouchDB t1"}}'
 
 
+	couchdb-external-kinosearch.pl - external searcher for KinoSearch indexes
+		(configuration for CouchDB is included at end of file)
+
+
 Roadmap:
 
 + implement angular-server.pl which implements REST API supported by $resource in angular
