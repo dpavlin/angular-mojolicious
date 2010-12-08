@@ -55,11 +55,8 @@ sub filter {
 	my $change = shift;
 	my $doc = $change->{doc} || next;
 
-	if ( $doc->{_deleted} ) {
-		warn "# filter DELETE\n";
-		_indexer->delete_by_term( field => '_id', term => $doc->{_id} );
-		return 0;
-	}
+	_indexer->delete_by_term( field => '_id', term => $doc->{_id} );
+	return 0 if $doc->{_deleted};
 
 	my $flat;
 	flatten( \$flat, $doc, '' );
