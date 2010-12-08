@@ -26,6 +26,14 @@ At it's current stage it provides support for angular $resource get, query and $
 http://angularjs.org/Service:$resource
 
 
+Data can also be serve static json files stored in:
+
+	public/json/:database/:entity/:key
+
+which can be used to provide data using external stand-alone scripts.
+
+
+
 Replication of data between instances using angular REST API can be done with:
 
 	# create local CouchDB database
