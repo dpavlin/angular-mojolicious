@@ -32,7 +32,8 @@ sub _indexer {
 sub flatten {
 	my ($flat,$data,$prefix) = @_;
 	if ( ref $data eq '' ) {
-		$$flat->{$prefix} = $data;
+		$$flat->{$prefix} .= "\n" . $data;
+		$$flat->{$prefix} =~ s/^\n//; # strip first
 	} elsif ( ref $data eq 'HASH' ) {
 		foreach my $key ( keys %$data ) {
 			my $full_prefix = $prefix ? $prefix . '.' : '';
@@ -40,8 +41,13 @@ sub flatten {
 			flatten( $flat, $data->{$key}, $full_prefix );
 		}
 	} elsif ( ref $data eq 'ARRAY' ) {
-		$$flat->{$prefix} = join("\n", map { ref $_ ? dump($_) : $_ } @$data);
-		# FIXME arrays with non-scalar references aren't really indexed well
+		foreach my $el ( @$data ) {
+			flatten( $flat, $el, $prefix );
+		}
+	} elsif ( ref $data eq 'Mojo::JSON::_Bool' ) {
+		$$flat->{$prefix} = $data;
+	} else {
+		die "unsupported ",ref($data)," from ",dump($data);
 	}
 }
 
