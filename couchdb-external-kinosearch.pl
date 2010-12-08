@@ -12,10 +12,6 @@ use Data::Dump qw(dump);
 
 $|=1;
 
-my $searcher = KinoSearch::Search::IndexSearcher->new( 
-	index => '/tmp/index' 
-);
-
 our $json = Mojo::JSON->new;
 
 open(my $log, '>>', '/tmp/couchdb-external-kinosearch.log');
@@ -31,6 +27,10 @@ while(<STDIN>) {
 	};
 
 	if ( my $q = $request->{query}->{q} ) {
+
+		my $searcher = KinoSearch::Search::IndexSearcher->new( 
+			index => '/tmp/index' 
+		);
 
 		my $hits = $searcher->hits( query => $q );
 
