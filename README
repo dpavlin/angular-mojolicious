@@ -90,6 +90,11 @@ CouchDB examples:
 	couchdb-external-kinosearch.pl - external searcher for KinoSearch indexes
 		(configuration for CouchDB is included at end of file)
 
+	$ ./couchdb-trigger.pl http://localhost:5984/trigger_demo trigger/KinoSearch.pm
+
+	$ curl 'http://localhost:5984/trigger_demo/_kinosearch?include_docs=true;q=foobar'
+
+
 
 Roadmap:
 
