@@ -81,7 +81,7 @@ while( ! $error ) {
 								if ( $tx->res->code == 409 ) {
 									info "TRIGGER ABORTED started on another worker? ", $tx->error;
 								} else {
-									info "ERROR ", $tx->error;
+									info "ERROR $url/$id ", $tx->error;
 								}
 							} else {
 								my $res = $tx->res->json;
@@ -95,7 +95,7 @@ while( ! $error ) {
 								$client->put( "$url/$id" => $json->encode( $change->{doc} ) => sub {
 									my ($client,$tx) = @_;
 									if ($tx->error) {
-										info "ERROR", $tx->error;
+										info "ERROR $url/$id", $tx->error;
 									} else {
 										my $res = $tx->res->json;
 										$change->{doc}->{_rev} = $res->{rev};
