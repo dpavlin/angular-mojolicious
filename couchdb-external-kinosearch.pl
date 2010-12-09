@@ -29,7 +29,7 @@ while(<STDIN>) {
 	if ( my $q = $request->{query}->{q} ) {
 
 		my $searcher = KinoSearch::Search::IndexSearcher->new( 
-			index => '/tmp/index' 
+			index => '/tmp/kinosearch.' . $request->{info}->{db_name},
 		);
 
 		my $hits = $searcher->hits( query => $q );

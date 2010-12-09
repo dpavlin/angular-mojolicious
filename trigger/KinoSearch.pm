@@ -24,7 +24,7 @@ our $indexer;
 sub _indexer {
 	$indexer ||= KinoSearch::Index::Indexer->new(
 		schema => $schema,   
-		index  => '/tmp/index',
+		index  => "/tmp/kinosearch.$database", 
 		create => 1,
 	);
 };
