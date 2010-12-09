@@ -5,11 +5,11 @@ body {
 	color: #374E5A;
 	font-size: 14px;
 	line-height: 140%;
-	width: 861px;
+	width: 760px;
 }
 
 h2, h3 {
-	margin-top: 60px;
+	margin-top: 40px;
 	font-size: 14px;
 	padding: 2px 0;
 	border-bottom: 2px solid #D74F25;
@@ -20,6 +20,12 @@ h3 {
 	margin-top: 20px;
 }
 
+
+.naglasi {
+	color: #d74f25;
+}
+
+
 a {
 	color: #D74F25;
 }
@@ -27,14 +33,14 @@ a {
 input, textarea {
 	font: 14px arial;
 	color: #000000;
-	border: solid 1px #dedede;
+	border: solid 1px #ccc;
 	padding: 6px;
-	background: #f6f6f6;
+	background: #ffffff;
 }
 
 input:focus, textarea:focus
 {
-	background: #ffffff;
+	background: #f6f6f6;
 	font-family: arial;
 	color: #000000;
 }
@@ -47,6 +53,22 @@ input:focus, textarea:focus
 
 .text1 {
 	width: 30em;
+	margin-bottom: 3px;
+}
+.text2 {
+	width: 12em;
+}
+
+
+.labels1 {
+	font-style: italic;
+	padding-bottom: 5px;
+}
+
+.label1 {
+	padding-right: 27em;
+}
+.label2 {
 }
 
 img {
@@ -58,7 +80,6 @@ label {
 	margin-top: 10px;
 	font-size: 14px;
 	font-family: Arial;
-	color: #afafaf;
 }
 
 .radio { 
@@ -104,7 +125,7 @@ h1
 
 
 .button {
-	margin-top: 20px;
+	margin-top: 40px;
 	width: 40.8em;
 }
 
