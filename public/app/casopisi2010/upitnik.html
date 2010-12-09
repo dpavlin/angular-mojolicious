@@ -27,7 +27,7 @@
 <input class="text1" name="casopis.naslov" ng:required>
 <a href="" ng:click="upitnik.casopisi.$remove(casopis)">obriši</a>
 </div>
-<a href="" ng:click="upitnik.casopisi.$add({naslov:''})">Dodaj još jedan naslov</a>
+<a href="" ng:click="upitnik.casopisi.$add({naslov:''})" ng:show="upitnik.casopisi.$count() < 10">Dodaj još jedan naslov</a>
 
 <h2>
 2. Odaberite i obrazložite svoj izbor:
