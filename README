@@ -93,7 +93,8 @@ CouchDB examples:
 
 	$ ./couchdb-trigger.pl http://localhost:5984/demo trigger/shell.pm
 
-	$ curl -X PUT http://localhost:5984/demo/t1 -d '{"trigger":{"command":"notify-send CouchDB t1"}}'
+	$ curl -X POST http://localhost:5984/demo/ -H 'Content-type:application/json' -d \
+		'{"trigger":{"command":"notify-send \"CouchDB trigger notify example\""}}'
 
 
 	couchdb-external-kinosearch.pl - external searcher for KinoSearch indexes
