@@ -87,23 +87,23 @@ CouchDB examples:
 		trigger/email.pm - skeleton for sending e-email
 		trigger/KinoSearch.pm - full-text search
 
-	$ curl -X PUT http://localhost:5984/trigger_demo
+	$ curl -X PUT http://localhost:5984/demo
 	{"ok":true}
 
-	$ ./couchdb-trigger.pl http://localhost:5984/trigger_demo trigger/shell.pm
+	$ ./couchdb-trigger.pl http://localhost:5984/demo trigger/shell.pm
 
-	$ curl -X PUT http://localhost:5984/trigger_demo/t1 -d '{"trigger":{"command":"notify-send CouchDB t1"}}'
+	$ curl -X PUT http://localhost:5984/demo/t1 -d '{"trigger":{"command":"notify-send CouchDB t1"}}'
 
 
 	couchdb-external-kinosearch.pl - external searcher for KinoSearch indexes
 		(configuration for CouchDB is included at end of file)
 
-	$ ./couchdb-trigger.pl http://localhost:5984/trigger_demo trigger/KinoSearch.pm
+	$ ./couchdb-trigger.pl http://localhost:5984/demo trigger/KinoSearch.pm
 
-	$ curl -X PUT http://localhost:5984/trigger_demo/text -d '{"text":"foobar bla bla"}'
+	$ curl -X PUT http://localhost:5984/demo/text -d '{"text":"foobar bla bla"}'
 	{"ok":true,"id":"text","rev":"1-cf9bb608f93af7f4e5e40656a6e50096"}
 
-	$ curl 'http://localhost:5984/trigger_demo/_kinosearch?include_docs=true;q=foobar'
+	$ curl 'http://localhost:5984/demo/_kinosearch?include_docs=true;q=foobar'
 
 
 
