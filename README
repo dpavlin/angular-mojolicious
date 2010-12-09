@@ -26,14 +26,23 @@ At it's current stage it provides support for angular $resource get, query and $
 http://angularjs.org/Service:$resource
 
 
+Data can also be serve static json files stored in:
+
+	public/json/:database/:entity/:key
+
+which can be used to provide data using external stand-alone scripts.
+
+
+
 Replication of data between instances using angular REST API can be done with:
 
 	# create local CouchDB database
-	curl -X PUT http://localhost:5984/test
+	$ curl -X PUT http://localhost:5984/demo
+	{"ok":true}
 
-	./angular-replicate.pl \
+	$ ./angular-replicate.pl \
 		http://dpavlin.getangular.com/data/conference \
-		http://localhost:3000/data/test
+		http://localhost:3000/data/demo
 
 Replication is currently good only for initial import of data since it doesn't
 support incremental replication and dies if data is allready present.
@@ -41,18 +50,18 @@ support incremental replication and dies if data is allready present.
 
 Installation:
 
-	git submodule init
-	git submodule update
+	$ git submodule init
+	$ git submodule update
 
 Optionally build angular to get single file download
 
-	cd public/angular
-	rake compile
-	cd -
+	$ cd public/angular
+	$ rake compile
+	$ cd -
 
 Start it with:
 
-	./angular-server.pl daemon --reload  
+	$ ./angular-server.pl daemon --reload  
 
 
 Angular examples available:
@@ -61,12 +70,47 @@ Angular examples available:
 - template/conferece - conference submission example using mojolicious REST API server
 - public/app/conference - new application layout with latest example confernce submission
 
-	curl -X PUT http://localhost:5984/conference/_design/symposium \
+	$ curl -X PUT http://localhost:5984/conference/_design/symposium \
 		-d @public/app/conference/_design/symposium
+
+
+
+CouchDB examples:
+
+	couchdb-changes.pl - simple _changes feed watcher using Mojo::Client documented at
+
+		http://wiki.apache.org/couchdb/HTTP_database_API#Changes
+
+
+	couchdb-trigger.pl - FSM document with hook for user-defiend triggers
+
+		trigger/shell.pm - execute shell commands
+		trigger/email.pm - skeleton for sending e-email
+		trigger/KinoSearch.pm - full-text search
+
+	$ curl -X PUT http://localhost:5984/demo
+	{"ok":true}
+
+	$ ./couchdb-trigger.pl http://localhost:5984/demo trigger/shell.pm
+
+	$ curl -X PUT http://localhost:5984/demo/t1 -d '{"trigger":{"command":"notify-send CouchDB t1"}}'
+
+
+	couchdb-external-kinosearch.pl - external searcher for KinoSearch indexes
+		(configuration for CouchDB is included at end of file)
+
+	$ ./couchdb-trigger.pl http://localhost:5984/demo trigger/KinoSearch.pm
+
+	$ curl -X PUT http://localhost:5984/demo/text -d '{"text":"foobar bla bla"}'
+	{"ok":true,"id":"text","rev":"1-cf9bb608f93af7f4e5e40656a6e50096"}
+
+	$ curl 'http://localhost:5984/demo/_kinosearch?include_docs=true;q=foobar'
+
 
 
 Roadmap:
 
 + implement angular-server.pl which implements REST API supported by $resource in angular
 + persistency to local CouchDB, and use views to query data
++ implement CouchDB _changes and FSM inside document as base for queue or triggers
 - tests

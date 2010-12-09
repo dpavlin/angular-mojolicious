@@ -25,6 +25,9 @@ my ( $url, $trigger_path ) = @ARGV;
 $url          ||= 'http://localhost:5984/monitor';
 $trigger_path ||= 'trigger/shell.pm' ;
 
+our $database = $1 if $url =~ m{/(\w+)/?$};
+
+sub commit { warn "# commit ignored\n"; }
 require $trigger_path if -e $trigger_path;
 
 my $seq = 0;
@@ -45,12 +48,9 @@ while( ! $error ) {
 	$tx->res->body(sub{
 		my ( $content, $body ) = @_;
 
-		debug 'BODY' => $body;
+		return if length($body) == 0; # empty chunk, heartbeat?
 
-		if ( length($body) == 0 ) {
-			warn "# empty chunk, heartbeat?\n";
-			return;
-		}
+		debug 'BODY' => $body;
 
 		foreach ( split(/\r?\n/, $body) ) { # we can get multiple documents in one chunk
 
@@ -83,7 +83,7 @@ while( ! $error ) {
 								if ( $tx->res->code == 409 ) {
 									info "TRIGGER ABORTED started on another worker? ", $tx->error;
 								} else {
-									info "ERROR ", $tx->error;
+									info "ERROR $url/$id ", $tx->error;
 								}
 							} else {
 								my $res = $tx->res->json;
@@ -97,7 +97,7 @@ while( ! $error ) {
 								$client->put( "$url/$id" => $json->encode( $change->{doc} ) => sub {
 									my ($client,$tx) = @_;
 									if ($tx->error) {
-										info "ERROR", $tx->error;
+										info "ERROR $url/$id", $tx->error;
 									} else {
 										my $res = $tx->res->json;
 										$change->{doc}->{_rev} = $res->{rev};
@@ -113,6 +113,8 @@ while( ! $error ) {
 			}
 
 		}
+
+		commit;
 
 	});
 	$client->start($tx);

@@ -44,7 +44,10 @@ Ako želite, upišite svoju e-mail adresu:
 	<input class="text1" name="casopis.naslov" ng:required>
 	<a href="" title="Brisanje naslova." ng:click="upitnik.casopisi.$remove(casopis)">X</a>
 </div>
-<a href="" title="Dodavanje prostora za unos još jednog naslova." ng:click="upitnik.casopisi.$add({naslov:''})">dodaj još jedno polje</a>
+<a href="" title="Dodavanje prostora za unos još jednog naslova."
+	ng:click="upitnik.casopisi.$add({naslov:''})"
+	ng:show="upitnik.casopisi.$count() < 10"
+>dodaj još jedno polje</a>
 
 <h2>
 2. Odaberite i obrazložite svoj izbor:
