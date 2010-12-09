@@ -100,6 +100,9 @@ CouchDB examples:
 
 	$ ./couchdb-trigger.pl http://localhost:5984/trigger_demo trigger/KinoSearch.pm
 
+	$ curl -X PUT http://localhost:5984/trigger_demo/text -d '{"text":"foobar bla bla"}'
+	{"ok":true,"id":"text","rev":"1-cf9bb608f93af7f4e5e40656a6e50096"}
+
 	$ curl 'http://localhost:5984/trigger_demo/_kinosearch?include_docs=true;q=foobar'
 
 
