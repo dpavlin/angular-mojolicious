@@ -74,8 +74,10 @@ pages
 info
 </label>
 
+<input type=text name=search>
+
 <table>
-<tr ng:repeat="printer in data">
+<tr ng:repeat="printer in data.$filter(search)">
 <td><a href="http://{{printer._key}}" target="{{printer._key}}"><tt>{{printer._key}}</tt></a></td>
 <td>{{printer.hostname}}</td>
 
