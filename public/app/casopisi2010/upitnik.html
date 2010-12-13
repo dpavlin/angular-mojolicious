@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <script src="angular.js" ng:autobind></script>
 
-<title>Upitnik o stranim časopisima</title>
+<title>Ispitivanje potreba o stranim časopisima</title>
 
 <script src="upitnik.js"></script>
 
@@ -15,61 +15,68 @@
 
 <div class="root" ng:controller="Upitnik" ng:init="$window.$root = this;">
 
+<h1>
+Ispitivanje potreba za stranim časopisima
+</h1>
+<br>
 <h2>
 Na kojem odsjeku ili zavodu ste zaposleni?
 </h2>
-<input name="upitnik.odsjek" class="text1">
+<input name="upitnik.odsjek" class="text1" ng:required>
 
 <h2 style="margin-top: 20px">
 Kojim područjem istraživanja se trenutno bavite?
 </h2>
-<input name="upitnik.podrucje" class="text1">
+<input name="upitnik.podrucje" class="text1" ng:required>
 
 <h2 style="margin-top: 20px">
-Ako želite, upišite svoju e-mail adresu:
+Znanstveno-nastavno zvanje:
 </h2>
-<input name="upitnik.email" class="text2">
+<input name="upitnik.podrucje" ng:required>
+
+<h2 style="margin-top: 20px">
+Upišite svoju e-mail adresu:
+</h2>
+<input name="upitnik.email" class="text2" ng:required ng:validate="email">
 
 <h2>
-1. Koji su Vam <span class="naglasi">strani</span> časopisi najpotrebniji?
+Koji <span class="naglasi">strani</span> časopisi su Vama osobno najviše potrebni?
 </h2>
 <div>
 <p>Navedite naslove stranih časopisa u kojima nalazite najveći broj članaka potrebnih u Vašem istraživanju i nastavi, koje najčešće citirate ili koje redovito pratite, bez obzira na to da li su Vam sada dostupni ili ne.</p>
-<p>Navedite <b>barem 3 naslova</b>, ali ako je potrebno možete unjeti i više.</p>
+<p>Navedite <b>barem 3 naslova</b>. Ako je potrebno možete unjeti i više, ali najviše 10 naslova</p>
 </div>
 
 <div class="labels1">
 </div>
 <div ng:repeat="casopis in upitnik.casopisi">
-	<input class="text1" name="casopis.naslov" ng:required>
+	<input class="text1" name="casopis.naslov">
 	<a href="" title="Brisanje naslova." ng:click="upitnik.casopisi.$remove(casopis)">X</a>
 </div>
 <a href="" title="Dodavanje prostora za unos još jednog naslova."
 	ng:click="upitnik.casopisi.$add({naslov:''})"
 	ng:show="upitnik.casopisi.$count() < 10"
->dodaj još jedno polje</a>
+>dodaj još jedno polje za unos!</a>
 
 <h2>
-2. Odaberite i obrazložite svoj izbor:
+Odaberite i obrazložite svoj izbor:
 </h2>
 
 <label>
 <input type="radio" name="upitnik.inacica" value="elektronicka"> Važnije mi je da knjižnica osigura stalni pristup elektroničkoj inačici časopisa.
 </label>
-<textarea ng:show="upitnik.inacica == 'elektronicka'" name="upitnik.inacica_obrazlozenje"></textarea>
 
 <label>
 <input type="radio" name="upitnik.inacica" value="tiskana"> Važnije mi je da knjižnica nabavi tiskani primjerak časopisa.
 </label>
-<textarea ng:show="upitnik.inacica == 'tiskana'" name="upitnik.inacica_obrazlozenje"></textarea>
 
 <label>
 <input type="radio" name="upitnik.inacica" value="svejedno"> Svejedo mi je.
 </label>
-<textarea ng:show="upitnik.inacica == 'svejedno'" name="upitnik.inacica_obrazlozenje"></textarea>
+<textarea ng:show="upitnik.inacica" name="upitnik.inacica_obrazlozenje"></textarea>
 
 <h2>
-3. Koji elektronički izvori informacija su Vam potrebni?
+Koji elektronički izvori informacija su Vam potrebni?
 </h2>
 <div>
 <p>Navedite poznate Vam digitalne zbirke časopisa, knjiga ili drugih vrsta građe, bibliografske baze podataka i slično.</p>
