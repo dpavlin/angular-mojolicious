@@ -49,62 +49,42 @@ function Printers(xhr){
 
 <div ng:controller="Printers"> 
 
-<label>
-<input type=checkbox name=show_message>
-message
-</label>
-
-<label>
-<input type=checkbox name=show_consumable>
-consumable
-</label>
-
-<label>
-<input type=checkbox name=show_trays>
-trays
-</label>
-
-<label>
-<input type=checkbox name=show_pages>
-pages
-</label>
-
-<label>
-<input type=checkbox name=show_info>
-info
-</label>
+<label><input type=checkbox name=hostname checked>hostname</label>
+<label><input type=checkbox name=model>model</label>
+<label><input type=checkbox name=serial>serial</label>
+<label><input type=checkbox name=message checked>message</label>
+<label><input type=checkbox name=consumable>consumable</label>
+<label><input type=checkbox name=trays>trays</label>
+<label><input type=checkbox name=pages checked>pages</label>
+<label><input type=checkbox name=info>info</label>
 
 <input type=text name=search>
 
 <table>
 <tr ng:repeat="printer in data.$filter(search)">
 <td><a href="http://{{printer._key}}" target="{{printer._key}}"><tt>{{printer._key}}</tt></a></td>
-<td>{{printer.hostname}}</td>
 
-<td><div class=message ng:show="show_message" ng:repeat="m in printer.message">{{m}}</div></td>
+<td ng:show="hostname">{{printer.hostname}}</td>
+<td ng:show="model">{{printer.model}}</td>
+<td ng:show="serial">{{printer.serial}}</td>
 
-<td ng:show="show_consumable">
-	<table>
-	<tr ng:repeat="c in printer.consumable">
-	<td align="right" ng:class="'p'+((c.curr * 10 + 0.0001)/ c.max).toFixed(0)">{{ ((c.curr * 100 + 0.0001)/ c.max).toFixed(1) }}%</td>
-	<td>{{c.name}}</td>
-	</tr>
-	</table>
+<td><div class=message ng:show="message" ng:repeat="m in printer.message">{{m}}</div></td>
+
+<td ng:show="consumable">
+<span ng:repeat="c in printer.consumable" ng:class="'p'+((c.curr * 10 + 0.0001)/ c.max).toFixed(0)" title="{{c.name}}">
+	{{ ((c.curr * 100 + 0.0001)/ c.max).toFixed(1) }}%
+</span>
 </td>
 
-<td ng:show="show_trays">
-	<table>
-	<tr ng:repeat="t in printer.tray">
-	<td align="right" ng:class="'p'+((t.capacity * 10 + 0.0001)/ t.max).toFixed(0)">{{t.capacity}}/{{t.max}}</td>
-	<td>{{t.name}}</td>
-	<td>{{t.dim_x}}*{{t.dim_y}}</td>
-	</tr>
-	</table>
+<td ng:show="trays">
+	<span ng:repeat="t in printer.tray" ng:class="'p'+((t.capacity * 10 + 0.0001)/ t.max).toFixed(0)" title="{{t.name}} {{t.dim_x}}*{{t.dim_y}}">
+	{{t.capacity}}/{{t.max}}
+	</span>
 </td>
 
-<td ng:show="show_pages">{{printer.pages}}</td>
+<td ng:show="pages" align="right">{{printer.pages}}</td>
 
-<td ng:show="show_info">{{printer.info}}</td>
+<td ng:show="info">{{printer.info}}</td>
 
 </table>
 
