@@ -127,7 +127,14 @@ Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može
 	<label ng:show="registration.type == 'round'">Tip registracije: Organizator okruglog stola<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'lecture'">Tip registracije: Usmeno priopćenje<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'poster'">Tip registracije: Prezentacija postera<span ng:show="registration.student == true">, student</span></label>
-	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Naslov: </b>{{registration.work.title}}</label>
+	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Naslov: </b><br>{{registration.work.title}}</label>
+	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Autori: </b><br>
+	<span ng:repeat="author in registration.work.authors">
+	{{author.name}}
+	{{author.surname}},
+	{{author.inst}} <br>
+	</span>
+        </label>
 	<div ng:show="registration.type == 'symposium'">
 		<p>Tip registracije: Organizator simpozija</p>
 		<label><b>Tema simpozija: </b><i>{{registration.symposium.title}}</i></label>

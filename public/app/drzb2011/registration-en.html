@@ -130,6 +130,13 @@ One person can be author of maximum three papers, only one of them as first/pres
 	<label ng:show="registration.type == 'lecture'">Registration type: Oral presentation<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'poster'">Registration type: Poster presentation<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Title: </b>{{registration.work.title}}</label>
+	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Authors: </b><br>
+	<span ng:repeat="author in registration.work.authors">
+	{{author.name}}
+	{{author.surname}},
+	{{author.inst}} <br>
+	</span>
+        </label>
 	<div ng:show="registration.type == 'symposium'">
 		<p>Symposium organizer</p>
 		<label><b>Symposium topic: </b><i>{{registration.symposium.title}}</i></label>
