@@ -20,6 +20,11 @@ function Registrations(xhr){
 
 } 
 
+angular.filter('lf2p', function(input) {
+	if ( input && input.length )
+		return input.replace(/\n/g,"<p>");
+});
+
 </script>
 
 <title>DRZB2011 Registrations</title>
@@ -114,7 +119,7 @@ Odabir: <br/>
 		<div style="font-size: 12pt; font-weight: bold; text-align: center; margin: 0; padding: 0">{{author.name}} {{author.surname}}</div>
 		<div style="font-size: 12pt; font-style: italic; font-weight: normal; text-align: center; padding-top: 6pt; padding-bottom: 12pt; margin: 0;">{{author.inst}}</div>
 	</span>
-	<div>{{registration.work.abstract}}</div>
+	<div>{{registration.work.abstract | lf2p | html}}</div>
 	<div>{{registration._id}}</div>
 </div>
 </div>
