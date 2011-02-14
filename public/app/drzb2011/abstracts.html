@@ -88,19 +88,14 @@ li {
 
 Odabir: <br/>
 
-<label><input name="selection" type="radio" value="all">SVI <br></label>
-<label class="participant"><input name="selection" type="radio" value="participant">Samo registracija <br></label>
-<label class="sparticipant"><input name="selection" type="radio" value="sparticipant">Sudionik simpozija/okruglog stola <br></label>
-<label class="symposium"><input name="selection" type="radio" value="symposium">Organizator simpozija <br></label>
-<label class="round"><input name="selection" type="radio" value="round">Organizator okruglog stola<br></label>
+<label class="symposium"><input name="selection" type="radio" value="symposium">Rad unutar simpozija<br></label>
 <label class="lecture"><input name="selection" type="radio" value="lecture">Usmeno priopćenje <br></label>
 <label class="poster"><input name="selection" type="radio" value="poster">Poster <br></label>
-<label class="student"><input name="selection" type="radio" value="student">Student - samo registracija<br></label>
-<label class="accomp"><input name="selection" type="radio" value="accomp">Osoba u pratnji<br></label>
 
 
-<ol>
-<li ng:repeat="registration in data" ng:show="registration.type == selection || selection == 'all'">
+<div>
+<div ng:repeat="registration in data" ng:show="registration.type == selection || selection == 'all'">
+<!--
 <span class="{{registration.type}}">
 	<span ng:show="registration.type == 'participant'">samo registracija</span> 
 	<span ng:show="registration.type == 'sparticipant'">sudionik simpozija/okruglog stola</span> 
@@ -112,23 +107,17 @@ Odabir: <br/>
 	<span ng:show="registration.type == 'accomp'">osoba u pratnji</span> 
 </span>
 	<span ng:show="registration.student == thrue"> - student</span><br>
-{{registration.person.name}}
-{{registration.person.surname}}
-&lt;{{registration.person.email}}&gt; {{registration.person.inst}}, {{registration.person.city}}, {{registration.person.country}}
-
-<div><b>{{registration.work.title}}</b></div>
-<span ng:repeat="author in registration.work.authors" ng:show="registration.work.title">
-{{author.name}}
-{{author.surname}},
-{{author.inst}} <br>
-</span>
-<div class="abstract">{{registration.work.abstract}}</div>
-<div>{{registration._id}}</div>
-<!--
-<div class=address>{{registration.person.zip}} {{registration.person.city}}</div>
 -->
-</li>
-</ol>
+
+	<h1 style="font-size: 14pt; text-align: center; padding-top:48pt">{{registration.work.title | uppercase}}</h1>
+	<span ng:repeat="author in registration.work.authors" ng:show="registration.work.title">
+		<div style="font-size: 12pt; font-weight: bold; text-align: center; margin: 0; padding: 0">{{author.name}} {{author.surname}}</div>
+		<div style="font-size: 12pt; font-style: italic; font-weight: normal; text-align: center; padding-top: 6pt; padding-bottom: 12pt; margin: 0;">{{author.inst}}</div>
+	</span>
+	<div>{{registration.work.abstract}}</div>
+	<div>{{registration._id}}</div>
+</div>
+</div>
 
 <div>
 <input name=debug type=checkbox style="float: right;">
