@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+
+<html xmlns:ng="http://angularjs.org">
+  <head> 
+	<title>Ispitivanje potreba za stranim časopisima - Knjižnica Filozofskog fakulteta</title>
+	<meta charset="utf-8">
+	<script src="upitnik.js"></script>
+	<script src="angular.js" ng:autobind></script>
+	<link rel="stylesheet" href="style2.css" type="text/css">
+	<link rel="stylesheet" href="upitnik.css" type="text/css">
+  </head> 
+ 
+<body> 
+<div id="main"> 
+	<div id="header"> 
+		<span class="title">Knjižnica<span class="darktitle"> Filozofskog fakulteta</span></span><br/><span class="subt">Sveučilišta u <span class="subt2">Zagrebu</span></span> 
+	</div> 
+	<div class="nav"> 
+		<a href="http://knjiznica.ffzg.hr/katalozi">katalozi</a> 
+		<a href="http://knjiznica.ffzg.hr/baze">baze podataka</a> 
+		<a href="http://knjiznica.ffzg.hr/dzbirke">digitalne zbirke</a> 
+		<a href="http://knjiznica.ffzg.hr/usluge">usluge</a> 
+		<a href="http://knjiznica.ffzg.hr/knjiznice">kontakt</a> 
+	</div> 
+	<div id="titleBar"> 
+		Upitnik o časopisima
+	</div> 
+	<div id="breadcrumb"> 
+	<a class="crumbTrail" href="http://knjiznica.ffzg.hr">naslovnica</a>
+	&gt;
+	<a class="crumbTrail" href="http://w3000.rot13.org/app/casopisi2010/upitnik.html">upitnik o časopisima</a>
+	</div> 
+
+<div class="content">
+
+<div class="root" ng:controller="Upitnik" ng:init="$window.$root = this;">
+
+<p>Pred Vama je upitnik pomoću kojega želimo upoznati Vaše potrebe vezane uz korištenje stranih znanstvenih časopisa.</p>
+
+<p>Prikupljeni podaci koristit će se kao jedna od polaznih točaka prilikom sastavljanja popisa naslova stranih časopisa koji bi trebali biti dostupni u Knjižnici Filozofskog fakulteta. Popis će biti sastavljen uz pomoć različitih kriterija kako bismo stvorili temelj za racionalno potraživanje potrebnih financijskih sredstava. Važno nam je da časopisi koje nabavljamo budu zaista potrebni za normalno odvijanje nastave i znanstvenog rada.</p>
+
+<p>Podaci će biti upotrebljivi samo ako prikupimo dovoljan broj odgovora, pa Vas stoga molimo da odvojite malo vremena za ovaj upitnik.</p>
+
+<p>Ukoliko imate pitanja, molimo obratite se na adresu <a href="mailto:knjiznice@ffzg.hr">knjiznice@ffzg.hr</a>.</p> 
+
+<h2 style="margin-top: 20px">
+Na kojem odsjeku ste zaposleni?
+</h2>
+<select name="upitnik.odsjek" ng:required>
+<option>-- odaberite --</option>
+<option>Odsjek za anglistiku</option>
+<option>Odsjek za arheologiju</option>
+<option>Odsjek za etnologiju i kulturnu antropologiju</option>
+<option>Odsjek za filozofiju</option>
+<option>Odsjek za fonetiku</option>
+<option>Odsjek za germanistiku</option>
+<option>Odsjek za informacijske znanosti</option>
+<option>Odsjek za klasičnu filologiju</option>
+<option>Odsjek za komparativnu književnost</option>
+<option>Odsjek za kroatistiku</option>
+<option>Odsjek za lingvistiku</option>
+<option>Odsjek za indologiju i dalekoistočne studije</option>
+<option>Odsjek za turkologiju i hungarologiju</option>
+<option>Odsjek za pedagogiju</option>
+<option>Odsjek za povijest</option>
+<option>Odsjek za povijest umjetnosti</option>
+<option>Odsjek za psihologiju</option>
+<option>Odsjek za romanistiku</option>
+<option>Odsjek za istočnoslavenske jezike i književnosti</option>
+<option>Odsjek za južnoslavenske jezike i književnosti</option>
+<option>Odsjek za zapadnoslavenske jezike i književnosti</option>
+<option>Odsjek za sociologiju</option>
+<option>Odsjek za talijanistiku</option>
+<option>Samostalna katedra za kineziologiju</option>
+<option>Katedra za skandinavistiku</option>
+</select> <span class="naglasi">*</span>
+
+<h2 style="margin-top: 20px">
+Koje je Vaše zvanje?
+</h2>
+<select name="upitnik.zvanje" ng:required>
+<option>-- odaberite --</option>
+<option>docent</option>
+<option>izvanredni profesor</option>
+<option>redoviti profesor</option>
+<option>lektor</option>
+<option>viši lektor</option>
+<option>predavač</option>
+<option>viši predavač</option>
+<option>asistent</option>
+<option>viši asistent</option>
+<option>stručni suradnik</option>
+<option>viši stručni suradnik</option>
+<option>stručni savjetnik</option>
+<option>znanstveni novak</option>
+</select> <span class="naglasi">*</span>
+
+<h2 style="margin-top: 20px">
+Kojim područjem istraživanja se trenutno bavite?
+</h2>
+<input name="upitnik.podrucje" class="text1" ng:required> <span class="naglasi">*</span>
+
+
+<h2 style="margin-top: 20px">
+Upišite svoju e-mail adresu:
+</h2>
+<input name="upitnik.email" class="text2" ng:required ng:validate="email"> <span class="naglasi">*</span>
+
+
+<h2>
+Koji <span class="naglasi">strani časopisi</span> su Vama osobno najviše potrebni?
+</h2>
+<div>
+<p>Navedite naslove stranih časopisa u kojima nalazite najveći broj članaka potrebnih u Vašem istraživanju i nastavi, koje najčešće citirate ili koje redovito pratite, bez obzira na to jesu li Vam sada dostupni ili ne.</p>
+<p>Navedite <b>barem 3 naslova</b>. Ako je potrebno možete unjeti i više, ali najviše 10 naslova.</p>
+</div>
+
+<div class="labels1">
+</div>
+<div ng:repeat="casopis in upitnik.casopisi">
+	<input class="text1" name="casopis.naslov" ng:required> <span class="naglasi">*</span>
+
+	<a href="" title="Brisanje naslova." ng:click="upitnik.casopisi.$remove(casopis)">obriši</a>
+</div>
+<a href="" title="Dodavanje prostora za unos još jednog naslova."
+	ng:click="upitnik.casopisi.$add({naslov:''})"
+	ng:show="upitnik.casopisi.$count() < 10"
+>dodaj polje za unos još jednog naslova</a>
+
+<h2>
+Odaberite i obrazložite svoj izbor:
+</h2>
+
+<label>
+<input type="radio" name="upitnik.inacica" value="elektronicka"> Važnije mi je da knjižnica osigura stalni pristup elektroničkoj inačici časopisa.
+</label>
+
+<label>
+<input type="radio" name="upitnik.inacica" value="tiskana"> Važnije mi je da knjižnica nabavi tiskani primjerak časopisa.
+</label>
+
+<label>
+<input type="radio" name="upitnik.inacica" value="svejedno"> Svejedno mi je.
+</label>
+<textarea ng:show="upitnik.inacica" name="upitnik.inacica_obrazlozenje"></textarea>
+
+<h2>
+Koji elektronički izvori informacija su Vam potrebni?
+</h2>
+<div>
+<p>Navedite digitalne zbirke časopisa, knjiga ili drugih vrsta građe, bibliografske baze podataka i slično koji su Vam poznati i smatrate ih korisnima za svoj rad.</p>
+</div>
+<div ng:repeat="eizvor in upitnik.eizvori">
+	<input name="eizvor.naziv" class="text1">
+	<a href="" title="Brisanje naziva izvora." ng:click="upitnik.eizvori.$remove(eizvor)">obriši</a>
+</div>
+<a href="" title="Dodavanje prostora za unos još jednog izvora." ng:click="upitnik.eizvori.$add({naziv:''})">dodaj polje za unos još jednog izvora</a>
+
+<h2>
+Komentari, prijedlozi i pitanja u vezi časopisa:
+</h2>
+<textarea type="textarea" rows=5 name="upitnik.komentari"></textarea>
+
+
+<div class="button">
+	<input type=submit ng:click="save()" value="Pošalji">
+<!--
+	<input type=reset ng:click="reset()" value="Poništi">
+-->
+</div>
+<div class="button" ng:show="$invalidWidgets.visible() &gt; 0 || upitnik.odsjek == '-- odaberite --' || upitnik.zvanje == '-- odaberite --'">
+<p>Molimo ispunite sva tražena polja. Polja označena zvjezdicom (*) su obavezna.</p>
+</div>
+
+
+
+<div style="clear: both">
+<input type=checkbox name=debug style="float: right; clear: both">
+<pre ng:show="debug">
+
+dirty= invalid={{$invalidWidgets.visible()}}
+
+upitnik = {{upitnik}}
+
+last_saved = {{last_saved}}
+</pre>
+</div>
+
+</div><!-- ng:controller="Upitnik" -->
+	</div>	</div>
+
+</body>
+</html>

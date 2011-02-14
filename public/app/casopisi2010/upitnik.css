@@ -119,6 +119,7 @@ label {
 
 .button {
 	margin-top: 40px;
+	clear: both;
 }
 
 .button input {
