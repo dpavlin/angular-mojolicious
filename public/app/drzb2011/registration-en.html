@@ -84,6 +84,9 @@
 All participants (presenters, coauthors and visitors) have to register via on-line register system.
 </p>
 
+<p>Proposal submission has been closed on 27th January 2011.</p>
+
+<!--
 <p>
 Abstract of oral presentation/poster has to be submitted only by first author or by presenting coauthor. Other coauthors do not have to submit the abstract, only register.
 </p>
@@ -103,7 +106,7 @@ The abstracts length should be between 1800 and 2000 characters (space included)
 <p>
 One person can be author of maximum three papers, only one of them as first/presenting/single author.
 </p>
-
+-->
 
 
 </div>
@@ -130,6 +133,13 @@ One person can be author of maximum three papers, only one of them as first/pres
 	<label ng:show="registration.type == 'lecture'">Registration type: Oral presentation<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'poster'">Registration type: Poster presentation<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Title: </b>{{registration.work.title}}</label>
+	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Authors: </b><br>
+	<span ng:repeat="author in registration.work.authors">
+	{{author.name}}
+	{{author.surname}},
+	{{author.inst}} <br>
+	</span>
+        </label>
 	<div ng:show="registration.type == 'symposium'">
 		<p>Symposium organizer</p>
 		<label><b>Symposium topic: </b><i>{{registration.symposium.title}}</i></label>
@@ -181,14 +191,16 @@ One person can be author of maximum three papers, only one of them as first/pres
 <div id="submission" ng:show="! registration.$id && ! symposium.$id">
 	<div>
 		<h2>Registration Type</h2>
-		<label><input type="radio" name="registration.type" value="participant" ng:required>Registration only</label>
+		<label><input type="radio" name="registration.type" value="participant" ng:required>Registration</label>
 		<label><input type="radio" name="registration.type" value="sparticipant" ng:required>Symposium/round table participant</label>
+<!--
 		<label><input type="radio" name="registration.type" value="symposium" ng:required>Symposium organizer</label>
 		<label><input type="radio" name="registration.type" value="round" ng:required>Round table organizer</label>
 		<label><input type="radio" name="registration.type" value="lecture" ng:required>Oral presentation</label>
 		<label><input type="radio" name="registration.type" value="poster" ng:required>Poster presentation</label>
+-->
 	</div>
-		<label><input type="radio" name="registration.type" value="student" ng:required ng:change="registration.dinner = 'no'">Student registration only</label>
+		<label><input type="radio" name="registration.type" value="student" ng:required ng:change="registration.dinner = 'no'">Registration - students</label>
 		<label><input type="radio" name="registration.type" value="accomp" ng:required>Accompanying person</label>
 </div>
 
@@ -259,7 +271,7 @@ One person can be author of maximum three papers, only one of them as first/pres
 
 
 <div id="work" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.type != 'student' && registration.type != 'accomp'">
-<div ng:show="registration.type == 'symposium' && registration.symposium.work_nr < 4 && ! symposium.$id">
+<div ng:show="registration.type == 'symposium' && registration.symposium.work_nr < 5 && ! symposium.$id">
 
 	<h2>Symposium</h2>
 	<label for="registration.symposium.title">Topic:</label>
@@ -381,7 +393,7 @@ Decide about going to welcome reception.</span>
 		</div>
 		<br><br>
 	</div>
-	<div class="saved" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.type != 'student' && registration.type != 'accomp' && registration.symposium.work_nr == 4 && last_saved.$id">
+	<div class="saved" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.type != 'student' && registration.type != 'accomp' && (registration.symposium.work_nr == 5 || registration.symposium.work_last == true) && last_saved.$id">
 		<span class="saved2">Thank you. Your proposal has been submitted successfully! <br></span>
 		<span class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011-eng/registration/fee">Please read conference fee payment instructions</a></span>
 		
@@ -395,9 +407,13 @@ Decide about going to welcome reception.</span>
 	</div>
 	
 </div>
-	<div class="button button2" ng:show="last_saved.$id && symposium.$id && registration.symposium.work_nr < 4">
+	<div style="clear: both" ng:show="last_saved.$id && symposium.$id && registration.symposium.work_nr == 4 && registration.symposium.work_last == false">
+		<input type="checkbox" name="registration.symposium.work_last">This was the last paper in this symposium
+	</div>
+	<div class="button button2" ng:show="last_saved.$id && symposium.$id && registration.symposium.work_nr < 5 && registration.symposium.work_last == false">
 		<input type="reset" value="Submit another paper" ng:click="reset()"> 
 	</div>
+	
 <!--
 <div class="button2" ng:show="registration.$id && registration.type != 'participant' && registration.type != 'sparticipant' && last_saved.$equals(registration)">
 	<input type="reset" value="Submit another paper" ng:click="reset()">
@@ -406,6 +422,8 @@ Decide about going to welcome reception.</span>
 -->
 
 </div>
+
+
 <div id="footer">
         Odsjek za psihologiju, Filozofski fakultet Sveučilišta u Zagrebu, Ivana Lučića 3, 10000 Zagreb ; tel. 01/6120 215 ; fax. 01/6120 037
         <div id="go_to_top"><a href="#"></a></div>

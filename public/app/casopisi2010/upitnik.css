@@ -1,3 +1,5 @@
+
+/*
 body {
 	background: #F6F6F6;
 	margin: 0 auto;
@@ -20,6 +22,7 @@ h3 {
 	margin-top: 20px;
 }
 
+*/
 
 .naglasi {
 	color: #d74f25;
@@ -44,6 +47,11 @@ input:focus, textarea:focus
 	font-family: arial;
 	color: #000000;
 }
+
+textarea {
+	width: 30em;
+}
+
 .input {
 	color: #afafaf;
 	float: left;
@@ -86,21 +94,6 @@ label {
 	color: #374E5A;
 }
 
-h1
-{
-	float: left;
-/*	margin-bottom: 6px;	*/
-	padding-left: 20px;
-	font: 18px arial;
-	color: #0c1426;
-	text-align: center;
-	text-decoration: none;
-	display: block;
-	background: url(http://mjesec.ffzg.hr/drzb2011/images/kvadrat.gif) no-repeat left;
-	margin: 0;
-}
-
-
 
 .clear {
 	clear: both;
@@ -126,7 +119,7 @@ h1
 
 .button {
 	margin-top: 40px;
-	width: 40.8em;
+	clear: both;
 }
 
 .button input {
@@ -140,6 +133,11 @@ h1
 
 .button input:hover, .gohome:hover {
 	/* background: #dc6844;	*/
+}
+
+.button p {
+	color: #D74f25;
+	font-weight: bold;
 }
 
 .button2 input {

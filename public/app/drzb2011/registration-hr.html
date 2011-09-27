@@ -82,6 +82,9 @@
 Svi sudionici skupa, bez obzira na to jesu li izlagači, suautori ili slušači, moraju se registrirati kroz sustav elektroničke prijave.
 </p>
 
+<p>Prijave izlaganja zatvorene su 27.01.2010.</p>
+
+<!--
 <p>
 Sažetak izlaganja/postera prijavljuje samo prvi autor, odnosno onaj autor koji će rad izložiti. Ostali suautori ne trebaju prijaviti sažetak, nego se samo registrirati.
 </p>
@@ -101,7 +104,7 @@ Duljina sažetka treba biti između 1800 i 2000 znakova (uključujući razmake).
 <p>
 Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može biti prvi ili jedini autor ili autor koji će izlagati.
 </p>
-
+-->
 
 
 </div>
@@ -123,11 +126,18 @@ Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može
 	<label ng:show="registration.type == 'participant'">Tip registracije: Samo registracija</label>
 	<label ng:show="registration.type == 'accomp'">Tip registracije: Osoba u pratnji</label>
 	<label ng:show="registration.type == 'student'">Tip registracije: Student</label>
-	<label ng:show="registration.type == 'sparticipant'">Tip registracije: Sudionik simpozija/okriglog stola<span ng:show="registration.student == true">, student</span></label>
+	<label ng:show="registration.type == 'sparticipant'">Tip registracije: Sudionik simpozija/okruglog stola<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'round'">Tip registracije: Organizator okruglog stola<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'lecture'">Tip registracije: Usmeno priopćenje<span ng:show="registration.student == true">, student</span></label>
 	<label ng:show="registration.type == 'poster'">Tip registracije: Prezentacija postera<span ng:show="registration.student == true">, student</span></label>
-	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Naslov: </b>{{registration.work.title}}</label>
+	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Naslov: </b><br>{{registration.work.title}}</label>
+	<label ng:show="registration.type == 'poster' || registration.type == 'lecture' || registration.type == 'round'"><b>Autori: </b><br>
+	<span ng:repeat="author in registration.work.authors">
+	{{author.name}}
+	{{author.surname}},
+	{{author.inst}} <br>
+	</span>
+        </label>
 	<div ng:show="registration.type == 'symposium'">
 		<p>Tip registracije: Organizator simpozija</p>
 		<label><b>Tema simpozija: </b><i>{{registration.symposium.title}}</i></label>
@@ -179,14 +189,16 @@ Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može
 <div id="submission" ng:show="! registration.$id && ! symposium.$id">
 	<div>
 		<h2>Tip registracije</h2>
-		<label><input type="radio" name="registration.type" value="participant" ng:required>Samo registracija</label>
+		<label><input type="radio" name="registration.type" value="participant" ng:required>Registracija</label>
 		<label><input type="radio" name="registration.type" value="sparticipant" ng:required>Sudionik simpozija/okruglog stola</label>
+<!--
 		<label><input type="radio" name="registration.type" value="symposium" ng:required>Organizator simpozija</label>
 		<label><input type="radio" name="registration.type" value="round" ng:required>Organizator okruglog stola</label>
 		<label><input type="radio" name="registration.type" value="lecture" ng:required>Usmeno priopćenje</label>
 		<label><input type="radio" name="registration.type" value="poster" ng:required>Prezentacija postera</label>
+-->
 	</div>
-		<label><input type="radio" name="registration.type" value="student" ng:required ng:change="registration.dinner = 'no'">Student - samo registracija</label>
+		<label><input type="radio" name="registration.type" value="student" ng:required ng:change="registration.dinner = 'no'">Registracija za studente</label>
 		<label><input type="radio" name="registration.type" value="accomp" ng:required>Osoba u pratnji</label>
 </div>
 
@@ -282,7 +294,7 @@ Jedna osoba može biti autor u najviše tri rada, pri čemu na samo jednom može
 
 
 <div id="work" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.type != 'student' && registration.type != 'accomp'">
-<div ng:show="registration.type == 'symposium' && registration.symposium.work_nr < 4 && ! symposium.$id">
+<div ng:show="registration.type == 'symposium' && registration.symposium.work_nr < 5 && ! symposium.$id">
 
 	<h2>Simpozij</h2>
 	<label for="registration.symposium.title">Tema:</label>
@@ -404,7 +416,7 @@ Odlučite o dolasku na domjenak.</span>
 		</div>
 		<br><br>
 	</div>
-	<div class="saved" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.type != 'student' && registration.type != 'accomp' && registration.symposium.work_nr == 4 && last_saved.$id">
+	<div class="saved" ng:show="registration.type != 'participant' && registration.type != 'sparticipant' && registration.type != 'student' && registration.type != 'accomp' && (registration.symposium.work_nr == 5 || registration.symposium.work_last == true) && last_saved.$id">
 		<span class="saved2">Hvala! Vaš prijedlog je uspješno predan. <br></span>
 		<span class="gohome"><a href="http://psihologija.ffzg.hr/drzb2011/registracija/kotizacija">Molimo pročitajte upute za plaćanje kotizacije.</a></span>
 		
@@ -418,7 +430,10 @@ Odlučite o dolasku na domjenak.</span>
 	</div>
 	
 </div>
-	<div class="button button2" ng:show="last_saved.$id && symposium && registration.symposium.work_nr < 4">
+	<div style="clear: both" ng:show="last_saved.$id && symposium.$id && registration.symposium.work_nr == 4 && registration.symposium.work_last == false">
+		<input type="checkbox" name="registration.symposium.work_last">Ovo je bio zadnji rad unutar ovog simpozija
+	</div>
+	<div class="button button2" ng:show="last_saved.$id && symposium.$id && registration.symposium.work_nr < 5 && registration.symposium.work_last == false">
 		<input type="reset" value="Dodavanje sljedećeg rada" ng:click="reset()"> 
 	</div>
 <!--
@@ -441,9 +456,8 @@ Odlučite o dolasku na domjenak.</span>
 Permalink to <a href="#{{registration.$id}}">DRZB2011 registration</a> which you can bookmark
 </div>
 -->
-<!--
 <div style="clear: both">
-<input type=checkbox name=debug style="float: right; clear: both">
+<input type=checkbox name=debug style="float: left; clear: both">
 <pre ng:show="debug">
 
 dirty={{! last_saved.$equals(registration)}} invalid={{$invalidWidgets.visible()}}
@@ -460,7 +474,6 @@ $id={{$id}}
 registration.$id={{registration.$id}}
 </pre>
 </div>
--->
 
 </body>
 </html>

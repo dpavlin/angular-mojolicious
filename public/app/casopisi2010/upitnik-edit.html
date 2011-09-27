@@ -35,11 +35,11 @@
 
 <div class="root" ng:controller="Upitnik" ng:init="$window.$root = this;">
 
-<div ng:show="! last_saved.$id">
-
 <p>Pred Vama je upitnik pomoću kojega želimo upoznati Vaše potrebe vezane uz korištenje stranih znanstvenih časopisa.</p>
 
 <p>Prikupljeni podaci koristit će se kao jedna od polaznih točaka prilikom sastavljanja popisa naslova stranih časopisa koji bi trebali biti dostupni u Knjižnici Filozofskog fakulteta. Popis će biti sastavljen uz pomoć različitih kriterija kako bismo stvorili temelj za racionalno potraživanje potrebnih financijskih sredstava. Važno nam je da časopisi koje nabavljamo budu zaista potrebni za normalno odvijanje nastave i znanstvenog rada.</p>
+
+<p>Podaci će biti upotrebljivi samo ako prikupimo dovoljan broj odgovora, pa Vas stoga molimo da odvojite malo vremena za ovaj upitnik.</p>
 
 <p>Ukoliko imate pitanja, molimo obratite se na adresu <a href="mailto:knjiznice@ffzg.hr">knjiznice@ffzg.hr</a>.</p> 
 
@@ -161,9 +161,6 @@ Komentari, prijedlozi i pitanja u vezi časopisa:
 </h2>
 <textarea type="textarea" rows=5 name="upitnik.komentari"></textarea>
 
-<div class="button">
-<p>Molimo ispunite sva obavezna polja označena zvjezdicom (*) i nakon toga pritisnite gumb "Pošalji"</p>
-</div>
 
 <div class="button">
 	<input type=submit ng:click="save()" value="Pošalji">
@@ -171,17 +168,11 @@ Komentari, prijedlozi i pitanja u vezi časopisa:
 	<input type=reset ng:click="reset()" value="Poništi">
 -->
 </div>
-
-</div> <!-- show -->
-
-<div ng:show="last_saved.$id">
-<h2>
-Podaci su uspješno poslani!
-</h2>
-<p>Hvala što ste ispunili upitnik.</p>
-<p>Ako imate pitanja, obratite nam se na adresu <a href="mailto:knjiznice@ffzg.hr">knjiznice@ffzg.hr</a>
-
+<div class="button" ng:show="$invalidWidgets.visible() &gt; 0 || upitnik.odsjek == '-- odaberite --' || upitnik.zvanje == '-- odaberite --'">
+<p>Molimo ispunite sva tražena polja. Polja označena zvjezdicom (*) su obavezna.</p>
 </div>
+
+
 
 <div style="clear: both">
 <input type=checkbox name=debug style="float: right; clear: both">
