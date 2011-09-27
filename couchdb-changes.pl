@@ -7,13 +7,13 @@ use strict;
 
 use lib 'common/mojo/lib';
 
-use Mojo::Client;
+use Mojo::UserAgent;
 use Mojo::JSON;
 
 my $url = 'http://localhost:5984/monitor/_changes?feed=continuous;include_docs=true;since=';
 my $seq = 0;
 
-my $client = Mojo::Client->new;
+my $client = Mojo::UserAgent->new;
 my $json   = Mojo::JSON->new;
 my $error;
 

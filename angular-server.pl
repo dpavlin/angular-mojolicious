@@ -6,6 +6,7 @@ use Mojolicious::Lite;
 use Data::Dump qw(dump);
 use Time::HiRes;
 use Clone qw(clone);
+use Mojo::UserAgent;
 
 sub new_uuid { Time::HiRes::time * 100000 }
 
@@ -14,7 +15,7 @@ sub new_uuid { Time::HiRes::time * 100000 }
 # http://angular.getangular.com/data
 
 my $couchdb = 'http://localhost:5984';
-my $client = Mojo::Client->new;
+my $client = Mojo::UserAgent->new;
 
 sub _couchdb_put {
 	my ( $url, $data ) = @_;
