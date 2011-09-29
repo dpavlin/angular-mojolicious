@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html xmlns:ng="http://angularjs.org">
+<head>
+<meta charset="utf-8">
+<!--
+<script src="angular.js" ng:autobind></script>
+-->
+<script src="http://code.angularjs.org/0.9.15/angular-0.9.15.min.js"
+   ng:autobind></script>
+
+<script>
+Calendar.$inject = ['$xhr', '$resource']; 
+
+function Calendar($xhr,$resource){ 
+	console.info('Calendar');
+	var self = this;
+	$xhr("GET"
+		, "/reservations/get/www.google.com/calendar/ical/8tg8ecg285qshtp75813jktqa0%40group.calendar.google.com/private-b9d68b530fde2c6060979f8a05aa0865/basic.ics"
+		, function(code, response){ 
+			console.log('xhr JSON', code, response);
+			self.data = response;
+		}
+	);
+	var Reservation = $resource('/data/reservations/prijava/:id');
+	this.reservation = new Reservation();
+
+} 
+
+// http://groups.google.com/group/angular/browse_thread/thread/af68afb22fd2d2ab/18fc5e3216a77e53?show_docid=18fc5e3216a77e53
+</script>
+
+<title>Reservations</title>
+
+<style>
+</style>
+
+</head>
+<body>
+
+<div ng:controller="Calendar"> 
+
+<h1>{{data.cal['X-WR-CALNAME']}}</h1>
+
+<div>{{data.cal['X-WR-CALDESC'] | html}}</div>
+
+<ul>
+<li ng:repeat="c in data.events" ng:show="! reservation.UID || reservation.UID == c.UID">
+{{c.DTSTART}} - {{c.DTEND}} 
+<a href="" ng:click="reservation.UID = c.UID ; reservation.event = c">
+<b>{{c.SUMMARY}}</b>
+</a>
+<div>{{c.LOCATION}}</div>
+<div ng:show="c.DESCRIPTION">
+{{c.DESCRIPTION}}
+</div>
+</li>
+</ul>
+
+
+<form ng:show="reservation.UID">
+
+<div ng:show="! reservation._id">
+Popunite vašu prijavu za
+<b>{{reservation.event.SUMMARY}}</b>
+<input type=button ng:click="reservation.UID = null" value="Odustani od prijave">
+</div>
+
+<div ng:show="reservation._id && reservation.UID" style="background: #ff8">
+Vaša prijava za
+<b>{{reservation.event.SUMMARY}}</b>
+<input type=button ng:click="reservation.UID = null" value="Promjeni termin">
+</div>
+
+<br>
+ime: <input name="reservation.name" ng:required>
+<br>
+prezime: <input name="reservation.surname" ng:required>
+<br>
+e-mail: <input name="reservation.email" ng:required>
+<br>
+odsjek: <input name="reservation.odsjek" ng:required>
+<br>
+zvanje: <input name="reservation.zvanje">
+<br>
+područke/tema zaninimanja: <input name="reservation.porducje">
+<br>
+<input type=button ng:click="reservation.$save()" value="Prijavi me">
+<pre>{{reservation}}</pre>
+</form>
+
+<input name=debug type=checkbox>
+<pre ng:show="debug">
+data={{data}}
+reservation={{reservation}}
+</pre>
+
+</div>
+
+
+</body>
+</html>

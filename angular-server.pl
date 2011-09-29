@@ -224,6 +224,46 @@ get '/json/:database/:entity' => sub {
 	_render_jsonp( $self, $docs )
 };
 
+# app/resevations
+use Encode;
+use iCal::Parser;
+
+get '/reservations/get/(*url)' => sub {
+	my $self = shift;
+
+	my $text = $client->get( 'http://' . $self->param('url') )->res->body;
+	warn "# get ", $self->param('url'), dump($text);
+
+	$text = decode( 'utf-8', $text );
+	$text =~ s{\\,}{,}gs;
+	$text =~ s{\\n}{ }gs;
+
+	my $c = iCal::Parser->new->parse_strings( $text );
+
+	warn "# iCal::Parser = ",dump($c);
+
+	my $ical = {
+		cal => $c->{cals}->[0], # FIXME assume single calendar
+	};
+
+	my $e = $c->{events};
+	my @events;
+
+	foreach my $yyyy ( sort keys %$e ) {
+		foreach my $mm ( sort keys %{ $e->{$yyyy} } ) {
+			foreach my $dd ( sort keys %{ $e->{$yyyy}->{$mm} } ) {
+				push @events, values %{ $e->{$yyyy}->{$mm}->{$dd} };
+			}
+		}
+	}
+
+	$ical->{events} = [ sort {
+					$a->{DTSTART} cmp $b->{DTSTART}
+	} @events ];
+
+	_render_jsonp( $self, $ical );
+};
+
 app->start;
 __DATA__
 
