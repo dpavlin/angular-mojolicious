@@ -14,7 +14,7 @@ sub new_uuid { Time::HiRes::time * 100000 }
 # http://docs.getangular.com/REST.Basic
 # http://angular.getangular.com/data
 
-my $couchdb = 'http://localhost:5984';
+my $couchdb = $ENV{COUCHDB} || 'http://localhost:5984';
 my $client = Mojo::UserAgent->new;
 
 sub _couchdb_put {
@@ -27,20 +27,7 @@ sub _couchdb_put {
 	my $rev;
 
 	warn "# _couchdb_put $url = $json";
-	$client->put( "$couchdb/$url" => $json => sub {
-		my ($client,$tx) = @_;
-		my ($message, $code) = $tx->error;
-		my $response = $tx->res->json;
-		warn "## response $code ",dump($response);
-		if ($tx->error) {
-			warn "ERROR $code $message";
-		}
-		return
-		$rev = $response->{rev};
-	})->process;
-
-	warn "## rev = $rev";
-	return $rev;
+	return $client->put( "$couchdb/$url" => $json)->res->json;
 }
 
 sub _couchdb_get {
@@ -143,8 +130,14 @@ any [ 'post' ] => '/data/:database/:entity' => sub {
 
 	$json->{'$id'} ||= $id;	# make sure $id is in there
 
-	my $rev = _couchdb_put "/$database/$entity.$id" => $json;
-	$json->{_rev} = $rev;
+	my $new = _couchdb_put "/$database/$entity.$id" => $json;
+	warn "new: ",dump($new);
+	if ( $new->{ok} ) {
+		$json->{'_'.$_} = $new->{$_} foreach ( 'rev','id' );
+	} else {
+		warn "ERROR: ",dump($new);
+		$json->{_error} = $new;
+	}
 
 	_render_jsonp( $self,  $json );
 };
