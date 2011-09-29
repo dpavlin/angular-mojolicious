@@ -7,5 +7,5 @@ if [ ! -z "$1" ] ; then
 	test -f public/angular/build/angular.js || ( cd public/angular && rake compile )
 fi
 
-./angular-server.pl daemon --reload --listen 'http://*:3001'
+morbo ./angular-server.pl --listen 'http://*:3001'
 
