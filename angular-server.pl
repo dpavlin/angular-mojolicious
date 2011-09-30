@@ -240,7 +240,7 @@ get '/reservations/get/(*url)' => sub {
 
 	my $c = iCal::Parser->new->parse_strings( $text );
 
-	warn "# iCal::Parser = ",dump($c);
+#	warn "# iCal::Parser = ",dump($c);
 
 	my $ical = {
 		cal => $c->{cals}->[0], # FIXME assume single calendar
@@ -262,6 +262,38 @@ get '/reservations/get/(*url)' => sub {
 	} @events ];
 
 	_render_jsonp( $self, $ical );
+};
+
+get '/reservations/events/:view_name' => sub {
+	my $self = shift;
+
+	my $view = _couchdb_get('/reservations/_design/events/_view/' . $self->param('view_name') . '?group=true');
+	my $hash;
+
+	if ( exists $view->{error} ) {
+		_couchdb_put "/reservations/_design/events", {
+			_id => '_design/events',
+			language => 'javascript',
+			views => {
+				submited => {
+					map    => q|
+						function(doc) {
+							if ( doc.event && doc.event.UID ) emit(doc.event.UID, 1)
+						}
+					|,
+					reduce => q|_sum|,
+				}
+			}
+		};
+	}
+
+	_render_jsonp( $self, {} ) unless ref $view->{rows} eq 'ARRAY';
+
+	foreach my $row ( @{ $view->{rows} } ) {
+		$hash->{ $row->{key} } = $row->{value};
+	}
+
+	_render_jsonp( $self, $hash );
 };
 
 app->start;

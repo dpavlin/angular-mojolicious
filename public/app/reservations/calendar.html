@@ -17,10 +17,22 @@ function Calendar($xhr,$resource){
 	$xhr("GET"
 		, "/reservations/get/www.google.com/calendar/ical/8tg8ecg285qshtp75813jktqa0%40group.calendar.google.com/private-b9d68b530fde2c6060979f8a05aa0865/basic.ics"
 		, function(code, response){ 
-			console.log('xhr JSON', code, response);
+			console.log('xhr calendar', code, response);
 			self.data = response;
 		}
 	);
+
+	var load_submited = function() {
+		$xhr("GET"
+			, "/reservations/events/submited"
+			, function(code, response){ 
+				console.log('xhr submited', code, response);
+				self.submited = response;
+			}
+		);
+	}
+	load_submited();
+
 	var Reservation = $resource('/data/reservations/prijava/:id');
 	this.reservation = new Reservation();
 
@@ -46,9 +58,10 @@ function Calendar($xhr,$resource){
 <ul>
 <li ng:repeat="c in data.events" ng:show="! reservation.UID || reservation.UID == c.UID">
 {{c.DTSTART}} - {{c.DTEND}} 
-<a href="" ng:click="reservation.UID = c.UID ; reservation.event = c">
-<b>{{c.SUMMARY}}</b>
-</a>
+<a href="" ng:click="reservation.UID = c.UID ; reservation.event = c">{{c.SUMMARY}}</a>
+<b ng:show="submited[c.UID]">
+broj prijava: {{submited[c.UID]}}
+</b>
 <div>{{c.LOCATION}}</div>
 <div ng:show="c.DESCRIPTION">
 {{c.DESCRIPTION}}
@@ -84,7 +97,7 @@ zvanje: <input name="reservation.zvanje">
 <br>
 područke/tema zaninimanja: <input name="reservation.porducje">
 <br>
-<input type=button ng:click="reservation.$save()" value="Prijavi me">
+<input type=button ng:click="reservation.$save(); load_reservations();" value="Prijavi me">
 <pre>{{reservation}}</pre>
 </form>
 
