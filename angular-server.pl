@@ -228,6 +228,8 @@ get '/json/:database/:entity' => sub {
 use Encode;
 use iCal::Parser;
 
+plugin 'proxy';
+
 get '/reservations/get/(*url)' => sub {
 	my $self = shift;
 
@@ -307,6 +309,8 @@ get '/reservations/events/:view_name' => sub {
 
 	_render_jsonp( $self, $hash );
 };
+
+get '/_utils/script/(*url)' => sub { $_[0]->proxy_to( "$couchdb/_utils/script/" . $_[0]->param('url') , with_query_params => 1 ) };
 
 app->start;
 __DATA__
