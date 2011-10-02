@@ -22,7 +22,10 @@ function Calendar($xhr,$resource){
 		}
 	);
 
-	var load_submited = function() {
+	var Reservation = $resource('/data/reservations/prijava/:id');
+	this.reservation = new Reservation();
+
+	this.load_submited = function() {
 		$xhr("GET"
 			, "/reservations/events/submited"
 			, function(code, response){ 
@@ -31,10 +34,33 @@ function Calendar($xhr,$resource){
 			}
 		);
 	}
-	load_submited();
+	this.load_submited();
 
-	var Reservation = $resource('/data/reservations/prijava/:id');
-	this.reservation = new Reservation();
+	self.reservation.status = 'event';
+
+	this.select_event = function(c) {
+		console.info('select_event', c);
+		self.reservation.event = c;
+		self.reservation.status = 'changed';
+		if (self.submited) self.reservation.slot_nr = ++self.submited[c.UID];
+	}
+
+	this.change_event = function() {
+		self.reservation.event = null;
+		self.reservation.status = 'event';
+		self.load_submited();
+	}
+
+	this.save_submission = function() {
+		if ( self.reservation && self.reservation.event ) {
+			console.info('submit save');
+			self.reservation.status = 'saved';
+			self.reservation.$save();
+			self.load_submited();
+		} else {
+			console.info('submit ignored');
+		}
+	}
 
 } 
 
@@ -56,12 +82,13 @@ function Calendar($xhr,$resource){
 <div>{{data.cal['X-WR-CALDESC'] | html}}</div>
 
 <ul>
-<li ng:repeat="c in data.events" ng:show="! reservation.UID || reservation.UID == c.UID">
-{{c.DTSTART}} - {{c.DTEND}} 
-<a href="" ng:click="reservation.UID = c.UID ; reservation.event = c">{{c.SUMMARY}}</a>
-<b ng:show="submited[c.UID]">
+<li ng:repeat="c in data.events" ng:show="reservation.status == 'event'">
+{{c.DTSTART}} - {{c.DTEND}}
+<a href="" ng:click="select_event(c)" ng:show="! reservation.event && c.UID != reservation.event.UID">{{c.SUMMARY}}</a>
+<b ng:show="reservation.event && reservation.event.UID == c.UID">{{c.SUMMARY}}</b>
+<em ng:show="submited[c.UID]">
 broj prijava: {{submited[c.UID]}}
-</b>
+</em>
 <div>{{c.LOCATION}}</div>
 <div ng:show="c.DESCRIPTION">
 {{c.DESCRIPTION}}
@@ -69,22 +96,22 @@ broj prijava: {{submited[c.UID]}}
 </li>
 </ul>
 
+<div ng:show="reservation.error" style="background:#f88">{{reservation.error}}</div>
 
-<form ng:show="reservation.UID">
+<form ng:show="reservation.status != 'event'">
 
-<div ng:show="! reservation._id">
-Popunite vašu prijavu za
+<div ng:show="reservation.event" style="background: #ff8">
+Vaša <b>{{reservation.status}}</b> prijava za
 <b>{{reservation.event.SUMMARY}}</b>
-<input type=button ng:click="reservation.UID = null" value="Odustani od prijave">
+u terminu {{reservation.event.DTSTART}} u trajanju od {{reservation.event.hours}} sata
+<span ng:show="reservation.slot_nr">broj {{reservation.slot_nr}}</span>
+<span ng:show="reservation.saved">je spremljena.</span>
+<input type=button value="Potvrdi promjenu" ng:show="reservation.changed" ng:click="save_submission()">
+
+<a href="" ng:click="change_event()">Promjeni termin</a>
 </div>
 
-<div ng:show="reservation._id && reservation.UID" style="background: #ff8">
-Vaša prijava za
-<b>{{reservation.event.SUMMARY}}</b>
-<input type=button ng:click="reservation.UID = null" value="Promjeni termin">
-</div>
 
-<br>
 ime: <input name="reservation.name" ng:required>
 <br>
 prezime: <input name="reservation.surname" ng:required>
@@ -97,14 +124,14 @@ zvanje: <input name="reservation.zvanje">
 <br>
 područke/tema zaninimanja: <input name="reservation.porducje">
 <br>
-<input type=button ng:click="reservation.$save(); load_reservations();" value="Prijavi me">
-<pre>{{reservation}}</pre>
+<input type=button ng:click="save_submission()" value="Prijavi me" ng:disable="$invalidWidgets.visible()">
 </form>
 
 <input name=debug type=checkbox>
 <pre ng:show="debug">
-data={{data}}
 reservation={{reservation}}
+submited={{submited}}
+data={{data}}
 </pre>
 
 </div>
