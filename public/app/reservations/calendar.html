@@ -89,6 +89,7 @@ function Calendar($xhr,$resource){
 <em ng:show="submited[c.UID]">
 broj prijava: {{submited[c.UID]}}
 </em>
+<em ng:show="c.slots">/{{c.slots}}</em>
 <div>{{c.LOCATION}}</div>
 <div ng:show="c.DESCRIPTION">
 {{c.DESCRIPTION}}
