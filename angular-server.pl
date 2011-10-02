@@ -257,6 +257,18 @@ get '/reservations/get/(*url)' => sub {
 		}
 	}
 
+	@events = map {
+		foreach my $check_slot ( qw(
+			LOCATION
+			STATUS
+			SUMMARY
+		)) {
+			next unless exists $_->{$check_slot};
+			$_->{slots} = $1 if $_->{$check_slot} =~ m/(\d+)\s*mjesta/s;
+		}
+		$_;
+	} @events;
+
 	$ical->{events} = [ sort {
 					$a->{DTSTART} cmp $b->{DTSTART}
 	} @events ];
