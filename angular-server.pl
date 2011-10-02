@@ -136,7 +136,7 @@ any [ 'post' ] => '/data/:database/:entity' => sub {
 		$json->{'_'.$_} = $new->{$_} foreach ( 'rev','id' );
 	} else {
 		warn "ERROR: ",dump($new);
-		$json->{_error} = $new;
+		$json->{error} = $new;
 	}
 
 	_render_jsonp( $self,  $json );
