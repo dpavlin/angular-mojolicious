@@ -261,6 +261,7 @@ get '/reservations/get/(*url)' => sub {
 
 	@events = map {
 		foreach my $check_slot ( qw(
+			DESCRIPTION
 			LOCATION
 			STATUS
 			SUMMARY
