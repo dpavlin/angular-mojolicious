@@ -27,8 +27,11 @@ $trigger_path ||= 'trigger/shell.pm' ;
 
 our $database = $1 if $url =~ m{/(\w+)/?$};
 
-sub commit { warn "# commit ignored\n"; }
 require $trigger_path if -e $trigger_path;
+
+my $uid = `hostname -s`;
+chomp $uid;
+$uid .= ':' . $$;
 
 my $seq = 0;
 
@@ -71,41 +74,45 @@ while( ! $error ) {
 				debug 'change' => $change;
 
 				if ( filter($change) ) {
-					if ( exists $change->{doc}->{trigger}->{active} ) {
-						debug 'trigger.active',  $change->{doc}->{trigger}->{active};
-					} else {
-						$change->{doc}->{trigger}->{active} = [ time() ];
+
+					if ( ! exists $change->{doc}->{trigger}->{active} ) {
+						$change->{doc}->{trigger}->{active} = [ $uid, time() ];
 
 						debug 'TRIGGER start PUT ', $change->{doc};
-						$client->put( "$url/$id" => $json->encode( $change->{doc} ) => sub {
-							my ($client,$tx) = @_;
-							if ($tx->error) {
-								if ( $tx->res->code == 409 ) {
-									info "TRIGGER ABORTED started on another worker? ", $tx->error;
+						my $client = Mojo::UserAgent->new;
+						my $res = $client->put( "$url/$id" => $json->encode( $change->{doc} ) )->res;
+warn "code ", $res->code, dump( $res->json );
+						if ( $res->code == 409 ) {
+							info "TRIGGER ABORTED started on another worker? ", $res->error;
+							next;
+						} elsif ( $res->code != 201 ) {
+							info "ERROR $url/$id ", $res->code;
+						}
+
+
+					} elsif ( $change->{doc}->{trigger}->{active}->[0] eq $uid ) {
+						if ( exists $change->{doc}->{trigger}->{active}->[2] ) {
+							warn "allready executed";
+							next;
+						} else {
+
+							debug "TRIGGER execute ", $change->{doc};
+							trigger( $change );
+
+							push @{ $change->{doc}->{trigger}->{active} }, time(), 0; # last timestamp
+warn "change ",dump $change;
+
+							my $client = Mojo::UserAgent->new;
+							my $res = $client->put( "$url/$id" => $json->encode( $change->{doc} ) )->res;
+warn "code ", $res->code;
+							if ( my $json = $res->json ) {
+warn dump($json);
+									$change->{doc}->{_rev} = $json->{rev};
+									info "TRIGGER finish ", $change->{doc};
 								} else {
-									info "ERROR $url/$id ", $tx->error;
-								}
-							} else {
-								my $res = $tx->res->json;
-								$change->{doc}->{_rev} = $res->{rev};
-
-								debug "TRIGGER execute ", $change->{doc};
-								trigger( $change );
-
-								push @{ $change->{doc}->{trigger}->{active} }, time(), 0; # last timestamp
-
-								$client->put( "$url/$id" => $json->encode( $change->{doc} ) => sub {
-									my ($client,$tx) = @_;
-									if ($tx->error) {
-										info "ERROR $url/$id", $tx->error;
-									} else {
-										my $res = $tx->res->json;
-										$change->{doc}->{_rev} = $res->{rev};
-										info "TRIGGER finish ", $change->{doc};
-									}
-								})->process;
+									info "ERROR $url/$id", $tx->error;
 							}
-						})->process;
+						}
 					}
 				}
 			} else {
@@ -113,8 +120,6 @@ while( ! $error ) {
 			}
 
 		}
-
-		commit;
 
 	});
 	$client->start($tx);
