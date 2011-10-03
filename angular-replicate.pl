@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 
-use Mojo::Client;
+use Mojo::UserAgent;
 use Data::Dump qw(dump);
 
 use lib 'common/mojo/lib';
@@ -12,7 +12,7 @@ my ( $from, $to ) = @ARGV;
 die "usage: $0 http://from/data/database/ http://to/data/database/\n"
 unless $from && $to;
 
-my $client = Mojo::Client->new;
+my $client = Mojo::UserAgent->new;
 
 my $got = $client->get( $from )->res->json;
 warn "# from $from ",dump($got);

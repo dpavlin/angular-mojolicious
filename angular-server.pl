@@ -6,6 +6,7 @@ use Mojolicious::Lite;
 use Data::Dump qw(dump);
 use Time::HiRes;
 use Clone qw(clone);
+use Mojo::UserAgent;
 
 sub new_uuid { Time::HiRes::time * 100000 }
 
@@ -13,8 +14,8 @@ sub new_uuid { Time::HiRes::time * 100000 }
 # http://docs.getangular.com/REST.Basic
 # http://angular.getangular.com/data
 
-my $couchdb = 'http://localhost:5984';
-my $client = Mojo::Client->new;
+my $couchdb = $ENV{COUCHDB} || 'http://localhost:5984';
+my $client = Mojo::UserAgent->new;
 
 sub _couchdb_put {
 	my ( $url, $data ) = @_;
@@ -26,20 +27,7 @@ sub _couchdb_put {
 	my $rev;
 
 	warn "# _couchdb_put $url = $json";
-	$client->put( "$couchdb/$url" => $json => sub {
-		my ($client,$tx) = @_;
-		my ($message, $code) = $tx->error;
-		my $response = $tx->res->json;
-		warn "## response $code ",dump($response);
-		if ($tx->error) {
-			warn "ERROR $code $message";
-		}
-		return
-		$rev = $response->{rev};
-	})->process;
-
-	warn "## rev = $rev";
-	return $rev;
+	return $client->put( "$couchdb/$url" => $json)->res->json;
 }
 
 sub _couchdb_get {
@@ -142,8 +130,14 @@ any [ 'post' ] => '/data/:database/:entity' => sub {
 
 	$json->{'$id'} ||= $id;	# make sure $id is in there
 
-	my $rev = _couchdb_put "/$database/$entity.$id" => $json;
-	$json->{_rev} = $rev;
+	my $new = _couchdb_put "/$database/$entity.$id" => $json;
+	warn "new: ",dump($new);
+	if ( $new->{ok} ) {
+		$json->{'_'.$_} = $new->{$_} foreach ( 'rev','id' );
+	} else {
+		warn "ERROR: ",dump($new);
+		$json->{error} = $new;
+	}
 
 	_render_jsonp( $self,  $json );
 };
@@ -229,6 +223,95 @@ get '/json/:database/:entity' => sub {
 
 	_render_jsonp( $self, $docs )
 };
+
+# app/resevations
+use Encode;
+use iCal::Parser;
+
+plugin 'proxy';
+
+get '/reservations/get/(*url)' => sub {
+	my $self = shift;
+
+	my $text = $client->get( 'http://' . $self->param('url') )->res->body;
+	warn "# get ", $self->param('url'), dump($text);
+
+	$text = decode( 'utf-8', $text );
+	$text =~ s{\\,}{,}gs;
+	$text =~ s{\\n}{ }gs;
+
+	my $c = iCal::Parser->new->parse_strings( $text );
+
+#	warn "# iCal::Parser = ",dump($c);
+
+	my $ical = {
+		cal => $c->{cals}->[0], # FIXME assume single calendar
+	};
+
+	my $e = $c->{events};
+	my @events;
+
+	foreach my $yyyy ( sort keys %$e ) {
+		foreach my $mm ( sort keys %{ $e->{$yyyy} } ) {
+			foreach my $dd ( sort keys %{ $e->{$yyyy}->{$mm} } ) {
+				push @events, values %{ $e->{$yyyy}->{$mm}->{$dd} };
+			}
+		}
+	}
+
+	@events = map {
+		foreach my $check_slot ( qw(
+			DESCRIPTION
+			LOCATION
+			STATUS
+			SUMMARY
+		)) {
+			next unless exists $_->{$check_slot};
+			$_->{slots} = $1 if $_->{$check_slot} =~ m/(\d+)\s*mjesta/s;
+		}
+		$_;
+	} @events;
+
+	$ical->{events} = [ sort {
+					$a->{DTSTART} cmp $b->{DTSTART}
+	} @events ];
+
+	_render_jsonp( $self, $ical );
+};
+
+get '/reservations/events/:view_name' => sub {
+	my $self = shift;
+
+	my $view = _couchdb_get('/reservations/_design/events/_view/' . $self->param('view_name') . '?group=true');
+	my $hash;
+
+	if ( exists $view->{error} ) {
+		_couchdb_put "/reservations/_design/events", {
+			_id => '_design/events',
+			language => 'javascript',
+			views => {
+				submited => {
+					map    => q|
+						function(doc) {
+							if ( doc.event && doc.event.UID ) emit(doc.event.UID, 1)
+						}
+					|,
+					reduce => q|_sum|,
+				}
+			}
+		};
+	}
+
+	_render_jsonp( $self, {} ) unless ref $view->{rows} eq 'ARRAY';
+
+	foreach my $row ( @{ $view->{rows} } ) {
+		$hash->{ $row->{key} } = $row->{value};
+	}
+
+	_render_jsonp( $self, $hash );
+};
+
+get '/_utils/script/(*url)' => sub { $_[0]->proxy_to( "$couchdb/_utils/script/" . $_[0]->param('url') , with_query_params => 1 ) };
 
 app->start;
 __DATA__

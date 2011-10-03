@@ -77,7 +77,7 @@ Angular examples available:
 
 CouchDB examples:
 
-	couchdb-changes.pl - simple _changes feed watcher using Mojo::Client documented at
+	couchdb-changes.pl - simple _changes feed watcher using Mojo::UserAgent documented at
 
 		http://wiki.apache.org/couchdb/HTTP_database_API#Changes
 

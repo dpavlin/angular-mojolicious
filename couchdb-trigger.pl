@@ -15,7 +15,7 @@ use strict;
 
 use lib 'common/mojo/lib';
 
-use Mojo::Client;
+use Mojo::UserAgent;
 use Mojo::JSON;
 use Time::HiRes qw(time);
 use Data::Dump qw(dump);
@@ -32,7 +32,7 @@ require $trigger_path if -e $trigger_path;
 
 my $seq = 0;
 
-my $client = Mojo::Client->new;
+my $client = Mojo::UserAgent->new;
 our $json   = Mojo::JSON->new;
 sub info { warn $_[0], " ",$json->encode($_[1]),$/ }
 sub debug { info "# $_[0]", $_[1] }
