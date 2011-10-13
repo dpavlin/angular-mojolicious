@@ -9,15 +9,15 @@
    ng:autobind></script>
 
 <script>
-Calendar.$inject = ['$xhr', '$resource']; 
+Calendar.$inject = ['$xhr', '$resource','$log'];
 
-function Calendar($xhr,$resource){ 
-	console.info('Calendar');
+function Calendar($xhr,$resource,$log){ 
+	$log.info('Calendar');
 	var self = this;
 	$xhr("GET"
 		, "/reservations/get/www.google.com/calendar/ical/8tg8ecg285qshtp75813jktqa0%40group.calendar.google.com/private-b9d68b530fde2c6060979f8a05aa0865/basic.ics"
 		, function(code, response){ 
-			console.log('xhr calendar', code, response);
+			$log.log('xhr calendar', code, response);
 			self.data = response;
 		}
 	);
@@ -29,7 +29,7 @@ function Calendar($xhr,$resource){
 		$xhr("GET"
 			, "/reservations/events/submited"
 			, function(code, response){ 
-				console.log('xhr submited', code, response);
+				$log.log('xhr submited', code, response);
 				self.submited = response;
 			}
 		);
@@ -39,7 +39,7 @@ function Calendar($xhr,$resource){
 	self.reservation.status = 'event';
 
 	this.select_event = function(c) {
-		console.info('select_event', c);
+		$log.info('select_event', c);
 		self.reservation.event = c;
 		self.reservation.status = 'changed';
 		if (self.submited) self.reservation.slot_nr = ++self.submited[c.UID];
@@ -53,12 +53,12 @@ function Calendar($xhr,$resource){
 
 	this.save_submission = function() {
 		if ( self.reservation && self.reservation.event ) {
-			console.info('submit save');
+			$log.info('submit save');
 			self.reservation.status = 'saved';
 			self.reservation.$save();
 			self.load_submited();
 		} else {
-			console.info('submit ignored');
+			$log.info('submit ignored');
 		}
 	}
 
