@@ -23,26 +23,30 @@ my $in  = IO::Handle->new_from_fd(\*STDIN, 'r');
 my $out = IO::Handle->new_from_fd(\*STDOUT, 'w');
 $out->autoflush(1);
 
-open(my $l_fh, '>', "/tmp/couchdb-perl-view.log");
+open(my $l_fh, '>>', "/tmp/couchdb-perl-view.log");
+$l_fh->autoflush(1);
 
-sub _log {
-	$out->print($j->encode([ 'log' => @_ ]), "\n");
+sub _debug {
 	print $l_fh "@_\n";
 }
 
-our $fun;
+sub _log {
+	$out->print($j->encode([ 'log' => @_ ]), "\n");
+}
+
+our @fun;
 
 while(defined(my $line = $in->getline)) {
 	chomp $line;
-	_log $line if $ENV{DEBUG};
+	_debug $line;
 	my $input = $j->decode($line);
 	my ($cmd, @args) = @$input;
 
 	if ( $cmd eq 'reset' ) {
-		undef $fun;
+		@fun = ();
 		$out->print("true\n");
 	} elsif ( $cmd eq 'add_fun' ) {
-		$fun = eval $args[0];
+		push @fun, eval $args[0];
 		if ( $@ ) {
 			$out->print( qq|{"error": "$!", "reason": "$@"}\n| );
 		} else {
@@ -50,15 +54,14 @@ while(defined(my $line = $in->getline)) {
 		}
 	} elsif ( $cmd eq 'map_doc' ) {
 		my @results;
-		our $d;
-		local $d;
-		$d = eval { $fun->(@args) };
-		if ( $@ ) {
-			_log $@;
-		} else {
+		foreach my $fun ( @fun ) {
+			my $d = eval { $fun->(@args) };
+			_log $@ if $@;
 			push @results, [$d];
 		}
-		$out->print($j->utf8->encode( \@results ), "\n");
+		my $json = $j->utf8->encode( \@results );
+		$out->print("$json\n");
+		_debug "# $json";
 	} else {
 		_log "$cmd unimplemented", dump( $input );
 	}
