@@ -3,6 +3,11 @@ use warnings;
 use strict;
 
 # http://wiki.apache.org/couchdb/View_server
+#
+# /etc/couchdb/local.ini add:
+#
+# [query_servers]
+# perl = /usr/bin/perl /srv/angular-mojolicious/couchdb-view-server.pl
 
 use JSON::XS;
 use IO::Handle;
