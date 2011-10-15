@@ -230,6 +230,8 @@ use iCal::Parser;
 
 plugin 'proxy';
 
+my $slot_regex = '(\d+)\s*mjesta';
+
 get '/reservations/get/(*url)' => sub {
 	my $self = shift;
 
@@ -267,8 +269,9 @@ get '/reservations/get/(*url)' => sub {
 			SUMMARY
 		)) {
 			next unless exists $_->{$check_slot};
-			$_->{slots} = $1 if $_->{$check_slot} =~ m/(\d+)\s*mjesta/s;
+			$_->{slots} = $1 if $_->{$check_slot} =~ m/$slot_regex/is;
 		}
+		$_->{slots} ||= $1 if $ical->{cal}->{'X-WR-CALDESC'} =~ m/$slot_regex/s;
 		$_;
 	} @events;
 
