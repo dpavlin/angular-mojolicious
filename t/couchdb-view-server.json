@@ -1,0 +1,3 @@
+["reset",{"reduce_limit":true,"timeout":5000}]
+["add_fun","sub {\n [ shift->{_id}, 1 ];\n}"]
+["map_doc",{"_id":"cb71ad755be66b467ae5e51e4100e027","_rev":"3-11fd6bead394b463531889babc686ac4","trigger":{"active":["t61p:11026","1317673926.10924","1317673926.15453","0"],"output":"","command":"notify-send \"CouchDB trigger notify example\""}}]
