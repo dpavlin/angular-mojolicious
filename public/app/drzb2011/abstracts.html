@@ -114,13 +114,21 @@ Odabir: <br/>
 	<span ng:show="registration.student == thrue"> - student</span><br>
 -->
 
-	<h1 style="font-size: 14pt; text-align: center; padding-top:48pt">{{registration.work.title | uppercase}}</h1>
 	<span ng:repeat="author in registration.work.authors" ng:show="registration.work.title">
-		<div style="font-size: 12pt; font-weight: bold; text-align: center; margin: 0; padding: 0">{{author.name}} {{author.surname}}</div>
-		<div style="font-size: 12pt; font-style: italic; font-weight: normal; text-align: center; padding-top: 6pt; padding-bottom: 12pt; margin: 0;">{{author.inst}}</div>
-	</span>
+		<span style="font-size: 12pt; font-weight: bold; margin: 0; padding-top: 46pt; display: inline;">{{author.name}} {{author.surname}}</span>, 
+		<span style="font-size: 12pt; font-style: italic; font-weight: normal; margin: 0; display: inline;">{{author.inst}}</span>,</span>
+	<h1 style="font-size: 14pt; text-align: center; padding-bottom: 14pt">{{registration.work.title}}</h1>
+<!--
 	<div>{{registration.work.abstract | lf2p | html}}</div>
+-->
+	<div>{{registration.work.abstract}}</div>
+	<div>{{symposium.abstract}}</div>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+<!--
 	<div>{{registration._id}}</div>
+-->
 </div>
 </div>
 
