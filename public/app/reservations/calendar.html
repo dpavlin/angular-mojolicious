@@ -62,6 +62,14 @@ function Calendar($xhr,$resource,$log){
 		}
 	}
 
+	this.event_full = function(e) {
+		if ( ! self.submited ) return 0;
+
+		var count = self.submited[e.UID];
+		if ( count === undefined ) return 0;
+		if ( parseInt(count) < parseInt(e.slots) ) return 0;
+		return 1;
+	}
 } 
 
 // http://groups.google.com/group/angular/browse_thread/thread/af68afb22fd2d2ab/18fc5e3216a77e53?show_docid=18fc5e3216a77e53
@@ -88,13 +96,13 @@ li {
 <li ng:repeat="c in data.events" ng:show="reservation.status == 'event'">
 {{c.DTSTART}} - {{c.DTEND}}
 
-<span ng:show="! submited[c.UID] || submited[c.UID] < c.slots">
+<span ng:show="! event_full(c)">
  <a href="" ng:click="select_event(c)">{{c.SUMMARY}}</a>
  <em ng:show="submited[c.UID]">prijava: {{submited[c.UID]}}</em>
  <em ng:show="c.slots">mjesta: {{c.slots}}</em>
 </span>
 
-<span ng:show="submited[c.UID] >= c.slots">
+<span ng:show="event_full(c)">
  <b>{{c.SUMMARY}}</b>
  <em>popunjena sva mjesta: {{c.slots}}</em>
 </span>
