@@ -311,6 +311,8 @@ get '/reservations/events/:view_name' => sub {
 		$hash->{ $row->{key} } = $row->{value};
 	}
 
+	$hash ||= {};
+
 	_render_jsonp( $self, $hash );
 };
 
