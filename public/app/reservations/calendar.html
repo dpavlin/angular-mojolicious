@@ -84,12 +84,18 @@ function Calendar($xhr,$resource,$log){
 <ul>
 <li ng:repeat="c in data.events" ng:show="reservation.status == 'event'">
 {{c.DTSTART}} - {{c.DTEND}}
-<a href="" ng:click="select_event(c)" ng:show="! reservation.event && c.UID != reservation.event.UID">{{c.SUMMARY}}</a>
-<b ng:show="reservation.event && reservation.event.UID == c.UID">{{c.SUMMARY}}</b>
-<em ng:show="submited[c.UID]">
-broj prijava: {{submited[c.UID]}}
-</em>
-<em ng:show="c.slots">/{{c.slots}}</em>
+
+<span ng:show="! submited[c.UID] || submited[c.UID] < c.slots">
+ <a href="" ng:click="select_event(c)">{{c.SUMMARY}}</a>
+ <em ng:show="submited[c.UID]">prijava: {{submited[c.UID]}}</em>
+ <em ng:show="c.slots">mjesta: {{c.slots}}</em>
+</span>
+
+<span ng:show="submited[c.UID] >= c.slots">
+ <b>{{c.SUMMARY}}</b>
+ <em>popunjena sva mjesta: {{c.slots}}</em>
+</span>
+
 <div>{{c.LOCATION}}</div>
 <div ng:show="c.DESCRIPTION">
 {{c.DESCRIPTION}}
