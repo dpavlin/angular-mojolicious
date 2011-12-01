@@ -8,6 +8,7 @@ use Mojo::JSON;
 use Mojo::UserAgent;
 use Data::Dump qw(dump);
 use XML::Simple;
+use Time::HiRes;
 
 my $json = Mojo::JSON->new;
 my $client = Mojo::UserAgent->new;
@@ -17,7 +18,9 @@ post '/collector' => sub {
 	my $data = XMLin( $self->req->body );
 	warn dump( $data );
 
-	my $res = $client->post( 'http://localhost:5984/mmonit/' => { 'Content-Type' => 'application/json' } => $json->encode( $data ) )->res->json;
+	# post will create new dockument, put will insert known key
+	my $key = sprintf "%10.5f", Time::HiRes::time;
+	my $res = $client->put( "http://localhost:5984/mmonit/$key" => { 'Content-Type' => 'application/json' } => $json->encode( $data ) )->res->json;
 
 	warn "# res = ",dump($res);
 
